@@ -18,12 +18,14 @@ ATTACK-RELATED QUESTIONS
 ------------------------------
 Who can we expect to be attacking this network?
 - Probably mostly script kiddies.  Perhaps a very occasional more advanced hacker, but odds are more on script kiddies.
+- I don't know who they are, but individual machines on the Math/CS network get hit and probed and have people trying to SSH into them all the time.
+- We could also attack it ourselves.
 
 What sort of methods might they use?
 - Mostly pre-established exploits, use of sscan, nmap, Nessus (as general "find-any-weakness" tools)
 
 How can we defend against these attacks?
-
+- Do we want to defend against these attacks?
 
 To what degree do we want to defend against these attacks? (That is, where are we on the spectrum of gaining information vs. blocking attacks?)
 - Since this is supposed to be an isolated network, probably more on info-gathering side.
@@ -55,8 +57,9 @@ How do we make this safe, so that we don't compromise the Carleton network?
 SUPER-SPECIFIC QUESTIONS
 ------------------------------
 Specifically what benign traffic should we expect to see on these systems?
+- None! "Since honeypots are not production systems, the honeynet itself has no production activity, no authorized services. As a result, any interaction with a honeynet implies malicious or unauthorized activity. Any connections intiated inbound to your honeynet are most likely a probe, scan, or attack. Any unauthorized outbound connections from your honeynet imply someone has compromised a system and has initiated outbound activity."
 
 
 What sort of warning mechanisms can we have set up to flag if harmful traffic is leaving the honeynet?
-- Don't let harmful traffic leave the honeynet!
+- Don't let harmful traffic leave the honeynet! Reality is probably not this simple.
 
