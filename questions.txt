@@ -42,10 +42,13 @@ What sort of system(s) should we provide to be both an enticing target and a use
 
 
 How many machines do we need to use?
-
+- Logging machine
+- Honeywall
+- Depending on how many machines we get to use, we may want to use VMs for the Honeypots.
 
 What specific mechanisms can we use for different parts of the Honeynet?
 - Seems like using the systems provided by Honeynet.org is probably the best best (both Georgia Tech and U Wisconsin did so, and they seem to have gotten plenty of useful info)
+- One benefit of doing it this way is we can then spend more time on things like analysis and making tools for analysis.
 
 How should each machine be set up?
 
