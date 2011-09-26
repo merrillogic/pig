@@ -49,6 +49,7 @@ How should each machine be set up?
 
 
 How do we make this safe, so that we don't compromise the Carleton network?
+- Restrict it at the router/firewall level. Don't let any traffic out. ITS may give us a specific subnet even so that they can also block our traffic.
 
 
 SUPER-SPECIFIC QUESTIONS
@@ -57,4 +58,5 @@ Specifically what benign traffic should we expect to see on these systems?
 
 
 What sort of warning mechanisms can we have set up to flag if harmful traffic is leaving the honeynet?
+- Don't let harmful traffic leave the honeynet!
 
