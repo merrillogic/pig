@@ -1,0 +1,60 @@
+GENERAL QUESTIONS
+------------------------------
+What do we hope to get out of this?
+
+
+How legal is this?
+
+
+How can the information we get from this be used? (possibly less our problem?)
+
+
+How much do we care if our honeynet is detected by attackers?
+
+
+
+
+ATTACK-RELATED QUESTIONS
+------------------------------
+Who can we expect to be attacking this network?
+- Probably mostly script kiddies.  Perhaps a very occasional more advanced hacker, but odds are more on script kiddies.
+
+What sort of methods might they use?
+- Mostly pre-established exploits, use of sscan, nmap, Nessus (as general "find-any-weakness" tools)
+
+How can we defend against these attacks?
+
+
+To what degree do we want to defend against these attacks? (That is, where are we on the spectrum of gaining information vs. blocking attacks?)
+- Since this is supposed to be an isolated network, probably more on info-gathering side.
+
+What sort of information will we be getting from attacks?
+
+
+SETUP QUESTIONS
+------------------------------
+What are the significant parts of the Honeynet?
+- Honeywall machine, logging machine, honeypot systems, ...?
+
+What sort of system(s) should we provide to be both an enticing target and a useful source of information?
+
+
+How many machines do we need to use?
+
+
+What specific mechanisms can we use for different parts of the Honeynet?
+- Seems like using the systems provided by Honeynet.org is probably the best best (both Georgia Tech and U Wisconsin did so, and they seem to have gotten plenty of useful info)
+
+How should each machine be set up?
+
+
+How do we make this safe, so that we don't compromise the Carleton network?
+
+
+SUPER-SPECIFIC QUESTIONS
+------------------------------
+Specifically what benign traffic should we expect to see on these systems?
+
+
+What sort of warning mechanisms can we have set up to flag if harmful traffic is leaving the honeynet?
+
