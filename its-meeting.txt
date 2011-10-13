@@ -1,0 +1,28 @@
+1 dell honeywall
+1 dell logging machine
+2 dells running VMs
+    - windows & linux
+
+joining the honeynet project?
+rgraves login on honeywall and logging machine
+mtie account
+
+two separate networks:
+    honeynet network, honeywall bridging on that network
+    log/control network
+        physical ethernet interfaces? 3?
+            in, out, bridge, data management interface
+            management eth0 -- on CS subnet
+                honeywall is just a bridge. physical, no logical prescense.
+            eth1/eth2 bridge without IP addresses
+
+webserver locatable on google
+
+run honeywall for a while before putting machines behind it
+
+137.22.73.*
+give machines many IP addresses
+
+logger and honeywall on real MATHCS ports
+
+<https://projects.honeynet.org/honeywall>
