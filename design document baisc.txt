@@ -122,3 +122,9 @@ VM 2:
 	ftp
 VM 3:
 	smtp, imap
+	
+	
+	
+So what do our attacks look like?
+For example, SQL injection attacked might look something like a series of server errors coming out 
+from our sql server. (the errors are from them trying different things to see what happens).
