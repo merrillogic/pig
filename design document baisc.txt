@@ -1,0 +1,124 @@
+If snort is run with -l ./log -b it will save binary log files into the ./log file.  
+/var/log/snort/LOGNAME
+How do we interpret this binary data? We can technically use snort to output it to a different 
+file in verbose mode, which seems like a viable option. We could also have it pipe that into 
+our app directly, and leave the binary files for long term data analysis.
+
+
+		
+how do we want to display our data? Do we want to do a webpage? 
+We could implement the output of our analyzer to mostly write description files, 
+that can be read by a site-maker that updates every 5 minutes, and can just display 
+the data prettily. We can have a legit interactive interface for the long-term data 
+analysis, as well as for realtime threats. 
+
+Real time threats interface:
+	(color coded by how likely there is an attack. If any attack is confirmed = red, the farther 
+	along in an attack it is, change shades of yellow/orange. If no attacks, green like crazy.
+	|IP: current threat status / total threats : malicious?|
+	|137.22.0.0: no threats detected / 0 : no|
+	|137.22.2.102: FTP vulnerability exploit / 3 : likely|
+	|0.0.0.0: DDoS! / over 9000! : YES! UNPLUG EVERYTHING!|
+	
+If they click on one, a window with additional info about each threat will appear. Not like, 
+	a popup, but the way wireshark does it.
+
+Design skeleton pseudo-code:
+
+ThreatAnalyser:
+	connections -> {ipinfo=key: connection class}
+	
+	run(): (possible to multithread, if we so desire - one for adding new things to the buffer, the other just takes things out)
+	while True:
+		if there's something in the buffer:
+			grab the next packet:
+				check IPs.
+				If the ips match no connections, and the packet isn't one that doesn't care about ips somehow, make a new one. 
+				Give the packet to the connection
+				grab the return of it receiving that packet. (not sure what's in this info yet... things like connection status, and whatnot)
+		check all the connections, see if any are expired, or have info to add. conncetion.update() or something.
+		Once all connections are up to date, check for AoE attacks on the connections.
+		Update view.
+		Keep on keepin' on. I assume if we're going to allow input, this will need some tweaking of some sort. Like this:
+		processinput()
+		
+/*
+This might be fine as a static class. The only thing it would store is which node it's currently at,
+which if the owning class has, it can save a lot of space in memory. Just keep track of where each 
+connection is in each threatmonitor, and any info associated with that. I like that.
+*/
+class ThreatMonitor:
+	states -> list[ThreatState]
+	
+	
+	getState(x):
+		return self.states[x]
+	/*
+	Processes a given input. If it's a valid input, returns the node index that should be the new current
+	and the command to be executed. Maybe it executes it, unknown yet.
+	*/
+	processInput(input):
+		if input in getCurrentNode().keys:
+			dict[key][0]()
+			return dict[key][1]
+	
+	/*
+	Various action functions. We don't know yet what these are. Things like dump to file, 
+	email warning, modifying whether or not it was found.
+	*/
+
+ThreatState struct:
+	dict -> {input: (command, nodePointer)}
+	timeout -> int timeout (if we don't hear anything after this certain time, this attack is timed out)
+	functionPointer -> invalidInput //This is if a packet comes in that doesn't match anything. 
+							//Does the threatMonitor reset? Does it keep going? Does it not care?
+	
+
+
+Less in-depth version:
+	Flow of real time threat analysis: (this is essentially mimiced in the pseudo code for ThreatAnalyser)
+		Has a buffer of incoming packet info. (fifo)
+		while true:
+			check for additional packets, add them to end of buffer
+			pop off top buffer item.
+			For all threats being analyzed, run the packet through them 
+				(they are Finite state automata, if the packet matches, they progress, if it doesn't 
+					they reset. That's defined within them, though.)
+				For most attacks, this should be done based on incoming packet IP. If we are watching 
+					for things like DDoS attacks, we can modify certain attack-monitors to handle all 
+					ips. It can even be a nice little flag.
+			Honestly that's all we need in the basic code. The threat-monitor classes will handle most of what we need to do.
+			Once all processing has been done, update view.
+			
+	Threat-monitor:
+		Is an FSA. Maintains info on what state it's currently at. Has a graph of states.
+		Has an associated IP if necessary, otherwise analyzes packets from all sources.
+		
+	Threat-state:
+		Node. Contains info on what it goes to when it receives each packet. Can also have a function it executes before going there.
+			e.g. dict{HTTPGET: (recordData, node34)}
+
+
+IMPORTANT:
+What libraries will we need with the code? The real time analysis itself needs nothing. I imagine 
+the only library it will need is a graphics library. We can look into a good one for basic GUI 
+elements. Goals: Minimal, customizable, fast. GTK? WxWidgets? Probably GTK.
+
+Types of attack to detect:
+password cracking
+	-ssh
+	-apache
+	-mysql
+man in the middle
+	-apache
+sql exploits (sql injection)
+	-sql db
+
+
+VM setup:
+VM 1:
+	ssh, apache, sql
+VM 2:
+	ftp
+VM 3:
+	smtp, imap
