@@ -1,0 +1,47 @@
+HONEYNET COMPS DESIGN DOC
+By Jon, Chris, Andy, Tsusa, and Denis
+
+
+PURPOSE
+=====================
+The purpose of our comps project is to implement a network-monitoring
+suite for detecting and providing information on malicious attacks on a subnet
+of the Carleton network.
+
+
+SETUP 
+=====================
+We are using the Honeywall OS provided by The Honeynet Project
+(honeynet.org) to function as a network traffic controller.  The honeywall is
+set up as an invisible network bridge on a VLAN that has been isolated from the
+remainder of the Carleton network for security purposes.
+
+Our honeypots will be set up as three virtual machines running Red Hat
+Enterprise Linux 6, installed on two computers also running Red Hat as the base
+system.  One of the VMs will be running an Apache/MySQL server combination.
+Another will run an FTP server, and the third will host an IMAP/SMTP server
+combination. All machines will be running SSH servers.
+
+
+ATTACKS 
+=====================
+We will be working with three specific types of attacks: password
+cracking, man-in-the-middle attacks, and SQL injection attacks, and we may make
+use of some long-standing stand-alone exploits (FTP, for example, is lousy with
+these).  We will use these attacks ourselves against the honeypot machines in
+order to gather sufficient specific data to make use of it in our software.
+Aside from these, we may experience other attacks from outside sources.
+
+
+SOFTWARE 
+=====================
+Our software will be based around finite state automata-like threat
+detectors. For each honeypot, we monitor the incoming traffic, and maintain
+information on whether or not the traffic is similar to one of our three known
+attacks. If any threats are detected, the software can send notifications, close
+connections or just log that it occurred. Real time threat analysis data is
+displayed in an online interface.
+
+We will also implement previous attack information in this web interface. A
+history of network activity will be displayed, along with any attacks that
+occurred, IPs that are potentially malicious, and various other information.
