@@ -1,0 +1,14 @@
+For each attack group:
+Dl virtualbox, make installation script for necessary services
+If possible, make attacks against own machine, while running wireshark
+      - make general profile for each attack
+
+Determine UI elements
+UI TEAMS
+RT Data - Jon, Andy, Tsusa
+Historic data - Jon, Denis, Chris
+
+figure out how we want to store data
+what data to store
+
+jon and andy: mail related
