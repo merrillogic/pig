@@ -4,7 +4,7 @@ What do we hope to get out of this?
 
 
 How legal is this?
-
+- Legal enough, since it's just our machines
 
 How can the information we get from this be used? (possibly less our problem?)
 
