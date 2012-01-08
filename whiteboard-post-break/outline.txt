@@ -1,0 +1,14 @@
+1. Log traffic with Wireshark or the router/switch machine.
+    - figure out HOW
+    - parse the file format: either <https://github.com/r1chardj0n3s/parse> or regular expressions will probably help. also, fuzzy string matching: <https://github.com/seatgeek/fuzzywuzzy>
+
+2. Background process watching logfile
+    - parse packets from log into Packet objects
+
+3. background worker classifies packets into Attack objects
+
+4. Django views either do long-polling or request some JSON blob regularly and update data on the page
+    - there are ways to push over javascript. comet maybe? Andy has never used any and doesn't remember too much about them.
+    - or regularly hit /attacks?since=time
+    - KnockoutJS ViewModels will store data as JS objects, and magically update elements it's bound too.
+
