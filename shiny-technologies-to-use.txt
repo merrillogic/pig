@@ -1,0 +1,9 @@
+Django <https://docs.djangoproject.com/en/1.3/> - Andy is familiar with this and can take questions.
+
+Twitter Bootstrap <http://twitter.github.com/bootstrap> - Andy has never used this, but it's really cool.
+
+KnockoutJS <http://knockoutjs.com/> - Andy is familiar with this and can take questions.
+
+LESS <http://lesscss.org> - Andy is familiar with this and can take questions.
+
+MySQL - Andy will talk to mtie about setting that up, which shouldn't be too hard.
