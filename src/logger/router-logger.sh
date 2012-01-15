@@ -1,5 +1,12 @@
 #!/bin/sh
 
-sudo /usr/bin/daemonlogger -l /home/logger/logs -i eth0 -n eth0.pcap -t 5m -u logger -d
-sudo /usr/bin/daemonlogger -l /home/logger/logs -i eth1 -n eth1.pcap -t 5m -u logger -d
-sudo /usr/bin/daemonlogger -l /home/logger/logs -i eth2 -n eth2.pcap -t 5m -u logger -d
+# change to directory of script
+cd "`dirname "$0"`"
+# load config variables
+source ./logging-config
+
+# start daemonlogger
+for interface in "eth0" "eth1" "eth2"
+do
+    sudo /usr/bin/daemonlogger -l /home/logger/logs -i $interface -n $interface.pcap -t $ROLLOVER_TIME -u logger -d
+done
