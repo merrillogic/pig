@@ -12,6 +12,10 @@ sgoings-hera:
     137.22.73.130
 sgoings-odin:
     137.22.73.129
+sgoings-thor (VM on Odin):
+	137.22.73.131
+sgoings-loki (VM on Odin):
+	137.22.73.132
 
 sgoingscompslogger:
     137.22.30.46
