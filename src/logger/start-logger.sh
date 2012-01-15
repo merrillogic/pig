@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # change to directory of script
 cd "`dirname "$0"`"
