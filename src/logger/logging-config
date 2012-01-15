@@ -2,3 +2,4 @@
 
 # Rollovertime of 30 seconds
 ROLLOVER_TIME="30"
+LOGDIR="/home/logger/logs"
