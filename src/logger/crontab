@@ -1,0 +1,4 @@
+# crontab entry for logger
+
+*/3 * * * * /home/logger/honeynet/src/copy-logs.sh &> /home/logger/transfer.log
+#@reboot /home/logger/honeynet/src/start-logger.sh
