@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Rollovertime of 30 seconds
+ROLLOVER_TIME="30"
+LOGDIR="/home/logger/logs"
+LOG_SERVER="137.22.30.46"
