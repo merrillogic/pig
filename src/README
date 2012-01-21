@@ -1,0 +1,74 @@
+===============================================
+PACKET ANALYSIS
+===============================================
+
+OVERVIEW
+
+The master process follows these steps:
+1) Read in a set of packets
+2) Split those packets into subsets based on their source and destination IP
+   addresses
+3) Hand each source/dest-unique packet set to a Connection object for that
+   source/dest pair
+4) Tell all Connection objects to analyze their packets
+5) Remove any Connections that return that they have timed out (had no attack
+   activity)
+6) Rinse and repeat
+
+Connections handle sets of packets like this:
+1) Packets passed in are added to the packet buffer
+2) When told to analyze, checks if the packet buffer is large enough to make it
+   worthwhile, or if has been told to analyze multiple times in a row; if not,
+   does nothing
+3) On analysis, passes the contents of the packet buffer into each of the
+   Connection's persistent attack analyzers (ideally running in parallel) to
+   analyze for possible attacks
+4) If all analyzers have timed out (have found no attack activity), sends the
+   signal that this Connection can be terminated
+
+Attack analyzers process packets like this:
+0) Before processing any packets, the automaton checks if the time between
+   relevant packets has been longer than the programmed timeout value; if so,
+   any stored attack data is written to the database and the automaton is
+   returned to the clean initial (SAFE) state
+1) Hand the next packet to the current node
+2) The current node checks if the packet fits all the criteria for making any
+   of its transitions
+3) If so, the current node is changed to the destination of the matched
+   transition and the current attack score is incremented by the transition's
+   score; the machine's state then changes to the state of the destination node
+4) If the transition returned to the SAFE node, the attack is over, so the
+   automaton writes the attack data (source, destination, start time, end time,
+   attack type, attack score) out to the database
+5) Otherwise, the automaton notes that the packet was a possible attack packet
+   and moves on to the next packet
+
+
+STRUCTURAL SKETCH
+
+                CONTROLLER
+                 |     ^
+                 |     |
+                 |  PACKETREADER
+                 |
+          -------|--------------
+          |      |     |       |
+    CONNECTION  CON   CON     CON
+        |
+        |
+        |
+   -----|---------------------------------------------
+   |             |          |            |           |
+   |             |          |            |           |
+SQLANALYZER     DOS      PASSCRACK     MAIL        MITM
+                            |
+                            |
+                            |
+                        SAFE NODE
+                            |
+                -----------------------
+                |           |         |
+           PRELIM NODE    PRELIM    PRELIM
+                |           |           |
+                |           |           |
+                ------- THREAT NODE   THREAT
