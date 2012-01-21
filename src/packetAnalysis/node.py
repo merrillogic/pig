@@ -2,7 +2,7 @@
 node.py
 @author Jon Garnaas-Holmes
 '''
-class Node:
+class Node(object):
     def __init__(self, threatLevel):
         self.transitions = []
         self.threatLevel = threatLevel

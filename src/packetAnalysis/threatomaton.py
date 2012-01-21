@@ -30,19 +30,19 @@ PRELIM = 1
 THREAT = 2
 ###################
 
-class Threatomaton:
+class Threatomaton(object):
 
     # Each Threatomaton has a type marking what it is used for (e.g. for a
     # SQLInjection AttackAnalyzer, it's 'sqlinjection'); here, initialize this
     # to a default value
     type = 'Default'
-    
+
     # The instance-dependent number of seconds in packet time after which to
     # say an attack has timed out
     timeoutVal = -1
 
     # The list of node objects contained in the automaton
-    nodes = [] 
+    nodes = []
     # The mapping of STATE (SAFE, PRELIM, or THREAT) to a list of indices in
     # self.nodes of nodes belonging to that state
     nodeMap = {}
@@ -114,7 +114,7 @@ class Threatomaton:
         src = self.nodes[source]
         src.addTransition(trans)
 
-    
+
     def processPackets(self, packets):
         """ Check if the automaton has timed out and then feed each packet into
         self.processPacket;
@@ -137,7 +137,7 @@ class Threatomaton:
         for packet in packets:
             self.processPacket(packet)
 
-    
+
     def processPacket(self, packet):
         """ Update the machine state and attack data based on the contents of
         the input packet
@@ -147,7 +147,7 @@ class Threatomaton:
         # pull state before processing packets for checking to see if attack
         # started
         prevState = self.curState
-        
+
         # Get the results of checking this packet against the current Node's
         # available Transitions
         dest, score = self.curNode.processPacket(packet)
@@ -180,7 +180,7 @@ class Threatomaton:
         """
         pass
 
-    
+
     def reset(self):
         """ Write out any attack data and set the machine back to a clean slate
         with no attack data recorded yet
@@ -197,7 +197,7 @@ class Threatomaton:
         self.curNode = self.nodes[0]
         self.curState = SAFE
 
-    
+
 
 def _test():
     th = Threatomaton(None, None)

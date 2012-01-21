@@ -10,10 +10,10 @@ Public methods:
 - Transition(destination node, attack score, list of trigger conditions)
 - match(Packet to compare against stored triggers)
 '''
-class Transition:
+class Transition(object):
 
     # The index of the destination node to transition to
-    dest = None 
+    dest = None
     # Integer score value assigned to this transition
     score = 0
     # List of boolean functions to match to make this transition
@@ -33,7 +33,7 @@ class Transition:
 
     def match(self, packet):
         """ Checks if the input packet matches all this Transition's stored
-        triggers 
+        triggers
 
         @param packet - The Packet to compare to the triggers
         @return - The resulting Boolean value of comparison

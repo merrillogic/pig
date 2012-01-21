@@ -11,7 +11,7 @@ Public methods:
 - analyzePackets()
 
 '''
-class Connection:
+class Connection(object):
 
     # Initialize values for the source IP and destination IP of the connection
     src = None
