@@ -1,3 +1,7 @@
+'''
+node.py
+@author Jon Garnaas-Holmes
+'''
 class Node:
     def __init__(self, threatLevel):
         self.transitions = []

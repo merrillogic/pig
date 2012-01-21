@@ -1,3 +1,7 @@
+'''
+controller.py
+@author (primary) Jon Garnaas-Holmes
+'''
 ##TODO: change threatomata timeout mechanism (global time mechanism)
 ## updated time after a bunch of packets
 #update the time before processing a chunk.
@@ -40,6 +44,6 @@ class Controller:
         for connectionID in self.connections:
             connection = self.connections[connectionID]
             result = connection.analyzePackets()
-            if result == False: #If the connection returns false, it will ahve already stored 
+            if result == False: #If the connection returns false, it will have already stored 
                                 # everything it needs to in the database, so it's safe to del.
                 del self.connections[connectionID]
