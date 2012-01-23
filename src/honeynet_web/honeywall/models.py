@@ -6,7 +6,7 @@ class Attack(models.Model):
     destination_ip = models.IPAddressField(null=True, blank=True)
     start_time = models.DateField()
     end_time = models.DateField(null=True, blank=True)
-    score = models.DecimalField(max_digits=6, decimal_places=3)
+    score = models.IntegerField()
 
 class Packet(models.Model):
     source_ip = models.IPAddressField()
