@@ -14,6 +14,7 @@ Public methods:
 
 Private methods:
 - processPacket(single Packet to analyze)
+- markPacket(single Packet to mark)
 - exportAttackData()
 - reset()
 
@@ -173,7 +174,23 @@ class Threatomaton(object):
             # if moved from SAFE state, attack may have started, so flag it
             if prevState == SAFE and prevState != self.curState:
                 self.lastAttackStart = time.time()
+            # if moved from PRELIM to THREAT, confirms that this is an
+            # attack, so create an attack object and mark all stored packets
+            # with its ID
+            elif prevState == PRELIM and self.curState == THREAT:
+                self.attack = None # TODO: what here?
+                for pckt in self.attackPackets:
+                    self.markPacket(pckt)
+            # otherwise, if we're still in THREAT, the only packet that needs
+            # to get marked is the one we just processed
+            elif self.curState == THREAT:
+                self.markPacket(packet)
 
+
+    def markPacket(self, packet):
+        """ Mark the packet in the DB with the current Attack object's ID
+        """
+        pass
 
     def exportAttackData(self):
         """ Do something with self.attackPackets
@@ -191,6 +208,7 @@ class Threatomaton(object):
 
         self.exportAttackData()
 
+        self.attack = None
         self.lastAttackStart = 0
         self.lastAttackTime = 0
         # set the current Node to the initial (SAFE) node
