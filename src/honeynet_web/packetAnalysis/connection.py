@@ -18,17 +18,16 @@ class Connection(object):
     dest = None
 
     # Initialize the pointers to the Threatomaton analyzers
-    sqlinj = None
-    dos = None
-    passcrack = None
-    mail = None
-    mitm = None
+    analyzers = []
 
     # Initialize the list used to buffer a set of packets to analyze
     packetBuffer = []
     # Initialize the minimum number of packets to have in the buffer before
     # processing them
     minBufferSize = 500
+
+    # Init the flag marking if we should force analysis of buffered packets
+    analysisFlag = False
 
     def __init__(self, src, dest):
         """ Create a Connection object; initializes all variables and creates
@@ -40,13 +39,22 @@ class Connection(object):
         self.src = src
         self.dest = dest
 
-        self.sqlinj = SQLInjectionAnalyzer(src, dest)
-        self.dos = DOSAnalyzer(src, dest)
-        self.passcrack = PassCrackAnalyzer(src, dest)
-        self.mail = MailAnalyzer(src, dest)
-        self.mitm = MitMAnalyzer(src, dest)
+        # Initialize all of our AttackAnalyzers
 
-        self.analysisFlag = False
+        sqlinj = SQLInjectionAnalyzer(src, dest)
+        self.analyzers.append(sqlinj)
+
+        dos = DOSAnalyzer(src, dest)
+        self.analyzers.append(dos)
+
+        passcrack = PassCrackAnalyzer(src, dest)
+        self.analyzers.append(passcrack)
+
+        mail = MailAnalyzer(src, dest)
+        self.analyzers.append(mail)
+
+        mitm = MitMAnalyzer(src, dest)
+        self.analyzers.append(mitm)
 
 
     def bufferPacket(self, packet):
@@ -74,17 +82,13 @@ class Connection(object):
 
         # Run all the attack analyses
         # :TODO: These should really be multi-threaded for efficiency
-        sqlResult = self.sqlinj.processPackets(packets)
-        dosResult = self.dos.processPackets(packets)
-        passResult = self.passcrack.processPackets(packets)
-        mailResult = self.mail.processPackets(packets)
-        mitmResult = self.mitm.processPackets(packets)
+        countAttacksFound = 0   # The number of analyzers that returned a
+                                # positive result
+        for analyzer in self.analyzers:
+            if analyzer.processPackets(packets):
+                countAttacksFound += 1
 
         # If all the attacks timed out, let the caller know that this
         # Connection is no longer necessary
-        if (not sqlResult
-                and not dosResult
-                and not passResult
-                and not mailResult
-                and not mitmResult):
+        if not countAttacksFound:
             return False
