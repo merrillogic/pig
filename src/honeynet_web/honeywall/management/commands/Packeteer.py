@@ -1,3 +1,4 @@
+from datetime import datetime
 from scapy.all import *
 
 '''
@@ -64,7 +65,7 @@ class Packeteer:
     def __init__(self, singlePacket, start):
         self.packet = singlePacket
         self.dict = {}
-        self.time = self.packet.time - start
+        self.time = datetime.fromtimestamp(self.packet.time)
         self.detectLayer()
 
     def __getitem__(self, item):
