@@ -71,6 +71,10 @@ class Packeteer:
             return self.time
         elif item == 'layer':
             return self.dict[item]
+        elif item == 'srcMAC':
+            return self.sourceMAC()
+        elif item == 'dstMAC':
+            return self.destinationMAC()
         else:
             return self.getIPField(item)
         
