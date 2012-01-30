@@ -103,7 +103,7 @@ class Packeteer:
     def detectLayer(self):
         if self.packet.haslayer(UDP):
             self.dict['layer'] = 'UDP'
-        elif self.packet.hasLayer(TCP):
+        elif self.packet.haslayer(TCP):
             self.dict['layer'] = 'TCP'
     
     
