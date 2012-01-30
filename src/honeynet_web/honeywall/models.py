@@ -1,4 +1,5 @@
 from django.db import models
+from macaddress.fields import MACAddressField
 
 class Attack(models.Model):
     classification_time = models.DateTimeField(auto_now_add=True)
@@ -13,6 +14,9 @@ class Packet(models.Model):
     destination_ip = models.IPAddressField(null=True, blank=True)
     source_port = models.IntegerField(null=True, blank=True)
     dest_port = models.IntegerField(null=True, blank=True)
+    source_mac = MACAddressField(null=True, blank=True)
+    destination_mac = MACAddressField(null=True, blank=True)
+
     time = models.DateTimeField()
 
     # protocol can be 0-255
