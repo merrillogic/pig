@@ -90,7 +90,10 @@ class Packeteer:
             return fieldval
         
     def getEthField(self, field):
-        return self.packet.getfieldval(field)
+        try:
+            return self.packet.getfieldval(field)
+        except IndexError:
+            return None
         
     def getPayload(self): 
         if "payload" in self.dict:
