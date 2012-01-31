@@ -12,17 +12,8 @@ class Command(BaseCommand):
         pcap_file = args[0]
         pcap = PacketReader(pcap_file)
 
-        #### Get Chris to name fields same way as in model
-        #### unpack dictionary into constructor
         for packet in pcap:
-            p = Packet()
-            # required fields
-            p.source_ip = packet['src']
-            p.time = packet['time']
-            #p.protocol = packet['protocol']
-
-            # optional fields
-
-            #p.save()
+            p = Packet(**packet)
+            p.save()
 
         transaction.commit()

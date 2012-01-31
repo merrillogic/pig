@@ -30,7 +30,7 @@ To avoid potential conflicts with scapy classes, no class variables or
 #           Should this instead be done in getPacketChunk?
 #           Shorter initialization time vs. Packet chunk retrieval time
 
-class PacketReader:
+class PacketReader(object):
     def __init__(self,pcapFile):
         self.packetList = []
         self.chunkCounter = 0
@@ -40,7 +40,8 @@ class PacketReader:
         self.startTime = self.pcap[0].time
 
         for packetCap in self.pcap:
-            self.packetList.append(Packeteer(packetCap, self.startTime))
+            if not packetCap.haslayer(LLC):
+                self.packetList.append(Packeteer(packetCap, self.startTime))
 
     def __iter__(self):
         return iter(self.packetList)
@@ -61,93 +62,72 @@ class PacketReader:
             self.chunkCounter += 1
         return returnList
 
-class Packeteer:
+class Packeteer(object):
     def __init__(self, singlePacket, start):
         self.packet = singlePacket
-        self.dict = {}
-        self.time = datetime.fromtimestamp(self.packet.time)
-        self.detectLayer()
+        self.dict = self._populate_dict()
+
+    def _populate_dict(self):
+        d = {}
+        # required fields
+        #self.packet.show()
+        d['time'] = datetime.fromtimestamp(self.packet.time)
+        d['source_mac'] = self.packet.src
+
+        # optional fields
+        try:
+            d['protocol'] = self.packet.payload.proto
+        except AttributeError:
+            pass
+        try:
+            if self.packet.haslayer(ARP):
+                d['source_ip'] = self.packet.payload.psrc
+            else:
+                d['source_ip'] = self.packet.payload.src
+        except AttributeError:
+            pass
+        try:
+            if self.packet.haslayer(ARP):
+                d['destination_ip'] = self.packet.payload.pdst
+            else:
+                d['destination_ip'] = self.packet.payload.dst
+        except AttributeError:
+            pass
+        try:
+            d['source_port'] = self.packet.sport
+        except AttributeError:
+            pass
+        try:
+            d['dest_port'] = self.packet.dport
+        except AttributeError:
+            pass
+        try:
+            d['destination_mac'] = self.packet.dst
+        except AttributeError:
+            pass
+        try:
+            # this is ridiculous. who knows if this is actually right
+            try:
+                if unicode(self.packet.payload.payload.payload):
+                    d['payload'] = unicode(self.packet.payload.payload.payload)
+            except UnicodeDecodeError:
+                pass
+
+        except AttributeError:
+            pass
+
+        if not d.get('source_ip'):
+            print 'HALP'
+            self.packet.show()
+
+        return d
+
+    def keys(self):
+        ## returns a list of all of the keys
+        return self.dict.keys()
 
     def __getitem__(self, item):
-        if item == 'payload':
-            return str(self.getPayload())
-        elif item == 'time':
-            return self.time
-        elif item == 'layer':
-            return self.dict[item]
-        elif item == 'srcMAC':
-            return self.sourceMAC()
-        elif item == 'dstMAC':
-            return self.destinationMAC()
-        else:
-            return self.getIPField(item)
-
-    def getIPField(self, field):
-        if field in self.dict:
-            return self.dict[field]
-        else:
-            try:
-                fieldval = self.packet[IP].getfieldval(field)
-            except IndexError:
-                fieldval = None
-            self.dict[field] = fieldval
-            return fieldval
-
-    def getEthField(self, field):
-        try:
-            return self.packet.getfieldval(field)
-        except IndexError:
-            return None
-
-    def getPayload(self):
-        if "payload" in self.dict:
-            return self.dict["payload"]
-        else:
-            try:
-                fieldval = self.packet[TCP].payload
-
-            except IndexError:
-                fieldval = self.packet[UDP].payload
-            self.dict["payload"] = fieldval
-            return fieldval
-
-    def detectLayer(self):
-        if self.packet.haslayer(UDP):
-            self.dict['layer'] = 'UDP'
-        elif self.packet.haslayer(TCP):
-            self.dict['layer'] = 'TCP'
-
-
-    def source(self):
-        return self.getIPField("src")
-
-
-    def destination(self):
-        return self.getIPField("dst")
-
-
-    def length(self):
-        return self.getIPField("len")
-
-
-    def options(self):
-        return self.getIPField("options")
-
-
-    def id(self):
-        return self.getIPField("id")
-
-
-    def flags(self):
-        return self.getIPField("flags")
-
-
-    def sourceMAC(self):
-        return self.getEthField("src")
-
-
-    def destinationMAC(self):
-        return self.getEthField("dst")
+        return self.dict[item]
 
 if __name__ == '__main__':
     import sys
@@ -156,6 +136,6 @@ if __name__ == '__main__':
     else:
         a = PacketReader(sys.argv[1])
     b = a[13]
-    for i in a:
-        print i
+    #for i in a:
+        #print i
     b[source]

@@ -14,13 +14,13 @@ class Packet(models.Model):
     destination_ip = models.IPAddressField(null=True, blank=True)
     source_port = models.IntegerField(null=True, blank=True)
     dest_port = models.IntegerField(null=True, blank=True)
-    source_mac = MACAddressField(null=True, blank=True)
+    source_mac = MACAddressField()
     destination_mac = MACAddressField(null=True, blank=True)
 
     time = models.DateTimeField()
 
     # protocol can be 0-255
-    protocol = models.IntegerField()
+    protocol = models.IntegerField(null=True, blank=True)
     payload = models.CharField(max_length=65535, blank=True)
 
     attack = models.ForeignKey(Attack, null=True, blank=True)
