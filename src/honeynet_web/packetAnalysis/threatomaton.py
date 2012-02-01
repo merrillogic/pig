@@ -20,7 +20,7 @@ Private methods:
 
 '''
 # :TODO: Make the timeout functionality use packet time, not system time
-from time import time
+from datetime import datetime
 
 from node import *
 from transition import *
@@ -124,7 +124,7 @@ class Threatomaton(object):
         @return - False if timed out, None otherwise
         """
         # timeout stuff
-        curTime = time.time()
+        curTime = datetime.now() 
         if (curTime - self.lastAttackTime) > self.timeoutVal:
             self.reset()
             # let the caller know that this timed out and reset
@@ -169,11 +169,11 @@ class Threatomaton(object):
             self.reset()
         # Otherwise, store update attack data
         else:
-            self.lastAttackTime = time.time()
+            self.lastAttackTime = datetime.now()
             self.attackPackets.append(packet)
             # if moved from SAFE state, attack may have started, so flag it
             if prevState == SAFE and prevState != self.curState:
-                self.lastAttackStart = time.time()
+                self.lastAttackStart = datetime.now()
             # if moved from PRELIM to THREAT, confirms that this is an
             # attack, so create an attack object and mark all stored packets
             # with its ID

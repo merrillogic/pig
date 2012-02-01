@@ -35,7 +35,7 @@ class PassCrackAnalyzer(AttackAnalyzer):
         # PRELIM node for the slow attack profile
         slowPrel = self.addPrelimNode()
         slowConds = sshConds[:]
-        slowConds.append(lambda p: p.time >= self.lastPotentialAttackTime + 5)
+        slowConds.append(lambda p: p.time >= self.lastAttackStart + 5)
         self.addTransition(firstPrel, slowPrel, 1, slowConds)
 
         # repeating PRELIM nodes for slow attack
