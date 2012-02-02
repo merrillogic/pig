@@ -138,7 +138,7 @@ class Packeteer(object):
     @property
     def id(self):
         if 'id' in self.dict:
-            return self.dict['id']
+            return self.dict['packet_id']
         else:
             return None
 
