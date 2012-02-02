@@ -1,4 +1,4 @@
-'''
+"""
 analyzers.py
 
 Basic file for defining the different attack profiles
@@ -15,7 +15,9 @@ Functions to use are:
     @param triggers - List of boolean functions to be satisfied in order to
         make the transition
 
-'''
+"""
+from attackanalyzer import AttackAnalyzer
+
 class DOSAnalyzer(AttackAnalyzer):
 
     type = 'denialofservice'

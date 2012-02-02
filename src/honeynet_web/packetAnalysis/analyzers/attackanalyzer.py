@@ -16,7 +16,7 @@ Functions to use are:
         make the transition
 
 '''
-from threatomaton import Threatomaton
+from honeynet_web.packetAnalysis.threatomaton import Threatomaton
 
 class AttackAnalyzer(Threatomaton):
 
@@ -26,3 +26,9 @@ class AttackAnalyzer(Threatomaton):
 
     def addAttackProfile(self):
         pass
+
+
+def _test():
+    aa = AttackAnalyzer()
+    print aa.type
+if __name__=='__main__':_test()
