@@ -18,7 +18,7 @@ Functions to use are:
 """
 from attackanalyzer import AttackAnalyzer
 
-class MailAnalyzer(AttackAnalzyer):
+class MailAnalyzer(AttackAnalyzer):
 
     type = 'mail'
     

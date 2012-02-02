@@ -11,6 +11,9 @@ Public methods:
 - analyzePackets()
 
 '''
+# import the attack analyzers
+from analyzers.all import *
+
 class Connection(object):
 
     # Initialize values for the source IP and destination IP of the connection
