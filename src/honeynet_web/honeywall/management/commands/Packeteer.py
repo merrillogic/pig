@@ -73,14 +73,14 @@ class Packeteer(object):
         #self.packet.show()
         d['time'] = datetime.fromtimestamp(self.packet.time)
         d['source_mac'] = self.packet.src
-        
+
 
         # optional fields
         try:
-            d['id'] = self.packet.payload.id
+            d['packet_id'] = self.packet.payload.id
         except AttributeError:
             pass
-        
+
         try:
             d['protocol'] = self.packet.payload.proto
         except AttributeError:
@@ -134,7 +134,7 @@ class Packeteer(object):
 
     def __getitem__(self, item):
         return self.dict[item]
-        
+
     @property
     def id(self):
         if 'id' in self.dict:
