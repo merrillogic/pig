@@ -1,6 +1,5 @@
-'''
+"""
 threatomaton.py
-@author (primary) Denis Griffis
 
 Defines the Threatomaton class (the base structural class for AttackAnalyzers)
 
@@ -18,7 +17,7 @@ Private methods:
 - exportAttackData()
 - reset()
 
-'''
+"""
 # :TODO: Make the timeout functionality use packet time, not system time
 from datetime import datetime
 

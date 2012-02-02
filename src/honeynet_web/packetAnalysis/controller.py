@@ -1,7 +1,6 @@
-'''
+"""
 controller.py
-@author (primary) Jon Garnaas-Holmes
-'''
+"""
 ##TODO: change threatomata timeout mechanism (global time mechanism)
 ## updated time after a bunch of packets
 #update the time before processing a chunk.
