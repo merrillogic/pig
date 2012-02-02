@@ -38,10 +38,6 @@ class Threatomaton(object):
     # to a default value
     type = 'Default'
 
-    # The instance-dependent number of seconds in packet time after which to
-    # say an attack has timed out
-    timeoutVal = -1
-
     # The list of node objects contained in the automaton
     nodes = []
     # The mapping of STATE (SAFE, PRELIM, or THREAT) to a list of indices in
@@ -133,7 +129,7 @@ class Threatomaton(object):
         # timeout stuff
         curTime = datetime.now()
         timeElapsed = curTime - self.lastAttackTime
-        if (timeElapsed > self.timeoutVal) or (timeElapsed > self.curNode.timeout):
+        if (timeElapsed > self.curNode.timeout):
             self.reset()
             # let the caller know that this timed out and reset
             # :TODO: This is a problem; if times out, currently returns without
