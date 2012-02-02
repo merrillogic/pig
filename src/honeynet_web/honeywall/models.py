@@ -9,6 +9,7 @@ class Attack(models.Model):
     end_time = models.DateTimeField(null=True, blank=True)
     score = models.IntegerField()
 
+
 class Packet(models.Model):
     source_ip = models.IPAddressField()
     destination_ip = models.IPAddressField(null=True, blank=True)
@@ -17,6 +18,7 @@ class Packet(models.Model):
     source_mac = MACAddressField()
     destination_mac = MACAddressField(null=True, blank=True)
 
+    packet_id = models.IntegerField()
     time = models.DateTimeField()
 
     # protocol can be 0-255
@@ -25,3 +27,6 @@ class Packet(models.Model):
 
     attack = models.ForeignKey(Attack, null=True, blank=True)
     classification_time = models.DateTimeField(auto_now_add=False, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('time, packet_id')
