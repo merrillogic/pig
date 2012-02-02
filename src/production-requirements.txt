@@ -4,3 +4,4 @@ hg+http://hg.secdev.org/scapy@74274bb47d3c#egg=scapy
 gunicorn==0.13.4
 django-macaddress==1.0.0
 netaddr==0.7.6
+django-annoying==0.7.6
