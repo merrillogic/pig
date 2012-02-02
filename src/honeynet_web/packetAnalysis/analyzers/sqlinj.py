@@ -16,9 +16,27 @@ Functions to use are:
         make the transition
 
 '''
+def isQuery(packet):
+    return True
+    
+def isSameQuery(packet1, packet2):
+    return True
+
 class SQLInjectionAnalyzer(AttackAnalyzer):
 
     type = 'sqlinjection'
+    self.attackedAddress = ''
 
     def addAttackProfile(self):
-        pass
+        numPrelims = 5
+        for i in range(numPrelims):
+            self.addPrelimNode(500)
+            
+        self.addTransition(self.startNode, prelims[0], 0, [isQuery]))
+        for prelimIndex in range(1, numPrelims):
+            #for the first numPrelims-1 nodes...
+            self.addTransition(self.nodes[prelimIndex], self.nodes[prelimIndex + 1]), prelimIndex+1, isSameQuery)
+            
+        self.addThreatNode()
+        self.addTransition(self.nodes[-2], self.nodes[-1], numPrelims, isSameQuery))
+        
