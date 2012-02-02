@@ -9,6 +9,10 @@ class Attack(models.Model):
     end_time = models.DateTimeField(null=True, blank=True)
     score = models.IntegerField()
 
+    class Meta:
+        # order newest first -- but by what measure?
+        #ordering = ['-time']
+        pass
 
 class Packet(models.Model):
     source_ip = models.IPAddressField()
@@ -29,4 +33,6 @@ class Packet(models.Model):
     classification_time = models.DateTimeField(auto_now_add=False, blank=True, null=True)
 
     class Meta:
-        unique_together = ('time, packet_id')
+        # order newest first
+        #ordering = ['-time']
+        unique_together = ('time', 'packet_id')
