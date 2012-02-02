@@ -22,7 +22,7 @@ class Packet(models.Model):
     source_mac = MACAddressField()
     destination_mac = MACAddressField(null=True, blank=True)
 
-    packet_id = models.IntegerField()
+    packet_id = models.IntegerField(null=True, blank=True)
     time = models.DateTimeField()
 
     # protocol can be 0-255
@@ -35,4 +35,4 @@ class Packet(models.Model):
     class Meta:
         # order newest first
         #ordering = ['-time']
-        unique_together = ('time', 'packet_id')
+        unique_together = ('time', 'source_ip')
