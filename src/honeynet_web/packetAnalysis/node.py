@@ -3,13 +3,17 @@ node.py
 @author Jon Garnaas-Holmes
 '''
 class Node(object):
-    def __init__(self, threatLevel):
+    def __init__(self, threatLevel, timeout = -1):
         self.transitions = []
         self.threatLevel = threatLevel
+        self.timeout = timeout
 
 
     def addTransition(self, transition):
         self.transitions.append(transition)
+
+    def setTimeout(self, timeout):
+        self.timeout = timeout
 
     def processPacket(self, packet):
         for transition in self.transitions:

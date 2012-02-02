@@ -104,6 +104,13 @@ class Threatomaton(object):
         return newNodeIndex
 
 
+    def addTimeout(self, node, timeout):
+        """ Add a timeout to the given node.
+        @param node - The node to add the timeout to
+        @param timeout - The length of the timeout, in milliseconds
+        """
+        node.setTimeout(timeout)
+
     def addTransition(self, source, dest, score, triggers):
         """ Add a Transition object to a Node
         @param source - The index in self.nodes of the node to add the Transition to
@@ -124,8 +131,9 @@ class Threatomaton(object):
         @return - False if timed out, None otherwise
         """
         # timeout stuff
-        curTime = datetime.now() 
-        if (curTime - self.lastAttackTime) > self.timeoutVal:
+        curTime = datetime.now()
+        timeElapsed = curTime - self.lastAttackTime
+        if (timeElapsed > self.timeoutVal) or (timeElapsed > self.curNode.timeout):
             self.reset()
             # let the caller know that this timed out and reset
             # :TODO: This is a problem; if times out, currently returns without
