@@ -20,7 +20,7 @@ Private methods:
 
 '''
 # :TODO: Make the timeout functionality use packet time, not system time
-from time import time
+from datetime import datetime
 
 from node import *
 from transition import *
@@ -37,10 +37,6 @@ class Threatomaton(object):
     # SQLInjection AttackAnalyzer, it's 'sqlinjection'); here, initialize this
     # to a default value
     type = 'Default'
-
-    # The instance-dependent number of seconds in packet time after which to
-    # say an attack has timed out
-    timeoutVal = -1
 
     # The list of node objects contained in the automaton
     nodes = []
@@ -104,6 +100,13 @@ class Threatomaton(object):
         return newNodeIndex
 
 
+    def addTimeout(self, node, timeout):
+        """ Add a timeout to the given node.
+        @param node - The node to add the timeout to
+        @param timeout - The length of the timeout, in milliseconds
+        """
+        node.setTimeout(timeout)
+
     def addTransition(self, source, dest, score, triggers):
         """ Add a Transition object to a Node
         @param source - The index in self.nodes of the node to add the Transition to
@@ -124,8 +127,9 @@ class Threatomaton(object):
         @return - False if timed out, None otherwise
         """
         # timeout stuff
-        curTime = time.time()
-        if (curTime - self.lastAttackTime) > self.timeoutVal:
+        curTime = datetime.now()
+        timeElapsed = curTime - self.lastAttackTime
+        if (timeElapsed > self.curNode.timeout):
             self.reset()
             # let the caller know that this timed out and reset
             # :TODO: This is a problem; if times out, currently returns without
@@ -169,11 +173,11 @@ class Threatomaton(object):
             self.reset()
         # Otherwise, store update attack data
         else:
-            self.lastAttackTime = time.time()
+            self.lastAttackTime = datetime.now()
             self.attackPackets.append(packet)
             # if moved from SAFE state, attack may have started, so flag it
             if prevState == SAFE and prevState != self.curState:
-                self.lastAttackStart = time.time()
+                self.lastAttackStart = datetime.now()
             # if moved from PRELIM to THREAT, confirms that this is an
             # attack, so create an attack object and mark all stored packets
             # with its ID

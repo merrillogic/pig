@@ -16,53 +16,9 @@ Functions to use are:
         make the transition
 
 '''
-from threatomaton import Threatomaton
-
-class AttackAnalyzer(Threatomaton):
-
-    def __init__(self, src, dest):
-        Threatomaton.__init__(self, src, dest)
-        self.addAttackProfile()
-
-    def addAttackProfile(self):
-        pass
-
-
-class SQLInjectionAnalyzer(AttackAnalyzer):
-
-    type = 'sqlinjection'
-
-    def addAttackProfile(self):
-        pass
-
-
-class DOSAnalyzer(AttackAnalyzer):
-
-    type = 'denialofservice'
-
-    def addAttackProfile(self):
-        pass
-
-
-class PassCrackAnalyzer(AttackAnalyzer):
-
-    type = 'passwordcracking'
-
-    def addAttackProfile(self):
-        pass
-
-
 class MailAnalyzer(AttackAnalzyer):
 
     type = 'mail'
     
-    def addAttackProfile(self):
-        pass
-
-
-class MitMAnalyzer(AttackAnalyzer):
-
-    type = 'maninthemiddle'
-
     def addAttackProfile(self):
         pass
