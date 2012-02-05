@@ -39,4 +39,5 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
             
         self.addThreatNode()
         self.addTransition(self.nodes[-2], self.nodes[-1], numPrelims, isSameQuery))
+        self.addTransition(self.nodes[-1], self.nodes[-1], numPrelims, isSameQuery))
         
