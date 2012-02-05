@@ -1,6 +1,5 @@
-'''
+"""
 threatomaton.py
-@author (primary) Denis Griffis
 
 Defines the Threatomaton class (the base structural class for AttackAnalyzers)
 
@@ -18,7 +17,7 @@ Private methods:
 - exportAttackData()
 - reset()
 
-'''
+"""
 # :TODO: Make the timeout functionality use packet time, not system time
 from datetime import datetime
 
@@ -127,20 +126,22 @@ class Threatomaton(object):
         @return - False if timed out, None otherwise
         """
         # timeout stuff
+        timeoutFlag = False
         curTime = datetime.now()
         timeElapsed = curTime - self.lastAttackTime
         if (timeElapsed > self.curNode.timeout):
             self.reset()
-            # let the caller know that this timed out and reset
-            # :TODO: This is a problem; if times out, currently returns without
-            # processing packets; but if store return value and return after
-            # processing packets, Connection that saw start of an attack could
-            # hypothetically get erased
-            return False
+            # flag that this timed out
+            timeoutFlag = True
 
         # actually process the packets
         for packet in packets:
             self.processPacket(packet)
+
+        # if we had flagged a timeout and the packets just processed did not
+        # start an attack, then let the parent Connection know this is inactive
+        if timeoutFlag and self.lastAttackStart == 0:
+            return False
 
 
     def processPacket(self, packet):

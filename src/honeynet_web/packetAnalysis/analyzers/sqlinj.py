@@ -1,4 +1,4 @@
-'''
+"""
 analyzers.py
 
 Basic file for defining the different attack profiles
@@ -15,7 +15,9 @@ Functions to use are:
     @param triggers - List of boolean functions to be satisfied in order to
         make the transition
 
-'''
+"""
+from attackanalyzer import AttackAnalyzer
+
 def isQuery(packet):
     return True
     
@@ -35,7 +37,8 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         self.addTransition(self.startNode, prelims[0], 0, [isQuery]))
         for prelimIndex in range(1, numPrelims):
             #for the first numPrelims-1 nodes...
-            self.addTransition(self.nodes[prelimIndex], self.nodes[prelimIndex + 1]), prelimIndex+1, isSameQuery)
+            self.addTransition(self.nodes[prelimIndex], self.nodes[prelimIndex
+                                                                    + 1]), prelimIndex+1, isSameQuery)
             
         self.addThreatNode()
         self.addTransition(self.nodes[-2], self.nodes[-1], numPrelims, isSameQuery))

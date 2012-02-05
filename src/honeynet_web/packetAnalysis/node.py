@@ -1,7 +1,6 @@
-'''
+"""
 node.py
-@author Jon Garnaas-Holmes
-'''
+"""
 class Node(object):
     def __init__(self, threatLevel, timeout = -1):
         self.transitions = []

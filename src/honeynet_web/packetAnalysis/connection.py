@@ -1,6 +1,5 @@
-'''
+"""
 connection.py
-@author (primary) Denis Griffis
 
 Defines the Connection class, a wrapper for source/destination IP-paired sets
 of AttackAnalyzers
@@ -10,7 +9,10 @@ Public methods:
 - bufferPacket(packet to add to the buffer)
 - analyzePackets()
 
-'''
+"""
+# import the attack analyzers
+from analyzers.all import *
+
 class Connection(object):
 
     # Initialize values for the source IP and destination IP of the connection

@@ -1,6 +1,5 @@
-'''
+"""
 transition.py
-@author Denis Griffis
 
 Definition of Transition class; a data structure containing a set of boolean
 conditions based on packet contents, a node in the containing machine to move
@@ -9,7 +8,7 @@ to, and the attack score of having met those transition conditions
 Public methods:
 - Transition(destination node, attack score, list of trigger conditions)
 - match(Packet to compare against stored triggers)
-'''
+"""
 class Transition(object):
 
     # The index of the destination node to transition to
