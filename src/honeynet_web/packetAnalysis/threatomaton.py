@@ -77,7 +77,7 @@ class Threatomaton(object):
         self.attackDest = dest
 
 
-    def addPrelimNode(self):
+    def addPrelimNode(self, timeout=-1):
         """ Add a node in the PRELIM grouping
         @return - The index in self.nodes of the new node
         """
@@ -88,7 +88,7 @@ class Threatomaton(object):
         return newNodeIndex
 
 
-    def addThreatNode(self):
+    def addThreatNode(self, timeout=-1):
         """ Add a node in the THREAT grouping
         @return - The index in self.nodes of the new node
         """
