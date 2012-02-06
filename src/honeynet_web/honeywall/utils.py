@@ -1,3 +1,9 @@
+import datetime
+import time
+from django.http import HttpResponse
+from django.utils import simplejson as json
+from decorator import decorator
+
 PROTOCOLS = {
         0: 'HOPOPT',
         1: 'ICMP',
@@ -270,11 +276,11 @@ def packet_to_dict(packet):
     d['source_mac'] = packet.source_mac
     d['destination_mac'] = packet.destination_mac
     d['packet_id'] = packet.packet_id
-    d['time'] = packet.time
+    d['time'] = datetime_to_milliseconds(packet.time)
     d['protocol_id'] = packet.protocol
     d['protocol'] = protocol_lookup(packet.protocol)
     d['payload'] = packet.payload
-    d['classification_time'] = packet.classification_time
+    d['classification_time'] = datetime_to_milliseconds(packet.classification_time)
     d['attack_id'] = packet.attack.id
 
     return d
@@ -282,11 +288,48 @@ def packet_to_dict(packet):
 def attack_to_dict(attack):
     d = {}
     d['id'] = attack.id
-    d['classification_time'] = attack.classification_time
+    d['classification_time'] = datetime_to_milliseconds(attack.classification_time)
     d['source_ip'] = attack.source_ip
     d['destination_ip'] = attack.destination_ip
-    d['start_time'] = attack.start_time
-    d['end_time'] = attack.end_time
+    d['start_time'] = datetime_to_milliseconds(attack.start_time)
+    d['end_time'] = datetime_to_milliseconds(attack.end_time)
     d['score'] = attack.score
 
     return d
+
+@decorator
+def json_response(f, *args, **kwargs):
+    try:
+        status_code = 200
+        response = {
+            'status': True,
+            'data': f(*args, **kwargs)
+        }
+    except Exception, e:
+        status_code = 400
+        response = {
+            'status': False,
+            'message': '%s: %s' % (e.__class__.__name__, str(e))
+        }
+
+    body = json.dumps(response, indent=4)
+    if 'callback' in args[0].GET:
+        body = '%s(%s)' % (args[0].GET['callback'], body)
+
+    return HttpResponse(body, status=status_code)
+
+# from <http://djangosnippets.org/snippets/1997/>
+def datetime_to_milliseconds(dt=None):
+    # Ensure the type matches
+    if not dt:
+        dt = datetime.datetime.now()
+
+    elif type(dt) == type(datetime.datetime.now()):
+        return time.mktime(dt.timetuple())+float("0.%s"%dt.microsecond) * 1000
+
+    elif type(dt) == type(datetime.date.today()):
+        return time.mktime(dt.timetuple()) * 1000
+
+    else:
+        raise ValueError, "You may only use a datetime.datetime or datetime.date instance with datetime_to_milliseconds"
+

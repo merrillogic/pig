@@ -71,7 +71,7 @@ class Packeteer(object):
         d = {}
         # required fields
         #self.packet.show()
-        d['time'] = datetime.fromtimestamp(self.packet.time)
+        d['time'] = datetime.utcfromtimestamp(self.packet.time)
         d['source_mac'] = self.packet.src
 
 
