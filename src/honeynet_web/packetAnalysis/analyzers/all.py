@@ -1,4 +1,4 @@
-#from sqlinj import SQLInjectionAnalyzer
+from sqlinj import SQLInjectionAnalyzer
 from passcrack import PassCrackAnalyzer
 from mitm import MitMAnalyzer
 from mail import MailAnalyzer

@@ -24,18 +24,17 @@ from datetime import datetime
 from node import *
 from transition import *
 
-### GLOBALS #######
-SAFE = 0
-PRELIM = 1
-THREAT = 2
-###################
-
 class Threatomaton(object):
 
     # Each Threatomaton has a type marking what it is used for (e.g. for a
     # SQLInjection AttackAnalyzer, it's 'sqlinjection'); here, initialize this
     # to a default value
     type = 'Default'
+
+    # Store the state values as readable variables
+    SAFE = 0
+    PRELIM = 1
+    THREAT = 2
 
     # The list of node objects contained in the automaton
     nodes = []
@@ -45,7 +44,7 @@ class Threatomaton(object):
     # Pointer to the node the machine is currently sitting at
     curNode = None
     # Mark the state the machine is in at all times for convenience
-    curState = SAFE
+    curState = -1
 
     # Attack data
     lastAttackStart = 0
@@ -59,43 +58,44 @@ class Threatomaton(object):
 
     def __init__(self, src, dest):
         """ Create a Threatomaton object; initializes the automaton to contain
-        one node (the SAFE node);
+        one node (the self.SAFE node);
 
         @param src - Identifier for the parent Connection's source host
         @param dest - Identifier for the parent Connection's destination host
         """
-        startNode = Node(SAFE)
+        self.curState = self.SAFE
+        startNode = Node(self.SAFE)
 
         self.nodes.append(startNode)
-        self.nodeMap[SAFE] = 0
+        self.nodeMap[self.SAFE] = 0
         self.curNode = self.nodes[0]
 
-        self.nodeMap[PRELIM] = []
-        self.nodeMap[THREAT] = []
+        self.nodeMap[self.PRELIM] = []
+        self.nodeMap[self.THREAT] = []
 
         self.attackSrc = src
         self.attackDest = dest
 
 
     def addPrelimNode(self, timeout=-1):
-        """ Add a node in the PRELIM grouping
+        """ Add a node in the self.PRELIM grouping
         @return - The index in self.nodes of the new node
         """
         newNodeIndex = len(self.nodes)
-        prelimNode = Node(PRELIM)
+        prelimNode = Node(self.PRELIM)
         self.nodes.append(prelimNode)
-        self.nodeMap[PRELIM].append(newNodeIndex)
+        self.nodeMap[self.PRELIM].append(newNodeIndex)
         return newNodeIndex
 
 
     def addThreatNode(self, timeout=-1):
-        """ Add a node in the THREAT grouping
+        """ Add a node in the self.THREAT grouping
         @return - The index in self.nodes of the new node
         """
         newNodeIndex = len(self.nodes)
-        threatNode = Node(THREAT)
+        threatNode = Node(self.THREAT)
         self.nodes.append(threatNode)
-        self.nodes[THREAT].append(threatNode)
+        self.nodeMap[self.THREAT].append(threatNode)
         return newNodeIndex
 
 
@@ -125,6 +125,7 @@ class Threatomaton(object):
         @param packets - List of Packet objects to process
         @return - False if timed out, None otherwise
         """
+        return True
         # timeout stuff
         timeoutFlag = False
         curTime = datetime.now()
@@ -168,27 +169,27 @@ class Threatomaton(object):
         self.curNode = self.nodes[dest]
         self.curState = dest.threatLevel
 
-        # If the transition moved to the SAFE node, that signals the end of an
+        # If the transition moved to the self.SAFE node, that signals the end of an
         # attack, so write out attack data and reset the machine
-        if dest.threatLevel == SAFE:
+        if dest.threatLevel == self.SAFE:
             self.reset()
         # Otherwise, store update attack data
         else:
             self.lastAttackTime = datetime.now()
             self.attackPackets.append(packet)
-            # if moved from SAFE state, attack may have started, so flag it
-            if prevState == SAFE and prevState != self.curState:
+            # if moved from self.SAFE state, attack may have started, so flag it
+            if prevState == self.SAFE and prevState != self.curState:
                 self.lastAttackStart = datetime.now()
-            # if moved from PRELIM to THREAT, confirms that this is an
+            # if moved from self.PRELIM to self.THREAT, confirms that this is an
             # attack, so create an attack object and mark all stored packets
             # with its ID
-            elif prevState == PRELIM and self.curState == THREAT:
+            elif prevState == self.PRELIM and self.curState == self.THREAT:
                 self.attack = None # TODO: what here?
                 for pckt in self.attackPackets:
                     self.markPacket(pckt)
-            # otherwise, if we're still in THREAT, the only packet that needs
+            # otherwise, if we're still in self.THREAT, the only packet that needs
             # to get marked is the one we just processed
-            elif self.curState == THREAT:
+            elif self.curState == self.THREAT:
                 self.markPacket(packet)
 
 
@@ -216,9 +217,9 @@ class Threatomaton(object):
         self.attack = None
         self.lastAttackStart = 0
         self.lastAttackTime = 0
-        # set the current Node to the initial (SAFE) node
+        # set the current Node to the initial (self.SAFE) node
         self.curNode = self.nodes[0]
-        self.curState = SAFE
+        self.curState = self.SAFE
 
 
 

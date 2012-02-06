@@ -31,7 +31,7 @@ class PassCrackAnalyzer(AttackAnalyzer):
         # set up the first PRELIM node (triggered when we get a single SSH
         # packet)
         firstPrel = self.addPrelimNode()
-        self.addTransition(SAFE, firstPrel, 0, sshConds)
+        self.addTransition(self.SAFE, firstPrel, 0, sshConds)
 
         ##### SLOW SSH #####
         # PRELIM node for the slow attack profile
