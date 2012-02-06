@@ -70,8 +70,6 @@ class Command(BaseCommand):
         # pull the packets matching their filters
         try:
             packets = Packet.objects.filter(**filters)
-            print "Number of packets: ",len(packets)
-            return
         except FieldError as strerror:
             print "FieldError: ", strerror
             return False

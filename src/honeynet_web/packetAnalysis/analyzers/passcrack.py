@@ -17,6 +17,8 @@ Functions to use are:
 
 """
 from attackanalyzer import AttackAnalyzer
+from datetime import timedelta
+from honeynet_web.protocols import *
 
 class PassCrackAnalyzer(AttackAnalyzer):
 
@@ -37,7 +39,8 @@ class PassCrackAnalyzer(AttackAnalyzer):
         # PRELIM node for the slow attack profile
         slowPrel = self.addPrelimNode()
         slowConds = sshConds[:]
-        slowConds.append(lambda p: p.time >= self.lastAttackStart + 5)
+        slowConds.append(lambda p: p.time >= self.lastAttackStart
+                                             + timedelta(seconds=5))
         self.addTransition(firstPrel, slowPrel, 1, slowConds)
 
         # repeating PRELIM nodes for slow attack
@@ -57,7 +60,8 @@ class PassCrackAnalyzer(AttackAnalyzer):
         ##### FAST SSH #####
         fastPrel = self.addPrelimNode()
         fastConds = sshConds[:]
-        fastConds.append(lambda p: p.time < self.lastPotentialAttackTime + 5)
+        fastConds.append(lambda p: p.time < self.lastAttackStart
+                                            + timedelta(seconds=5))
         self.addTransition(firstPrel, fastPrel, 1, fastConds)
 
         # repeating PRELIM nodes for fast attack
