@@ -23,8 +23,8 @@ from datetime import datetime, timedelta
 
 from honeynet_web.honeywall.models import Attack
 
-from node import *
-from transition import *
+from node import Node
+from transition import Transition
 
 class Threatomaton(object):
 
@@ -145,7 +145,10 @@ class Threatomaton(object):
                 timeoutFlag = True
 
         # actually process the packets
+        i=0
         for packet in packets:
+            i += 1
+            #if i % 100 == 0: print "packet ", i
             self.processPacket(packet)
 
         # if we had flagged a timeout and the packets just processed did not
@@ -237,7 +240,9 @@ class Threatomaton(object):
             self.attack.save()
         else:
             print "Attack data currently recorded for this analysis:"
+            print "-------------------------------------------------"
             print self.attack
+            print
 
 
     def reset(self):

@@ -14,6 +14,15 @@ class Attack(models.Model):
         #ordering = ['-time']
         pass
 
+    def __str__(self):
+        out = "Classification time: "+str(self.classification_time)+'\n'+\
+              "Source IP: "+str(self.source_ip)+'\n'+\
+              "Destination IP: "+str(self.destination_ip)+'\n'+\
+              "Start time: "+str(self.start_time)+'\n'+\
+              "End time: "+str(self.end_time)+'\n'+\
+              "Score: "+str(self.score)
+        return out
+
 class Packet(models.Model):
     source_ip = models.IPAddressField()
     destination_ip = models.IPAddressField(null=True, blank=True)

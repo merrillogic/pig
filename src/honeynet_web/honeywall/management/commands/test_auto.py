@@ -60,6 +60,7 @@ class Command(BaseCommand):
             filters[conds[0]] = conds[1]
         
         # initialize the AttackAnalyzer type
+        print "Creating the attack analyzer..."
         try:
             analyzer = eval(self.analyzers[typ])('0.0.0.0', '0.0.0.0')
             pass
@@ -68,6 +69,7 @@ class Command(BaseCommand):
             return False
             
         # pull the packets matching their filters
+        print "Fetching packets..."
         try:
             packets = Packet.objects.filter(**filters)
         except FieldError as strerror:
@@ -76,5 +78,7 @@ class Command(BaseCommand):
 
         # run the analyzer in debug mode
         analyzer.DEBUG = True
+        print "Processing the packets..."
         analyzer.processPackets(packets)
+        print
         analyzer.exportAttackData()
