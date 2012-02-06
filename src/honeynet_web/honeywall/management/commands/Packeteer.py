@@ -114,8 +114,8 @@ class Packeteer(object):
         try:
             # this is ridiculous. who knows if this is actually right
             try:
-                if unicode(self.packet.payload.payload.payload):
-                    d['payload'] = unicode(self.packet.payload.payload.payload)
+                if unicode(self.packet.lastlayer()):
+                    d['payload'] = unicode(self.packet.lastlayer())
             except UnicodeDecodeError:
                 pass
 
