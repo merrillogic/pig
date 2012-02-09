@@ -114,10 +114,12 @@ class Packeteer(object):
         try:
             # this is ridiculous. who knows if this is actually right
             try:
-                if unicode(self.packet.lastlayer()):
-                    d['payload'] = unicode(self.packet.lastlayer())
+                print "Heyooo"
+                if self.packet.lastlayer().decode('utf-8','replace'):
+                    d['payload'] = self.packet.lastlayer().decode('utf-8','replace')
+                    print '\', self.packet.lastlayer().decode('utf-8','replace')
             except UnicodeDecodeError:
-                pass
+                print "Unicooode!"
 
         except AttributeError:
             pass
