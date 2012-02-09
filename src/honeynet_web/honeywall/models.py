@@ -1,6 +1,14 @@
 from django.db import models
 from macaddress.fields import MACAddressField
 
+class ARPRecord(models.Model):
+    ip = models.IPAddressField()
+    mac = MACAddressField()
+
+    class Meta:
+        unique_together = ('ip', 'mac')
+
+
 class Attack(models.Model):
     classification_time = models.DateTimeField(auto_now_add=True)
     source_ip = models.IPAddressField()

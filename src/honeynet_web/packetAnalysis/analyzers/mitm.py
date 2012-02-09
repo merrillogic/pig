@@ -17,10 +17,29 @@ Functions to use are:
 
 """
 from attackanalyzer import AttackAnalyzer
+from honeywall.models import ARPRecord
 
 class MitMAnalyzer(AttackAnalyzer):
 
     type = 'maninthemiddle'
+    __arp_tables = {'IP': {}, 'MAC': {}}
+
+    @property
+    def arp_tables(self):
+        if not self.__arp_tables['IP'] or not self.__arp_tables['MAC']:
+            records = ARPRecord.objects.all()
+            for record in records:
+                self.__arp_tables['IP'][record.ip] = record.mac
+                self.__arp_tables['MAC'][record.mac] = record.ip
+
+        return self.__arp_tables
 
     def addAttackProfile(self):
+        #### we have an attack if...
+
+        #### a) packet.source_ip in self.arp_tables['IP'] and
+        ####    packet.source_mac != self.arp_tables['IP'][packet.source_ip]
+        #### OR
+        #### b) packet.source_mac in self.arp_tables['MAC'] and
+        ####    packet.source_ip != self.arp_tables['MAC'][packet.source_mac]
         pass
