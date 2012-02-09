@@ -18,7 +18,7 @@ Functions to use are:
 """
 from attackanalyzer import AttackAnalyzer
 from datetime import timedelta
-from honeynet_web.protocols import *
+from honeywall.utils import protocol_lookup
 
 class PassCrackAnalyzer(AttackAnalyzer):
 
@@ -28,7 +28,7 @@ class PassCrackAnalyzer(AttackAnalyzer):
         # set up the basic conditions to classify a packet as an SSH login
         sshConds = [lambda p: p.dest_port == 22,
                     lambda p: p.protocol == TCP]
-        
+
         ### SSH ############
         # set up the first PRELIM node (triggered when we get a single SSH
         # packet)
@@ -82,5 +82,5 @@ class PassCrackAnalyzer(AttackAnalyzer):
 
         ### MYSQL ##########
         # DERP
-        
+
         pass
