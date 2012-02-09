@@ -6,8 +6,10 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'honeynet_web.views.home', name='home'),
-    # url(r'^honeynet_web/', include('honeynet_web.foo.urls')),
+    url(r'^$', 'honeynet_web.views.dashboard'),
+    url(r'^attack/(?P<attack_id>\d+)/$', 'honeywall.views.attack'),
+    url(r'^attack/(?P<attack_id>\d+)/packets/$', 'honeywall.views.attack_packets'),
+    url(r'^attacks/$', 'honeywall.views.attacks'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

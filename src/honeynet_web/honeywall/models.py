@@ -1,6 +1,14 @@
 from django.db import models
 from macaddress.fields import MACAddressField
 
+class ARPRecord(models.Model):
+    ip = models.IPAddressField()
+    mac = MACAddressField()
+
+    class Meta:
+        unique_together = ('ip', 'mac')
+
+
 class Attack(models.Model):
     classification_time = models.DateTimeField(auto_now_add=True)
     source_ip = models.IPAddressField()
@@ -13,6 +21,15 @@ class Attack(models.Model):
         # order newest first -- but by what measure?
         #ordering = ['-time']
         pass
+
+    def __str__(self):
+        out = "Classification time: "+str(self.classification_time)+'\n'+\
+              "Source IP: "+str(self.source_ip)+'\n'+\
+              "Destination IP: "+str(self.destination_ip)+'\n'+\
+              "Start time: "+str(self.start_time)+'\n'+\
+              "End time: "+str(self.end_time)+'\n'+\
+              "Score: "+str(self.score)
+        return out
 
 class Packet(models.Model):
     source_ip = models.IPAddressField()
