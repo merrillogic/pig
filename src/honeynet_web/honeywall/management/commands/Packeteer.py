@@ -117,7 +117,7 @@ class Packeteer(object):
                 print "Heyooo"
                 if self.packet.lastlayer().decode('utf-8','replace'):
                     d['payload'] = self.packet.lastlayer().decode('utf-8','replace')
-                    print '\', self.packet.lastlayer().decode('utf-8','replace')
+                    print '\\', self.packet.lastlayer().decode('utf-8','replace')
             except UnicodeDecodeError:
                 print "Unicooode!"
 
