@@ -7,7 +7,7 @@ INSTALLED_APPS += ('gunicorn',)
 
 DATABASES =  {
     'default': {
-        'ENGINE': 'django.db.backends.psycopg2',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'logger',
         'USER': 'logger',
         'PASSWORD': 'ohyeswearewatchingsoveryclosely',
