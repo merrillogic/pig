@@ -37,8 +37,7 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         self.addTransition(0, 1, 0, [isQuery])
         for prelimIndex in range(1, numPrelims):
             #for the first numPrelims-1 nodes...
-            self.addTransition(self.nodes[prelimIndex], self.nodes[prelimIndex
-                                                                + 1], prelimIndex+1, isSameQuery)
+            self.addTransition(prelimIndex, prelimIndex + 1, prelimIndex+1, isSameQuery)
             
         self.addThreatNode()
         self.addTransition(-2, -1, numPrelims, isSameQuery)
