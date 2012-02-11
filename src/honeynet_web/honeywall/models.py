@@ -5,6 +5,9 @@ class ARPRecord(models.Model):
     ip = models.IPAddressField()
     mac = MACAddressField()
 
+    def __unicode__(self):
+        return unicode(self.ip) + u': ' + unicode(self.mac)
+
     class Meta:
         unique_together = ('ip', 'mac')
 
