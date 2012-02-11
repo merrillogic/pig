@@ -23,10 +23,10 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
     type = 'sqlinjection'
     attackedAddress = ''
 
-    def isQuery(packet):
+    def isQuery(self, packet):
         return True
     
-    def isSameQuery(packet1):
+    def isSameQuery(self, packet1):
         #check to match self.urls or something
         return True
 
