@@ -54,11 +54,13 @@ class MailAnalyzer(AttackAnalyzer):
 
         #started receiving mail
         self.addTransition(self.startNode, self.nodes[safeNodeIndex], 0, [rxNewMail])
-        #receive more mail, same connection
+        #receive more mail, same connection, move to threatOne if # >= 50
         self.addTransition(self.nodes[safeNodeIndex], self.nodes[safeNodeIndex], 0, [rxNewMail])
-        #receive 50 or more pieces of mail, same connection
         self.addTransition(self.nodes[safeNodeIndex], self.nodes[threatOneIndex], 1, [rxMoreMail])
-        #receive 100 or more pieces of mail, same connection
-        self.addTransition(self.nodes[safeNodeIndex], self.nodes[threatTwoIndex], 2, [rxHeavyMail])
-        #receive 250 or more pieces of mail, same connection
-        self.addTransition(self.nodes[safeNodeIndex], self.nodes[threatThreeIndex], 3, [rxTooMuchMail])
+        #receive 50 or more pieces of mail, same connection, move to threatTwo if # >= 100
+        self.addTransition(self.nodes[threatOneIndex], self.nodes[threatOneIndex], 1, [rxMoreMail])
+        self.addTransition(self.nodes[threatOneIndex], self.nodes[threatTwoIndex], 2, [rxHeavyMail])
+        #receive 100 or more pieces of mail, same connection, move to threatThree if # >= 250
+        self.addTransition(self.nodes[threatTwoIndex], self.nodes[threatTwoIndex], 2, [rxHeavyMail])
+        self.addTransition(self.nodes[threatTwoIndex], self.nodes[threatThreeIndex], 3, [rxTooMuchMail])
+
