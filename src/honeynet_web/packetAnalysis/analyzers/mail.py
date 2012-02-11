@@ -39,7 +39,7 @@ class MailAnalyzer(AttackAnalyzer):
         #checks if this packet is SMTP and begins with keywords 'mail from:'
         #which indicates a new piece of mail
         #sets a low limit and high limit for specific threat level
-        if packet.protocol == SMTP and \
+        if packet.protocol == 25 and \ #SMTP
            packet.payload.startswith('mail from:') and \
            mailRxNum > lowLimit and \
            mailRxNum < highLimit:
