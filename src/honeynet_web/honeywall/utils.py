@@ -1,5 +1,7 @@
 import datetime
 import time
+import re
+from honeywall.models import ARPRecord
 
 PROTOCOLS = {
         0: 'HOPOPT',
@@ -309,3 +311,17 @@ def datetime_to_milliseconds(dt=None):
     else:
         raise ValueError, "You may only use a datetime.datetime or datetime.date instance with datetime_to_milliseconds"
 
+def parse_arp_records(f):
+    for record in f:
+        # regular expressions from <http://stackoverflow.com/a/5287465/609144>
+        ip = re.search(r'((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9])', record, re.I)
+        mac = re.search(r'([0-9A-F]{2}[:-]){5}([0-9A-F]{2})', record, re.I)
+
+        if ip and mac:
+            ip = ip.group()
+            mac = mac.group()
+
+
+            a, created = ARPRecord.objects.get_or_create(ip=ip, mac=mac)
+            print a
+            a.save()
