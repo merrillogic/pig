@@ -112,14 +112,10 @@ class Packeteer(object):
         except AttributeError:
             pass
         try:
-            # this is ridiculous. who knows if this is actually right
-            try:
-                print "Heyooo"
-                if self.packet.lastlayer().decode('utf-8','replace'):
-                    d['payload'] = self.packet.lastlayer().decode('utf-8','replace')
-                    print '\\', self.packet.lastlayer().decode('utf-8','replace')
-            except UnicodeDecodeError:
-                print "Unicooode!"
+            if self.packet.lastlayer().decode('utf-8','replace'):
+                d['payload'] = self.packet.lastlayer().decode('utf-8','replace')
+            else:
+                d['payload'] = ''
 
         except AttributeError:
             pass
