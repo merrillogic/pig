@@ -21,16 +21,44 @@ from attackanalyzer import AttackAnalyzer
 class MailAnalyzer(AttackAnalyzer):
 
     type = 'mail'
-    
+    mailRxNum = 0
+
+    def rxNewMail(packet):
+        rxMailTemp(packet, -1, 50)
+
+    def rxMoreMail(packet):
+        rxMailTemp(packet, 49, 100)
+
+    def rxHeavyMail(packet):
+        rxMailTemp(packet, 99, 250)
+
+    def rxTooMuchMail(packet):
+        rxMailTemp(packet, 249, 1000) #upper limit of 1000, set by exim
+
+    def rxMailTemp(packet, lowLimit, highLimit):
+        if packet.protocol == SMTP and
+           packet.payload.startswith('mail from:') and
+           mailRxNum > lowLimit and
+           mailRxNum < highLimit:
+            mailRxNum += 1
+            return True
+        else:
+            return False
+
     def addAttackProfile(self):
         safeNodeIndex = self.addPrelimNode(300000) #5 minute timeout, for mail 
-        threatNodeIndex = self.addThreatNode(300000) #5 minute timeout, for mail
-        
-        self.addTransition(self.startNode, self.nodes[safeNodeIndex], 0, #condition) #started receiving mail
-            #condition = SMTP mail FROM, keep track of how many times this comes up w/ same ip
-        self.addTransition(self.nodes[safeNodeIndex], self.nodes[safeNodeIndex], 0, #condition)
-            #condition = SMTP rcpt TO or SMTP data or SMTP QUIT or anything else from same ip, SMTP
-        self.addTransition(self.nodes[safeNodeIndex], self.startNode, 0, #condition) #QUIT command received, moving back to start
-        self.addTransition(self.nodes[safeNodeIndex], self.nodes[threatNodeIndex], #some score, #condition) #receiving a lot of mail in one connection
-            #condition = SMTP mail FROM AND counter in self.nodes[safeNodeIndex] is huge
-        pass
+        threatOneIndex = self.addThreatNode(300000) #5 minute timeout, for mail
+        threatTwoIndex = self.addThreatNode(300000) #5 minute timeout, for mail
+        threatThreeIndex = self.addThreatNode(300000) #5 minute timeout, for mail
+        threatFourIndex = self.addThreatNode(300000) #5 minute timeout, for mail
+
+        #started receiving mail
+        self.addTransition(self.startNode, self.nodes[safeNodeIndex], 0, [rxNewMail])
+        #receive more mail, same connection
+        self.addTransition(self.nodes[safeNodeIndex], self.nodes[safeNodeIndex], 0, [rxNewMail])
+        #receive 50 or more pieces of mail, same connection
+        self.addTransition(self.nodes[safeNodeIndex], self.nodes[threatOneIndex], 1, [rxMoreMail])
+        #receive 100 or more pieces of mail, same connection
+        self.addTransition(self.nodes[safeNodeIndex], self.nodes[threatTwoIndex], 2, [rxHeavyMail])
+        #receive 250 or more pieces of mail, same connection
+        self.addTransition(self.nodes[safeNodeIndex], self.nodes[threatThreeIndex], 3, [rxTooMuchMail])
