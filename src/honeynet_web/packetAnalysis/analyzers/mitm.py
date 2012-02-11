@@ -46,7 +46,7 @@ class MitMAnalyzer(AttackAnalyzer):
         ####    packet.source_ip != self.arp_tables['MAC'][packet.source_mac]
 
     def addAttackProfile(self):
-        self.addThreatNode(600000) #10 minute timeout
+        self.addThreatNode(10000) #10 second timeout
 
         self.addTransition(0, -1, 5, [self.isARPThreat])
         self.addTransition(-1, -1, 5, [self.isARPThreat])
