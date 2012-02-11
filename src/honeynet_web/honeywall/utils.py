@@ -1,8 +1,5 @@
 import datetime
 import time
-from django.http import HttpResponse
-from django.utils import simplejson as json
-from decorator import decorator
 
 PROTOCOLS = {
         0: 'HOPOPT',
@@ -296,27 +293,6 @@ def attack_to_dict(attack):
     d['score'] = attack.score
 
     return d
-
-@decorator
-def json_response(f, *args, **kwargs):
-    try:
-        status_code = 200
-        response = {
-            'status': True,
-            'data': f(*args, **kwargs)
-        }
-    except Exception, e:
-        status_code = 400
-        response = {
-            'status': False,
-            'message': '%s: %s' % (e.__class__.__name__, str(e))
-        }
-
-    body = json.dumps(response, indent=4)
-    if 'callback' in args[0].GET:
-        body = '%s(%s)' % (args[0].GET['callback'], body)
-
-    return HttpResponse(body, status=status_code)
 
 # from <http://djangosnippets.org/snippets/1997/>
 def datetime_to_milliseconds(dt=None):
