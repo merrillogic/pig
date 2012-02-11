@@ -18,16 +18,17 @@ Functions to use are:
 """
 from attackanalyzer import AttackAnalyzer
 
-def isQuery(packet):
-    return True
-    
-def isSameQuery(packet1, packet2):
-    return True
-
 class SQLInjectionAnalyzer(AttackAnalyzer):
 
     type = 'sqlinjection'
     attackedAddress = ''
+
+    def isQuery(packet):
+        return True
+    
+    def isSameQuery(packet1):
+        #check to match self.urls or something
+        return True
 
     def addAttackProfile(self):
         numPrelims = 5
