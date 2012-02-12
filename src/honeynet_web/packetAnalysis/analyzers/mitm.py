@@ -35,11 +35,6 @@ class MitMAnalyzer(AttackAnalyzer):
         return self.__arp_tables
 
     def isARPThreat(self, packet):
-        #### a) packet.source_ip in self.arp_tables['IP'] and
-        ####    packet.source_mac != self.arp_tables['IP'][packet.source_ip]
-        #### OR
-        #### b) packet.source_mac in self.arp_tables['MAC'] and
-        ####    packet.source_ip != self.arp_tables['MAC'][packet.source_mac]
         def _wrong_ip_mac(packet):
             if packet.source_ip in self.arp_tables['IP']:
                 return packet.source_mac != self.arp_tables['IP'][packet.source_ip]
@@ -55,6 +50,8 @@ class MitMAnalyzer(AttackAnalyzer):
 
     def addAttackProfile(self):
         i = self.addThreatNode(10000) #10 second timeout
-
-        self.addTransition(0, i, 5, [self.isARPThreat])
+        prelim = self.addPrelimNode(10000)
+        
+        self.addTransition(0, prelim, 5, [self.isARPThreat])
+        self.addTransition(prelim, i, 5, [self.isARPThreat])
         self.addTransition(i, i, 5, [self.isARPThreat])
