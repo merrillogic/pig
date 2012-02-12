@@ -1,5 +1,6 @@
 from datetime import datetime
 from scapy.all import *
+from django.utils.encoding import smart_str
 
 '''
 USAGE:
@@ -112,8 +113,8 @@ class Packeteer(object):
         except AttributeError:
             pass
         try:
-            if str(self.packet.lastlayer()):
-                d['payload'] = str(self.packet.lastlayer())
+            if smart_str(str(self.packet.lastlayer())):
+                d['payload'] = smart_str(str(self.packet.lastlayer()))
             else:
                 d['payload'] = ''
 
