@@ -1,3 +1,4 @@
+import base64
 from django.db import models
 from macaddress.fields import MACAddressField
 
@@ -57,26 +58,41 @@ class Packet(models.Model):
 
     # protocol can be 0-255
     protocol = models.IntegerField(null=True, blank=True)
-    payload = models.CharField(max_length=65535, blank=True)
 
     attack = models.ForeignKey(Attack, null=True, blank=True)
     classification_time = models.DateTimeField(auto_now_add=False, blank=True, null=True)
+
+    # store payload as encoded data
+    _payload = models.TextField(db_column='payload', blank=True)
+
+    @property
+    def payload(self):
+        return base64.decodestring(self._payload)
+
+    @payload.setter
+    def payload(self, data):
+        self._payload = base64.encodestring(data)
+
+    @payload.deleter
+    def payload(self):
+        self._x = ''
+
 
     class Meta:
         # order newest first
         #ordering = ['-time']
         unique_together = ('time', 'source_ip')
 
-    def __str__(self):
-        out = "Source IP: "+str(self.source_ip)+'\n'+\
-              "Destination IP: "+str(self.destination_ip)+'\n'+\
-              "Source Port: "+str(self.source_port)+'\n'+\
-              "Destination Port: "+str(self.dest_port)+'\n'+\
-              "Source MAC: "+str(self.source_mac)+'\n'+\
-              "Destination MAC: "+str(self.destination_mac)+'\n'+\
-              "Time: "+str(self.time)+'\n'+\
-              "Protocol: "+str(self.protocol)+'\n'+\
-              "Payload: "+str(self.payload)+'\n'+\
-              "Attack: "+str(self.attack)+'\n'+\
-              "Classification time: "+str(self.classification_time)
+    def __unicode__(self):
+        out = u"Source IP: "+unicode(self.source_ip)+u'\n'+\
+              u"Destination IP: "+unicode(self.destination_ip)+u'\n'+\
+              u"Source Port: "+unicode(self.source_port)+u'\n'+\
+              u"Destination Port: "+unicode(self.dest_port)+u'\n'+\
+              u"Source MAC: "+unicode(self.source_mac)+u'\n'+\
+              u"Destination MAC: "+unicode(self.destination_mac)+u'\n'+\
+              u"Time: "+unicode(self.time)+u'\n'+\
+              u"Protocol: "+unicode(self.protocol)+u'\n'+\
+              u"Payload: "+unicode(self.payload)+u'\n'+\
+              u"Attack: "+unicode(self.attack)+u'\n'+\
+              u"Classification time: "+unicode(self.classification_time)
         return out
