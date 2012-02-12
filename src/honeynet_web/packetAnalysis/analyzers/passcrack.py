@@ -27,7 +27,7 @@ class PassCrackAnalyzer(AttackAnalyzer):
     def addAttackProfile(self):
         # set up the basic conditions to classify a packet as an SSH login
         sshConds = [lambda p: p.dest_port == 22,
-                    lambda p: p.protocol == 'TCP']
+                    lambda p: protocol_lookup(p.protocol) == 'TCP']
 
         ### SSH ############
         # set up the first PRELIM node (triggered when we get a single SSH
