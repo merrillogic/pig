@@ -81,4 +81,5 @@ class Command(BaseCommand):
         print "Processing the packets..."
         analyzer.processPackets(packets)
         print
-        analyzer.exportAttackData()
+        analyzer.reset()
+        #analyzer.exportAttackData()
