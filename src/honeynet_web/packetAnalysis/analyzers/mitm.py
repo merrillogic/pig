@@ -54,7 +54,7 @@ class MitMAnalyzer(AttackAnalyzer):
 
 
     def addAttackProfile(self):
-        self.addThreatNode(10000) #10 second timeout
+        i = self.addThreatNode(10000) #10 second timeout
 
-        self.addTransition(0, -1, 5, [self.isARPThreat])
-        self.addTransition(-1, -1, 5, [self.isARPThreat])
+        self.addTransition(0, i, 5, [self.isARPThreat])
+        self.addTransition(i, i, 5, [self.isARPThreat])
