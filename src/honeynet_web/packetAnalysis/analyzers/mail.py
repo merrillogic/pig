@@ -23,19 +23,19 @@ class MailAnalyzer(AttackAnalyzer):
     type = 'mail'
     mailRxNum = 0
 
-    def rxNewMail(packet):
-        rxMailTemp(packet, -1, 50)
+    def rxNewMail(self, packet):
+        self.rxMailTemp(packet, -1, 50)
 
-    def rxMoreMail(packet):
-        rxMailTemp(packet, 49, 100)
+    def rxMoreMail(self, packet):
+        self.rxMailTemp(packet, 49, 100)
 
-    def rxHeavyMail(packet):
-        rxMailTemp(packet, 99, 250)
+    def rxHeavyMail(self, packet):
+        self.rxMailTemp(packet, 99, 250)
 
-    def rxTooMuchMail(packet):
-        rxMailTemp(packet, 249, 1000) #upper limit of 1000, set by exim
+    def rxTooMuchMail(self, packet):
+        self.rxMailTemp(packet, 249, 1000) #upper limit of 1000, set by exim
 
-    def rxMailTemp(packet, lowLimit, highLimit):
+    def rxMailTemp(self, packet, lowLimit, highLimit):
         #checks if this packet is SMTP and begins with keywords 'mail from:'
         #which indicates a new piece of mail
         #sets a low limit and high limit for specific threat level
@@ -64,35 +64,35 @@ class MailAnalyzer(AttackAnalyzer):
         self.addTransition(self.SAFE,
                            prelimNodeIndex,
                            0,
-                           [rxNewMail])
+                           [self.rxNewMail])
         #receive more mail, same connection
         self.addTransition(prelimNodeIndex, 
                            prelimNodeIndex, 
                            0,
-                           [rxNewMail])
+                           [self.rxNewMail])
         #move to threatOne if # >= 50
         self.addTransition(prelimNodeIndex, 
                            threatNodeIndecise[0], 
                            1, 
-                           [rxMoreMail])
+                           [self.rxMoreMail])
         #receive 50 or more pieces of mail, same connection
         self.addTransition(threatNodeIndecise[0], 
                            threatNodeIndecise[0], 
                            1, 
-                           [rxMoreMail])
+                           [self.rxMoreMail])
         #move to threatTwo if # >= 100
         self.addTransition(threatNodeIndecise[0], 
                            threatNodeIndecise[1], 
                            2, 
-                           [rxHeavyMail])
+                           [self.rxHeavyMail])
         #receive 100 or more pieces of mail, same connection
         self.addTransition(threatNodeIndecise[1], 
                            threatNodeIndecise[1], 
                            2, 
-                           [rxHeavyMail])
+                           [self.rxHeavyMail])
         #move to threatThree if # >= 250
         self.addTransition(threatNodeIndecise[1], 
                            threatNodeIndecise[2], 
                            3, 
-                           [rxTooMuchMail])
+                           [self.rxTooMuchMail])
 
