@@ -46,8 +46,10 @@ class MailAnalyzer(AttackAnalyzer):
            mailRxNum > lowLimit and \
            mailRxNum < highLimit:
             mailRxNum += 1
+            #print True
             return True
         else:
+            #print False
             return False
 
     def addAttackProfile(self):
