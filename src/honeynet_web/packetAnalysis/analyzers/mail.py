@@ -24,16 +24,16 @@ class MailAnalyzer(AttackAnalyzer):
     mailRxNum = 0
 
     def rxNewMail(self, packet):
-        self.rxMailTemp(packet, -1, 50)
+        return self.rxMailTemp(packet, -1, 50)
 
     def rxMoreMail(self, packet):
-        self.rxMailTemp(packet, 49, 100)
+        return self.rxMailTemp(packet, 49, 100)
 
     def rxHeavyMail(self, packet):
-        self.rxMailTemp(packet, 99, 250)
+        return self.rxMailTemp(packet, 99, 250)
 
     def rxTooMuchMail(self, packet):
-        self.rxMailTemp(packet, 249, 1000) #upper limit of 1000, set by exim
+        return self.rxMailTemp(packet, 249, 1000) #upper limit of 1000, set by exim
 
     def rxMailTemp(self, packet, lowLimit, highLimit):
         #checks if this packet is SMTP and begins with keywords 'mail from:'
@@ -46,8 +46,10 @@ class MailAnalyzer(AttackAnalyzer):
            mailRxNum > lowLimit and \
            mailRxNum < highLimit:
             mailRxNum += 1
+            #print True
             return True
         else:
+            #print False
             return False
 
     def addAttackProfile(self):
