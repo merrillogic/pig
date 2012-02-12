@@ -2,5 +2,6 @@
 
 # Rollovertime of 30 seconds
 ROLLOVER_TIME="30"
+ROLLOVER_SIZE="2M"
 LOGDIR="/home/logger/logs"
 LOG_SERVER="137.22.30.46"
