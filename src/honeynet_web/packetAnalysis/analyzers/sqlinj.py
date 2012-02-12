@@ -21,14 +21,12 @@ from attackanalyzer import AttackAnalyzer
 class SQLInjectionAnalyzer(AttackAnalyzer):
 
     type = 'sqlinjection'
-    attackedAddress = ''
 
     def isQuery(self, packet):
-        return True
-    
-    def isSameQuery(self, packet1):
-        #check to match self.urls or something
-        return True
+        if '?' in packet['payload']:
+            return True
+        else:
+            return False
 
     def addAttackProfile(self):
         numPrelims = 5
@@ -38,9 +36,9 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         self.addTransition(0, 1, 0, [self.isQuery])
         for prelimIndex in range(1, numPrelims):
             #for the first numPrelims-1 nodes...
-            self.addTransition(prelimIndex, prelimIndex + 1, prelimIndex+1, [self.isSameQuery])
+            self.addTransition(prelimIndex, prelimIndex + 1, prelimIndex+1, [self.isQuery])
             
         self.addThreatNode()
-        self.addTransition(-2, -1, numPrelims, [self.isSameQuery])
-        self.addTransition(-1, -1, numPrelims, [self.isSameQuery])
+        self.addTransition(-2, -1, numPrelims, [self.isQuery])
+        self.addTransition(-1, -1, numPrelims, [self.isQuery])
         
