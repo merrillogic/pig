@@ -21,7 +21,7 @@ from honeywall.models import ARPRecord
 
 class MitMAnalyzer(AttackAnalyzer):
 
-    type = 'maninthemiddle'
+    type = 'mitm'
     __arp_tables = {'IP': {}, 'MAC': {}}
 
     @property
