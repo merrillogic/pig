@@ -1,8 +1,7 @@
 import datetime
 import time
-from django.http import HttpResponse
-from django.utils import simplejson as json
-from decorator import decorator
+import re
+from honeywall.models import ARPRecord
 
 PROTOCOLS = {
         0: 'HOPOPT',
@@ -297,27 +296,6 @@ def attack_to_dict(attack):
 
     return d
 
-@decorator
-def json_response(f, *args, **kwargs):
-    try:
-        status_code = 200
-        response = {
-            'status': True,
-            'data': f(*args, **kwargs)
-        }
-    except Exception, e:
-        status_code = 400
-        response = {
-            'status': False,
-            'message': '%s: %s' % (e.__class__.__name__, str(e))
-        }
-
-    body = json.dumps(response, indent=4)
-    if 'callback' in args[0].GET:
-        body = '%s(%s)' % (args[0].GET['callback'], body)
-
-    return HttpResponse(body, status=status_code)
-
 # from <http://djangosnippets.org/snippets/1997/>
 def datetime_to_milliseconds(dt=None):
     # Ensure the type matches
@@ -333,3 +311,17 @@ def datetime_to_milliseconds(dt=None):
     else:
         raise ValueError, "You may only use a datetime.datetime or datetime.date instance with datetime_to_milliseconds"
 
+def parse_arp_records(f):
+    for record in f:
+        # regular expressions from <http://stackoverflow.com/a/5287465/609144>
+        ip = re.search(r'((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9])', record, re.I)
+        mac = re.search(r'([0-9A-F]{2}[:-]){5}([0-9A-F]{2})', record, re.I)
+
+        if ip and mac:
+            ip = ip.group()
+            mac = mac.group()
+
+
+            a, created = ARPRecord.objects.get_or_create(ip=ip, mac=mac)
+            print a
+            a.save()

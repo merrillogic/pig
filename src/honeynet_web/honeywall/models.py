@@ -5,6 +5,9 @@ class ARPRecord(models.Model):
     ip = models.IPAddressField()
     mac = MACAddressField()
 
+    def __unicode__(self):
+        return unicode(self.ip) + u': ' + unicode(self.mac)
+
     class Meta:
         unique_together = ('ip', 'mac')
 
@@ -16,6 +19,16 @@ class Attack(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True, blank=True)
     score = models.IntegerField()
+
+    ATTACK_CHOICES = (
+                        ( 'sql', 'SQL Injection' ),
+                        ( 'pass', 'Password Cracking' ),
+                        ( 'dos', 'Denial of Service' ),
+                        ( 'mail', 'Mail' ),
+                        ( 'mitm', 'Man in the Middle' )
+                     )
+    attack_type = models.CharField(max_length=4, choices=ATTACK_CHOICES)
+    false_positive = models.NullBooleanField()
 
     class Meta:
         # order newest first -- but by what measure?
@@ -53,3 +66,17 @@ class Packet(models.Model):
         # order newest first
         #ordering = ['-time']
         unique_together = ('time', 'source_ip')
+
+    def __str__(self):
+        out = "Source IP: "+str(self.source_ip)+'\n'+\
+              "Destination IP: "+str(self.destination_ip)+'\n'+\
+              "Source Port: "+str(self.source_port)+'\n'+\
+              "Destination Port: "+str(self.dest_port)+'\n'+\
+              "Source MAC: "+str(self.source_mac)+'\n'+\
+              "Destination MAC: "+str(self.destination_mac)+'\n'+\
+              "Time: "+str(self.time)+'\n'+\
+              "Protocol: "+str(self.protocol)+'\n'+\
+              "Payload: "+str(self.payload)+'\n'+\
+              "Attack: "+str(self.attack)+'\n'+\
+              "Classification time: "+str(self.classification_time)
+        return out

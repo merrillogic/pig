@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from annoying.decorators import ajax_request
 from honeywall.models import Packet, Attack
-from honeywall.utils import packet_to_dict, attack_to_dict, json_response
+from honeywall.utils import packet_to_dict, attack_to_dict
 
 @ajax_request
 def attack(request, attack_id):

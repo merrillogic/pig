@@ -20,7 +20,7 @@ from attackanalyzer import AttackAnalyzer
 
 class DOSAnalyzer(AttackAnalyzer):
 
-    type = 'denialofservice'
+    type = 'dos'
 
     def addAttackProfile(self):
         pass

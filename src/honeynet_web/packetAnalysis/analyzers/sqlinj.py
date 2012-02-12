@@ -20,7 +20,7 @@ from attackanalyzer import AttackAnalyzer
 
 class SQLInjectionAnalyzer(AttackAnalyzer):
 
-    type = 'sqlinjection'
+    type = 'sql'
 
     def isQuery(self, packet):
         if '?' in packet['payload']:
