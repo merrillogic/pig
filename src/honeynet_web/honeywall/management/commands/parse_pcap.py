@@ -29,7 +29,6 @@ class Command(BaseCommand):
         transaction.commit()
 
     def handle(self, *args, **options):
-        print options
         if options['profile']:
             profiler = Profile()
             profiler.runcall(self._handle, *args, **options)

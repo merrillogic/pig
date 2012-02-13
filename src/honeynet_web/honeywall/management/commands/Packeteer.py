@@ -112,8 +112,8 @@ class Packeteer(object):
         except AttributeError:
             pass
         try:
-            if str(self.packet.lastlayer()).decode('utf-8','ignore'):
-                d['payload'] = str(self.packet.lastlayer()).decode('utf-8','ignore')
+            if str(self.packet.lastlayer()):
+                d['payload'] = str(self.packet.lastlayer())
             else:
                 d['payload'] = ''
 
