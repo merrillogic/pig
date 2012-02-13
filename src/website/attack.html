@@ -52,11 +52,6 @@
 
         <div class = "container">
             <div class = "row">
-                <div class = "span8">
-                    <div id = "placeholder" style="width:100%;height:300px;">
-                    </div>
-                </div>
-
                 <div class = "span4">
                     <!--Attack Details-->
                     <table class = "table table-bordered">
@@ -86,68 +81,51 @@
                             </tr>
                         </tbody>
                     </table>
-                    
-                    <!--Button to go to attack details-->
-                    <div class = "btn-group">
-                        <a class = "btn" href = "attack.html">see attack packets</a>
+                </div>
+
+                <div class = "span8">
+                    <div class = "well">
+                        <!-- Payload of selected packet -->
+                        <h4>Packet Payload</h4>
+                        <p>no packet selected</p>
                     </div>
                 </div>
             </div>
 
-                <div class = "row">
+            <div class = "row">
                 <div class = "span12">
-                    <!--Tabs-->
-                    <ul class = "nav nav-tabs">
-                        <li class = "active">
-                            <a href = "#attacks" data-toggle = "tab">Attacks</a>
-                        </li>
-                        <li>
-                            <a href = "#traffic" data-toggle = "tab">Traffic Analysis</a>
-                        </li>
-                    </ul>
-                    
-                    <!--Tab contents-->
-                    <div class = "tab-content">
-                        <!--Attacks tab contents-->
-                        <div class = "tab-pane active" id = "attacks">
-                            <table class = "table table-striped sortable">
-                                <thead>
-                                    <tr>
-                                        <th>Time</th>
-                                        <th>Source IP</th>
-                                        <th>Attack Type</th>
-                                        <th>Threat Level</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>12:43:53</td>
-                                        <td>137.22.73.130</td>
-                                        <td>SQL Injection</td>
-                                        <td>4</td>
-                                    </tr>
-                                    <tr>
-                                        <td>15:05:25</td>
-                                        <td>137.22.73.130</td>
-                                        <td>Denial of Service</td>
-                                        <td>2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>20:39:01</td>
-                                        <td>137.22.73.130</td>
-                                        <td>Password Cracking</td>
-                                        <td>8</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <!--Traffic Analysis tab contents-->
-                        <div class = "tab-pane" id = "traffic">
-                            <h2>Coming soon</h2>
-                        </div>
-                    </div>
-                </div>
+                     <table class = "table table-striped">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>time</th>
+                                <th>src ip</th>
+                                <th>src mac</th>
+                                <th>src port</th>
+                                <th>dest ip</th>
+                                <th>dest mac</th>
+                                <th>dest port</th>
+                                <th>protocol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>234</td>
+                                <td>12:43:53</td>
+                                <td>137.22.73.130</td>
+                                <td>0C-23-AC-3B-4C-7D</td>
+                                <td>80</td>
+                                <td>137.22.73.129</td>
+                                <td>0C-23-BB-23-41-3A</td>
+                                <td>22</td>
+                                <td>SSH</td>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                            </tr>
+                        </tbody>
+                    </table>
             </div>
         </div>
 
@@ -167,33 +145,5 @@
         <script src="twitter-bootstrap/docs/assets/js/bootstrap-collapse.js"></script>
         <script src="twitter-bootstrap/docs/assets/js/bootstrap-carousel.js"></script>
         <script src="twitter-bootstrap/docs/assets/js/bootstrap-typeahead.js"></script>
-
-        <!-- for sortable table -->
-        <script src="sorttable.js"></script>
-
-        <!-- For flot-->
-        <script language="javascript" type="text/javascript" src="flot/jquery.js"></script>
-        <script language="javascript" type="text/javascript" src="flot/jquery.flot.js"></script>
-        <script language="javascript" type="text/javascript" src="flot/jquery.flot.resize.js"></script>
-
-        <script type="text/javascript">
-            $(function () {
-                var d1 = [];
-                for (var i = 0; i < 14; i += 0.5)
-                    d1.push([i, Math.sin(i)]);
-
-                var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
-
-                // a null signifies separate line segments
-                var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-
-                var placeholder = $("#placeholder");
-                
-                var plot = $.plot(placeholder, [d1, d2, d3]);
-
-                placeholder.resize(function () {
-                });
-            });
-        </script>
     </body>
 </html>
