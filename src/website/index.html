@@ -52,14 +52,13 @@
 
         <div class = "container">
             <div class = "row">
-            <div class = "span8">
-                <div id = "placeholder" style="width:100%;height:300px;">
+                <div class = "span8">
+                    <div id = "placeholder" style="width:100%;height:300px;">
+                    </div>
                 </div>
-            </div>
 
-            <div class = "span4">
-                <!--Attack Details-->
                 <div class = "span4">
+                    <!--Attack Details-->
                     <table class = "table table-bordered">
                         <thead>
                             <tr>
@@ -89,54 +88,59 @@
                     </table>
                 </div>
             </div>
-            </div>
 
-            <div class = "span12">
-                <!--Tabs-->
-                <ul class = "nav nav-tabs">
-                    <li class = "active">
-                        <a href = "#attacks" data-toggle = "tab">Attacks</a>
-                    </li>
-                    <li>
-                        <a href = "#traffic" data-toggle = "tab">Traffic Analysis</a>
-                    </li>
-                </ul>
-                
-                <!--Tab contents-->
-                <div class = "tab-content">
-                    <!--Attacks tab contents-->
-                    <div class = "tab-pane active" id = "attacks">
-                        <table class = "table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Attack Type</th>
-                                    <th>Threat Level</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>12:43:53</td>
-                                    <td>SQL Injection</td>
-                                    <td>4</td>
-                                </tr>
-                                <tr>
-                                    <td>15:05:25</td>
-                                    <td>Denial of Service</td>
-                                    <td>2</td>
-                                </tr>
-                                <tr>
-                                    <td>20:39:01</td>
-                                    <td>Password Cracking</td>
-                                    <td>8</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class = "row">
+                <div class = "span12">
+                    <!--Tabs-->
+                    <ul class = "nav nav-tabs">
+                        <li class = "active">
+                            <a href = "#attacks" data-toggle = "tab">Attacks</a>
+                        </li>
+                        <li>
+                            <a href = "#traffic" data-toggle = "tab">Traffic Analysis</a>
+                        </li>
+                    </ul>
                     
-                    <!--Traffic Analysis tab contents-->
-                    <div class = "tab-pane" id = "traffic">
-                        <h2>Coming soon</h2>
+                    <!--Tab contents-->
+                    <div class = "tab-content">
+                        <!--Attacks tab contents-->
+                        <div class = "tab-pane active" id = "attacks">
+                            <table class = "table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Source IP</th>
+                                        <th>Attack Type</th>
+                                        <th>Threat Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>12:43:53</td>
+                                        <td>137.22.73.130</td>
+                                        <td>SQL Injection</td>
+                                        <td>4</td>
+                                    </tr>
+                                    <tr>
+                                        <td>15:05:25</td>
+                                        <td>137.22.73.130</td>
+                                        <td>Denial of Service</td>
+                                        <td>2</td>
+                                    </tr>
+                                    <tr>
+                                        <td>20:39:01</td>
+                                        <td>137.22.73.130</td>
+                                        <td>Password Cracking</td>
+                                        <td>8</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!--Traffic Analysis tab contents-->
+                        <div class = "tab-pane" id = "traffic">
+                            <h2>Coming soon</h2>
+                        </div>
                     </div>
                 </div>
             </div>
