@@ -12,6 +12,8 @@ Public methods:
 """
 # import the attack analyzers
 from analyzers.all import *
+#for multiprocessing
+from multiprocessing import Process
 
 class Connection(object):
 
@@ -30,7 +32,7 @@ class Connection(object):
 
     # Init the flag marking if we should force analysis of buffered packets
     analysisFlag = False
-
+    
     def __init__(self, src, dest):
         """ Create a Connection object; initializes all variables and creates
         instance-specific AttackAnalyzer instances
@@ -57,7 +59,6 @@ class Connection(object):
 
         mitm = MitMAnalyzer(src, dest)
         self.analyzers.append(mitm)
-
 
     def bufferPacket(self, packet):
         """ Add a packet to this Connection's packet buffer
@@ -86,9 +87,21 @@ class Connection(object):
         # :TODO: These should really be multi-threaded for efficiency
         countAttacksFound = 0   # The number of analyzers that returned a
                                 # positive result
+                                
         for analyzer in self.analyzers:
             if analyzer.processPackets(packets):
                 countAttacksFound += 1
+                
+        # Multiprocessed version. Messy.
+        functions = []
+        for analyzer in self.analyzers:
+            functions.append([analyzer.processPackets, packets])
+        # Runs the first item in the list (function) with the second item as the argument
+        runFunction = lambda x: x[0](x[1])
+        # Runs the function to run each analyzer on the packets.
+        results = map(runFunction, functions)
+        # Increments the attacksfoundcount for each True value in the results
+        countAttacksFound += reduce(lambda x, y: int(x) + int(y), results)
 
         # If all the attacks timed out, let the caller know that this
         # Connection is no longer necessary
