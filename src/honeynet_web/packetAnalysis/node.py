@@ -2,7 +2,7 @@
 node.py
 """
 class Node(object):
-    def __init__(self, threatLevel, timeout = -1):
+    def __init__(self, threatLevel, timeout=-1):
         self.transitions = []
         self.threatLevel = threatLevel
         self.timeout = timeout

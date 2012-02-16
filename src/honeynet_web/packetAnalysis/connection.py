@@ -77,7 +77,7 @@ class Connection(object):
         # To avoid overhead, only actually analyze the packets if there is a
         # large enough packet set buffered, or if this has been called a couple
         # times in a row
-        if len(self.packetBuffer < self.minBufferSize):
+        if len(self.packetBuffer) < self.minBufferSize:
             if not self.analysisFlag:
                 self.analysisFlag = True
                 return
@@ -87,7 +87,7 @@ class Connection(object):
         countAttacksFound = 0   # The number of analyzers that returned a
                                 # positive result
         for analyzer in self.analyzers:
-            if analyzer.processPackets(packets):
+            if analyzer.processPackets(self.packetBuffer):
                 countAttacksFound += 1
 
         # If all the attacks timed out, let the caller know that this

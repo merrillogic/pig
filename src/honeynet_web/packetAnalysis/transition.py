@@ -41,3 +41,10 @@ class Transition(object):
             if not trigger(packet):
                 return False
         return True
+
+    def __str__(self):
+        output = "Dest: "+str(self.dest)+'\n'+\
+                 "Score: "+str(self.score)+'\n'+\
+                 "Triggers: "
+
+        return output

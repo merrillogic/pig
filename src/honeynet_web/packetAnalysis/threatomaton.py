@@ -117,10 +117,12 @@ class Threatomaton(object):
 
     def addTransition(self, source, dest, score, triggers):
         """ Add a Transition object to a Node
-        @param source - The index in self.nodes of the node to add the Transition to
+        @param source - The index in self.nodes of the node to add the
+                        Transition to
         @param dest - The index in self.nodes to Transition to
         @param score - The score value assigned to this Transition
-        @param triggers - List of boolean functions that act as Transition conditions
+        @param triggers - List of boolean functions that act as Transition
+                          conditions
         """
         trans = Transition(dest, score, triggers)
         src = self.nodes[source]
@@ -140,6 +142,7 @@ class Threatomaton(object):
         if self.lastAttackTime:
             timeElapsed = datetime.now() - self.lastAttackTime
             if (timeElapsed > self.curNode.timeout):
+                print "Timed out! AW SHIT YO"
                 self.reset()
                 # flag that this timed out
                 timeoutFlag = True
@@ -184,6 +187,7 @@ class Threatomaton(object):
         # If the transition moved to the self.SAFE node, that signals the end of an
         # attack, so write out attack data and reset the machine
         if self.curNode.threatLevel == self.SAFE:
+            print "Resetting now..."
             self.reset()
         # Otherwise, store update attack data
         else:
