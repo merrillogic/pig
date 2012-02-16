@@ -17,6 +17,15 @@
             body {
                 padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
             }
+            table#attackInfo {
+            }
+            #attackInfo td {
+                padding: 8px;
+            }
+      
+            .well#payload{
+                background-color:#FFFFFF;
+            }
         </style>
         <link href="{{ STATIC_URL }}twitter-bootstrap/docs/assets/css/bootstrap-responsive.css" rel="stylesheet">
 
@@ -53,38 +62,47 @@
         <div class = "container">
             <div class = "row">
                 <div class = "span4">
-                    <!--Attack Details-->
-                    <table class = "table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Attack Information</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Type: *****</td>
-                            </tr>
-                            <tr>
-                                <td>Start Time: *****</td>
-                            </tr>
-                            <tr>
-                                <td>End Time: *****</td>
-                            </tr>
-                            <tr>
-                                <td>Source IP: *****</td>
-                            </tr>
-                            <tr>
-                                <td>Dest IP: *****</td>
-                            </tr>
-                            <tr>
-                                <td>Threat Level: *****</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class = "well">
+                        <!--Attack Details-->
+                        <table id = "attackInfo">
+                            <thead>
+                                <tr>
+                                    <th>Attack Information</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Type:</td>
+                                    <td>{{ attack.attack_type }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Start Time:</td>
+                                    <td>{{ attack.start_time }}</td>
+                                </tr>
+                                <tr>
+                                    <td>End Time:</td>
+                                    <td>{{ attack.end_time }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Source IP:</td>
+                                    <td>{{ attack.source_ip }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Dest IP:</td>
+                                    <td>{{ attack.destination_ip }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Threat Level:</td>
+                                    <td>{{ attack.score }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class = "span8">
-                    <div class = "well">
+                    <div class = "well" id = "payload">
                         <!-- Payload of selected packet -->
                         <h4>Packet Payload</h4>
                         <p>no packet selected</p>
@@ -109,21 +127,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>234</td>
-                                <td>12:43:53</td>
-                                <td>137.22.73.130</td>
-                                <td>0C-23-AC-3B-4C-7D</td>
-                                <td>80</td>
-                                <td>137.22.73.129</td>
-                                <td>0C-23-BB-23-41-3A</td>
-                                <td>22</td>
-                                <td>SSH</td>
-                            </tr>
-                            <tr>
-                            </tr>
-                            <tr>
-                            </tr>
+                            {% if packet_list %}
+                                {% for packet in packet_list %}
+                                    <tr>
+                                        <td>{{ packet.packet_id }}</td>
+                                        <td>{{ packet.time }}</td>
+                                        <td>{{ packet.source_ip }}</td>
+                                        <td>{{ packet.source_mac }}</td>
+                                        <td>{{ packet.source_port }}</td>
+                                        <td>{{ packet.destination_ip }}</td>
+                                        <td>{{ packet.destination_mac }}</td>
+                                        <td>{{ packet.destination_port }}</td>
+                                        <td>{{ packet.protocol }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td>No packets found</td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                     </table>
             </div>
@@ -147,3 +169,4 @@
         <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-typeahead.js"></script>
     </body>
 </html>
+

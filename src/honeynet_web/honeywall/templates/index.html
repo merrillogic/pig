@@ -35,6 +35,15 @@
             #attackTable td:hover {
                 cursor: pointer;
             }
+            #attackTable tr#low {
+                background-color: #00ff00
+            }
+            #attackTable tr#medium {
+                background-color: #ffff00
+            }
+            #attackTable tr#high {
+                background-color: #ff0000
+            }
             
             table#detailsTable {
             }
@@ -125,7 +134,7 @@
                     <!--Button to go to attack packets-->
                     <div class = "row">
                         <div class = "btn-group">
-                            <a class = "btn" href = "attack.html">see attack packets</a>
+                            <a class = "btn" id = "attack_button" href = "attack/">see attack packets</a>
                         </div>
                     </div>
                 </div>
@@ -160,7 +169,7 @@
                                 <tbody>
                                     {% if attack_list %}
                                         {% for attack in attack_list %}
-                                            <tr>
+                                            <tr id = "{% if attack.score > 500 %}high{% else %}{% if attack.score > 100 %}medium{% else %}low{% endif %}{% endif %}">
                                                 <td id = "idCol">{{ attack.id }}</td>
                                                 <td id = "timeCol">{{ attack.start_time }}</td>
                                                 <td id = "sourceCol">{{ attack.source_ip }}</td>
@@ -244,6 +253,8 @@
                             $('#score').text('{{ attack.score }}');
                         }
                     {% endfor %}
+                    
+                    $('#attack_button').attr('href', 'attack/' + aid);
                 });
             });
         </script>
