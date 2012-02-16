@@ -12,8 +12,6 @@ Public methods:
 """
 # import the attack analyzers
 from analyzers.all import *
-#for multiprocessing
-from multiprocessing import Process
 
 class Connection(object):
 
