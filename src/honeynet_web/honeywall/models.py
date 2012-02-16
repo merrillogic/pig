@@ -37,12 +37,14 @@ class Attack(models.Model):
         pass
 
     def __str__(self):
-        out = "Classification time: "+str(self.classification_time)+'\n'+\
+        out = "Attack type: "+str(self.attack_type)+'\n'+\
+              "Classification time: "+str(self.classification_time)+'\n'+\
               "Source IP: "+str(self.source_ip)+'\n'+\
               "Destination IP: "+str(self.destination_ip)+'\n'+\
               "Start time: "+str(self.start_time)+'\n'+\
               "End time: "+str(self.end_time)+'\n'+\
-              "Score: "+str(self.score)
+              "Score: "+str(self.score)+'\n'+\
+              "False Positive?: "+str(self.false_positive)
         return out
 
 class Packet(models.Model):

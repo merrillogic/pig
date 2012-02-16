@@ -22,7 +22,7 @@ from honeywall.utils import protocol_lookup
 
 class PassCrackAnalyzer(AttackAnalyzer):
 
-    type = 'pass'
+    attackType = 'pass'
 
     def addAttackProfile(self):
         # set up the basic conditions to classify a packet as an SSH login

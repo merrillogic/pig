@@ -31,7 +31,7 @@ class Threatomaton(object):
     # Each Threatomaton has a type marking what it is used for (e.g. for a
     # SQLInjection AttackAnalyzer, it's 'sqlinjection'); here, initialize this
     # to a default value
-    type = 'Default'
+    attackType = 'Default'
 
     # Store the state values as readable variables
     SAFE = 0
@@ -221,6 +221,7 @@ class Threatomaton(object):
         self.attack.destination_ip = self.attackDest
         self.attack.start_time = self.lastAttackStart
         self.attack.score = self.attackScore
+        self.attack.attack_type = self.attackType
         # save it so we can mark the collected attackPackets
         if not self.DEBUG:
             self.attack.save()

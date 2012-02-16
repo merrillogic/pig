@@ -20,7 +20,7 @@ from attackanalyzer import AttackAnalyzer
 
 class DOSAnalyzer(AttackAnalyzer):
 
-    type = 'dos'
+    attackType = 'dos'
 
     def addAttackProfile(self):
         for i in range(50):

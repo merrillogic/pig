@@ -20,7 +20,7 @@ from attackanalyzer import AttackAnalyzer
 
 class MailAnalyzer(AttackAnalyzer):
 
-    type = 'mail'
+    attackType = 'mail'
     mailRxNum = 0
 
     def rxNewMail(self, packet):
