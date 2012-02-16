@@ -23,7 +23,7 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
     attackType = 'sql'
 
     def isQuery(self, packet):
-        if '?' in packet['payload']:
+        if '?' in packet.payload:
             return True
         else:
             return False
