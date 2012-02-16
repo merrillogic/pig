@@ -26,6 +26,19 @@
             .well#payload{
                 background-color:#FFFFFF;
             }
+            
+            table#packetTable {
+            }
+            #packetTable th {
+                background-color: #ffffff;
+                cursor: default;
+            }
+            #packetTable td:hover {
+                cursor: pointer;
+            }
+            #packetTable tr:hover {
+                background-color: #c0c0c0;
+            }
         </style>
         <link href="{{ STATIC_URL }}twitter-bootstrap/docs/assets/css/bootstrap-responsive.css" rel="stylesheet">
 
@@ -105,14 +118,14 @@
                     <div class = "well" id = "payload">
                         <!-- Payload of selected packet -->
                         <h4>Packet Payload</h4>
-                        <p>no packet selected</p>
+                        <p id = "payloadInfo">no packet selected</p>
                     </div>
                 </div>
             </div>
 
             <div class = "row">
                 <div class = "span12">
-                     <table class = "table table-striped">
+                     <table class = "table" id = "packetTable">
                         <thead>
                             <tr>
                                 <th>id</th>
@@ -130,15 +143,15 @@
                             {% if packet_list %}
                                 {% for packet in packet_list %}
                                     <tr>
-                                        <td>{{ packet.packet_id }}</td>
-                                        <td>{{ packet.time }}</td>
-                                        <td>{{ packet.source_ip }}</td>
-                                        <td>{{ packet.source_mac }}</td>
-                                        <td>{{ packet.source_port }}</td>
-                                        <td>{{ packet.destination_ip }}</td>
-                                        <td>{{ packet.destination_mac }}</td>
-                                        <td>{{ packet.destination_port }}</td>
-                                        <td>{{ packet.protocol }}</td>
+                                        <td id = "idCol">{{ packet.packet_id }}</td>
+                                        <td id = "timeCol">{{ packet.time }}</td>
+                                        <td id = "srcIpCol">{{ packet.source_ip }}</td>
+                                        <td id = "srcMacCol">{{ packet.source_mac }}</td>
+                                        <td id = "srcPortCol">{{ packet.source_port }}</td>
+                                        <td id = "destIpCol">{{ packet.destination_ip }}</td>
+                                        <td id = "destMacCol">{{ packet.destination_mac }}</td>
+                                        <td id = "destPortCol">{{ packet.destination_port }}</td>
+                                        <td id = "protocolCol">{{ packet.protocol }}</td>
                                     </tr>
                                 {% endfor %}
                             {% else %}
@@ -167,6 +180,21 @@
         <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-collapse.js"></script>
         <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-carousel.js"></script>
         <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-typeahead.js"></script>
+        
+        <script type="text/javascript">
+            //Function that handles clicking of rows on attack table
+            $(document).ready(function() {
+                $('#packetTable td').click(function(event) {
+                    var pid = $(this).parent().children('#idCol').text();
+                    
+                    {% for packet in packet_list %}
+                        if(pid == {{ packet.id }}){
+                            $('#payloadInfo').text('{{ packet.payload }}');
+                        }
+                    {% endfor %}
+                });
+            });
+        </script>
     </body>
 </html>
 
