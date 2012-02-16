@@ -89,7 +89,7 @@ class Threatomaton(object):
         @return - The index in self.nodes of the new node
         """
         newNodeIndex = len(self.nodes)
-        prelimNode = Node(self.PRELIM)
+        prelimNode = Node(self.PRELIM, timeout)
         self.nodes.append(prelimNode)
         self.nodeMap[self.PRELIM].append(newNodeIndex)
         return newNodeIndex
@@ -100,7 +100,7 @@ class Threatomaton(object):
         @return - The index in self.nodes of the new node
         """
         newNodeIndex = len(self.nodes)
-        threatNode = Node(self.THREAT)
+        threatNode = Node(self.THREAT, timeout)
         self.nodes.append(threatNode)
         self.nodeMap[self.THREAT].append(threatNode)
         return newNodeIndex
