@@ -12,14 +12,17 @@ singlePacket['payload']
 Currently supported attributes:
 <Attribute -> 'Dictionary key'>
 Payload -> 'payload'
-Source IP -> 'src'
-Destination IP -> 'dst'
+Source MAC -> 'source_mac'
+Source IP -> 'source_ip'
+Destination IP -> 'destination_ip'
+Source Port -> 'source_port'
+Destination Port -> 'dest_port'
 Length -> 'len'
 Options -> 'options'
-ID# -> 'id'
+ID# -> 'packet_id'
 Flags -> 'flags'
 Time -> 'time'
-TCP/UDP -> 'layer'
+protocol -> 'protocol'
 
 
 To avoid potential conflicts with scapy classes, no class variables or
@@ -36,12 +39,9 @@ class PacketReader(object):
         self.chunkCounter = 0
         self.pcap = rdpcap(pcapFile)
 
-        #Let's set the time!
-        self.startTime = self.pcap[0].time
-
         for packetCap in self.pcap:
             if not packetCap.haslayer(LLC):
-                self.packetList.append(Packeteer(packetCap, self.startTime))
+                self.packetList.append(Packeteer(packetCap))
 
     def __iter__(self):
         return iter(self.packetList)
@@ -49,7 +49,7 @@ class PacketReader(object):
     def __getitem__(self, i):
         return self.packetList[i]
 
-    def getPacketChunk(size):
+    def getPacketChunk(self, size):
         '''
         Breaks off a size number of packets and returns them in a list.
         '''
@@ -63,40 +63,40 @@ class PacketReader(object):
         return returnList
 
 class Packeteer(object):
-    def __init__(self, singlePacket, start):
+    def __init__(self, singlePacket):
         self.packet = singlePacket
         self.dict = self._populate_dict()
 
     def _populate_dict(self):
         d = {}
+        IPLayer = self.packet.payload
         # required fields
-        #self.packet.show()
         d['time'] = datetime.utcfromtimestamp(self.packet.time)
         d['source_mac'] = self.packet.src
 
 
         # optional fields
         try:
-            d['packet_id'] = self.packet.payload.id
+            d['packet_id'] = IPLayer.id
         except AttributeError:
             pass
 
         try:
-            d['protocol'] = self.packet.payload.proto
+            d['protocol'] = IPLayer.proto
         except AttributeError:
             pass
         try:
             if self.packet.haslayer(ARP):
-                d['source_ip'] = self.packet.payload.psrc
+                d['source_ip'] = IPLayer.psrc
             else:
                 d['source_ip'] = self.packet.payload.src
         except AttributeError:
             pass
         try:
             if self.packet.haslayer(ARP):
-                d['destination_ip'] = self.packet.payload.pdst
+                d['destination_ip'] = IPLayer.pdst
             else:
-                d['destination_ip'] = self.packet.payload.dst
+                d['destination_ip'] = IPLayer.dst
         except AttributeError:
             pass
         try:
@@ -142,11 +142,5 @@ class Packeteer(object):
 
 if __name__ == '__main__':
     import sys
-    if len(sys.argv) != 2:
-        a = PacketReader('../../logs/eth2.pcap.1327553822')
-    else:
-        a = PacketReader(sys.argv[1])
-    b = a[13]
-    #for i in a:
-        #print i
-    b[source]
+    assert len(sys.argv) == 2, "Usage: python Packeteer.py pcapFile"
+    a = PacketReader(sys.argv[1])
