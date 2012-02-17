@@ -32,7 +32,7 @@ class Connection(object):
 
     # Init the flag marking if we should force analysis of buffered packets
     analysisFlag = False
-
+    
     def __init__(self, src, dest):
         """ Create a Connection object; initializes all variables and creates
         instance-specific AttackAnalyzer instances
@@ -64,7 +64,6 @@ class Connection(object):
         mitm = MitMAnalyzer(src, dest)
         self.analyzers.append(mitm)
 
-
     def bufferPacket(self, packet):
         """ Add a packet to this Connection's packet buffer
         @param packet - The Packet object to add to the buffer
@@ -91,16 +90,14 @@ class Connection(object):
         # Run all the attack analyses
         countAttacksFound = 0   # The number of analyzers that returned a
                                 # positive result
+
         # make a static copy of the packet buffer before we enter into threaded
         # analyses
         packetBufferCopy = self.packetBuffer[:]
         # and de-buffer the packets we have copied for analysis
         self.packetBuffer = self.packetBuffer[len(packetBufferCopy):]
         # ANALYZE DAT SHIT
-        for analyzer in self.analyzers:
-            if analyzer.processPackets(packetBufferCopy):
-                countAttacksFound += 1
-                
+
         # Multiprocessed version. Messy.
         functions = []
         for analyzer in self.analyzers:
@@ -113,7 +110,7 @@ class Connection(object):
         results = workers.map(runFunction, functions)
         # Increments the attacksfoundcount for each True value in the results
         countAttacksFound += reduce(lambda x, y: int(x) + int(y), results)
-        
+    
         # If all the attacks timed out, let the caller know that this
         # Connection is no longer necessary
         if not countAttacksFound:
