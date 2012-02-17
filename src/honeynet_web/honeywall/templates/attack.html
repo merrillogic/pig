@@ -22,7 +22,11 @@
             #attackInfo td {
                 padding: 8px;
             }
-      
+            
+            <!--overwrite bootstrap form formating-->
+            form {
+            }
+            
             .well#payload{
                 background-color:#FFFFFF;
             }
@@ -77,7 +81,7 @@
                 <div class = "span4">
                     <div class = "well">
                         <!--Attack Details-->
-                        <table id = "attackInfo">
+                        <table class = "table-condensed" id = "attackInfo">
                             <thead>
                                 <tr>
                                     <th>Attack Information</th>
@@ -109,8 +113,15 @@
                                     <td>Threat Level:</td>
                                     <td>{{ attack.score }}</td>
                                 </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id = "falsePositive" type = "checkbox" /> False Positive
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
+                        
                     </div>
                 </div>
 
