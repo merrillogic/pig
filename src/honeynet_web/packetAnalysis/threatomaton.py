@@ -18,7 +18,6 @@ Private methods:
 - reset()
 
 """
-# :TODO: Make the timeout functionality use packet time, not system time
 from datetime import datetime, timedelta
 
 from honeynet_web.honeywall.models import Attack
@@ -39,10 +38,10 @@ class Threatomaton(object):
     THREAT = 2
 
     # The list of node objects contained in the automaton
-    nodes = []
+    nodes = None
     # The mapping of STATE (SAFE, PRELIM, or THREAT) to a list of indices in
     # self.nodes of nodes belonging to that state
-    nodeMap = {}
+    nodeMap = None
     # Pointer to the node the machine is currently sitting at
     curNode = None
     # Mark the state the machine is in at all times for convenience
@@ -54,9 +53,13 @@ class Threatomaton(object):
     lastAttackTime = None
     attackDuration = 0
     attackScore = 0
-    attackPackets = []
+    attackPackets = None
     attackSrc = None
     attackDest = None
+
+    # Special case timeout vars
+    noPackets = False
+    noPacketTime = None
 
     # debug mode flag (prints attack data instead of saving to DB)
     DEBUG = False
@@ -70,6 +73,11 @@ class Threatomaton(object):
         @param src - Identifier for the parent Connection's source host
         @param dest - Identifier for the parent Connection's destination host
         """
+        # Init the necessary unique lists/dicts/stuff
+        self.nodes = []
+        self.nodeMap = {}
+        self.attackPackets = []
+        
         self.curState = self.SAFE
         startNode = Node(self.SAFE)
 
@@ -140,10 +148,19 @@ class Threatomaton(object):
         # packet seen is more than the timeout value
         timeoutFlag = False
         if self.lastAttackTime:
-            timeElapsed = datetime.now() - self.lastAttackTime
+            if len(packets):
+                timeElapsed = packets[0].time - self.lastAttackTime
+                self.noPackets = False
+                self.noPacketTime = None
+            elif not self.noPackets:
+                self.noPackets = True
+                self.noPacketTime = datetime.now() 
+                timeElapsed = timedelta()
+            elif self.noPackets:
+                timeElapsed = datetime.now() - self.noPacketTime
             if (timeElapsed > self.curNode.timeout):
                 print "Timed out! AW SHIT YO"
-                self.reset()
+                self.reset(self.lastAttackTime)
                 # flag that this timed out
                 timeoutFlag = True
 
@@ -159,6 +176,10 @@ class Threatomaton(object):
         if timeoutFlag and not self.lastAttackStart:
             return False
 
+        # if we detected an attack, let the Connection know
+        if self.attack:
+            return True
+
 
     def processPacket(self, packet):
         """ Update the machine state and attack data based on the contents of
@@ -166,6 +187,7 @@ class Threatomaton(object):
 
         @param packet - A Packet object to analyze
         """
+        #print packet.id, packet.time
         # pull state before processing packets for checking to see if attack
         # started
         prevState = self.curState
@@ -184,18 +206,18 @@ class Threatomaton(object):
         self.curNode = self.nodes[dest]
         self.curState = self.curNode.threatLevel
 
-        # If the transition moved to the self.SAFE node, that signals the end of an
-        # attack, so write out attack data and reset the machine
-        if self.curNode.threatLevel == self.SAFE:
-            print "Resetting now..."
-            self.reset()
+        # If the transition moved to the self.SAFE node, that signals the end
+        # of an attack, so write out attack data and reset the machine
+        if (self.curNode.threatLevel == self.SAFE
+                and self.curState != prevState):
+            self.reset(packet.time)
         # Otherwise, store update attack data
         else:
-            self.lastAttackTime = datetime.now()
+            self.lastAttackTime = packet.time 
             self.attackPackets.append(packet)
             # if moved from self.SAFE state, attack may have started, so flag it
             if prevState == self.SAFE and prevState != self.curState:
-                self.lastAttackStart = datetime.now()
+                self.lastAttackStart = packet.time 
             # if moved from self.PRELIM to self.THREAT, confirms that this is an
             # attack, so create an attack object and mark all stored packets
             # with its ID
@@ -215,6 +237,8 @@ class Threatomaton(object):
         """ Initialize an Attack instance with the data we've recorded so far
         and record it in the database as a partial attack
         """
+        print self.attackType, "attack found on", self.attackSrc, "->",\
+              self.attackDest
         self.attack = Attack()
         self.attack.classification_time = datetime.now()
         self.attack.source_ip = self.attackSrc
@@ -232,7 +256,6 @@ class Threatomaton(object):
         """
         if self.DEBUG: return
         packet.attack = self.attack
-        packet.classification_time = datetime.now()
         packet.save()
 
 
@@ -242,6 +265,8 @@ class Threatomaton(object):
         externally, regardless of if an attack has been recorded or not
         """
         if not self.DEBUG:
+            print "Attack completed!"
+            print self.attack
             self.attack.save()
         else:
             print "Attack data currently recorded for this analysis:"
@@ -250,12 +275,13 @@ class Threatomaton(object):
             print
 
 
-    def reset(self):
+    def reset(self, resetTime=0):
         """ Write out any attack data and set the machine back to a clean slate
         with no attack data recorded yet
         """
+        print "reset!"
         if self.attack:
-            self.attack.end_time = datetime.now()
+            self.attack.end_time = resetTime
             self.attack.score = self.attackScore
             self.exportAttackData()
 

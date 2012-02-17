@@ -20,10 +20,10 @@ class Connection(object):
     dest = None
 
     # Initialize the pointers to the Threatomaton analyzers
-    analyzers = []
+    analyzers = None
 
     # Initialize the list used to buffer a set of packets to analyze
-    packetBuffer = []
+    packetBuffer = None
     # Initialize the minimum number of packets to have in the buffer before
     # processing them
     minBufferSize = 500
@@ -40,6 +40,10 @@ class Connection(object):
         """
         self.src = src
         self.dest = dest
+        
+        # Initialize our unique packet buffer and analyzer lists
+        self.analyzers = []
+        self.packetBuffer = []
 
         # Initialize all of our AttackAnalyzers
 
@@ -86,8 +90,14 @@ class Connection(object):
         # :TODO: These should really be multi-threaded for efficiency
         countAttacksFound = 0   # The number of analyzers that returned a
                                 # positive result
+        # make a static copy of the packet buffer before we enter into threaded
+        # analyses
+        packetBufferCopy = self.packetBuffer[:]
+        # and de-buffer the packets we have copied for analysis
+        self.packetBuffer = self.packetBuffer[len(packetBufferCopy):]
+        # ANALYZE DAT SHIT
         for analyzer in self.analyzers:
-            if analyzer.processPackets(self.packetBuffer):
+            if analyzer.processPackets(packetBufferCopy):
                 countAttacksFound += 1
 
         # If all the attacks timed out, let the caller know that this

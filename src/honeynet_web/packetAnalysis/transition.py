@@ -16,7 +16,7 @@ class Transition(object):
     # Integer score value assigned to this transition
     score = 0
     # List of boolean functions to match to make this transition
-    triggers = []
+    triggers = None
 
     def __init__(self, dest, score, triggers):
         """ Create a Transition object

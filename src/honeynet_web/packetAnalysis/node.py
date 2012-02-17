@@ -1,18 +1,19 @@
 """
 node.py
 """
+from datetime import timedelta
+
 class Node(object):
     def __init__(self, threatLevel, timeout=-1):
         self.transitions = []
         self.threatLevel = threatLevel
-        self.timeout = timeout
-
+        self.setTimeout(timeout)
 
     def addTransition(self, transition):
         self.transitions.append(transition)
 
     def setTimeout(self, timeout):
-        self.timeout = timeout
+        self.timeout = timedelta(milliseconds=timeout)
 
     def processPacket(self, packet):
         for transition in self.transitions:
