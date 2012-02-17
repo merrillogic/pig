@@ -12,6 +12,8 @@ Public methods:
 """
 # import the attack analyzers
 from analyzers.all import *
+#import multiprocessing library
+from multiprocessing import Pool
 
 class Connection(object):
 
@@ -87,7 +89,6 @@ class Connection(object):
                 return
 
         # Run all the attack analyses
-        # :TODO: These should really be multi-threaded for efficiency
         countAttacksFound = 0   # The number of analyzers that returned a
                                 # positive result
         # make a static copy of the packet buffer before we enter into threaded
@@ -99,7 +100,20 @@ class Connection(object):
         for analyzer in self.analyzers:
             if analyzer.processPackets(packetBufferCopy):
                 countAttacksFound += 1
-
+                
+        # Multiprocessed version. Messy.
+        functions = []
+        for analyzer in self.analyzers:
+            functions.append([analyzer.processPackets, packets])
+        # Runs the first item in the list (function) with the second item as 
+        # the argument
+        workers = Pool(processes=len(functions)
+        runFunction = lambda x: x[0](x[1])
+        # Runs the function to run each analyzer on the packets.
+        results = workers.map(runFunction, functions)
+        # Increments the attacksfoundcount for each True value in the results
+        countAttacksFound += reduce(lambda x, y: int(x) + int(y), results)
+        
         # If all the attacks timed out, let the caller know that this
         # Connection is no longer necessary
         if not countAttacksFound:
