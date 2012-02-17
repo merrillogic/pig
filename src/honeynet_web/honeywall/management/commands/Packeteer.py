@@ -25,13 +25,8 @@ Time -> 'time'
 protocol -> 'protocol'
 
 
-To avoid potential conflicts with scapy classes, no class variables or
-    names will be 'packet.'
 '''
 
-#Currently: when the reader is initialized, we make every packet object
-#           Should this instead be done in getPacketChunk?
-#           Shorter initialization time vs. Packet chunk retrieval time
 
 class PacketReader(object):
     def __init__(self,pcapFile):
@@ -116,7 +111,6 @@ class Packeteer(object):
                 d['payload'] = str(self.packet.lastlayer())
             else:
                 d['payload'] = ''
-
         except AttributeError:
             pass
 
@@ -133,12 +127,6 @@ class Packeteer(object):
     def __getitem__(self, item):
         return self.dict[item]
 
-    @property
-    def id(self):
-        if 'id' in self.dict:
-            return self.dict['packet_id']
-        else:
-            return None
 
 if __name__ == '__main__':
     import sys
