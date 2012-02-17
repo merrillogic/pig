@@ -1,268 +1,163 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Carleton Honeynet Project</title>
-        <meta name="description" content="">
-        <meta name="author" content="">
+{% extends "base.html" %}
 
-        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-        <!--[if lt IE 9]>
-            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
+{% block stylesheets %}
+    <link href = "{{ STATIC_URL }}css/index.css" rel = "stylesheet" type = "text/css">
+{% endblock %}
 
-        <!-- Le styles -->
-        <link href="{{ STATIC_URL }}twitter-bootstrap/docs/assets/css/bootstrap.css" rel="stylesheet" type="text/css">
-        <style>
-            body {
-                padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-            }
-            table {
-                table-layout: fixed;
-            }
-            table th, td {
-                overflow:hidden
-            }
-            table#attackTable {
-            }
-            #attackTable th {
-                background-color: #ffffff;
-                cursor: default;
-            }
-            #attackTable td:hover {
-                cursor: pointer;
-            }
-            #attackTable tr#low {
-                background-color: #91ff7f;
-            }
-            #attackTable tr#low:hover {
-                background-color: #39ff19;
-            }
-            #attackTable tr#medium {
-                background-color: #ffff7f;
-            }
-            #attackTable tr#medium:hover {
-                background-color: #ffff19;
-            }
-            #attackTable tr#high {
-                background-color: #ff7f7f;
-            }
-            #attackTable tr#high:hover {
-                background-color: #ff1919;
-            }
+{% block top_row %}
+    <div class = "span8">
+        <div id = "placeholder" style="width:95%;height:300px;">
+        </div>
+    </div>
+
+    <div class = "span4">
+        <!--Attack Details-->
+        <div class = "row">
+            <div class = "well">
+                <table id = "attack_info">
+                    <thead>
+                        <tr>
+                            <th>Attack Information</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Type:</td>
+                            <td id = "type">No attack selected.</td>
+                        </tr>
+                        <tr>
+                            <td>Start Time:</td>
+                            <td id = "start"></td>
+                        </tr>
+                        <tr>
+                            <td>End Time:</td>
+                            <td id = "end"></td>
+                        </tr>
+                        <tr>
+                            <td>Source IP:</td>
+                            <td id = "source"></td>
+                        </tr>
+                        <tr>
+                            <td>Destination IP:</td>
+                            <td id = "dest"></td>
+                        </tr>
+                        <tr>
+                            <td>Threat Level:</td>
+                            <td id = "score"></td>
+                        </tr>
+                    </tbody>                                 
+                </table>
+            </div> <!-- well -->
+        </div> <!-- row -->
             
-            table#detailsTable {
-            }
-            #detailsTable td {
-                padding: 8px;
-            }
-        </style>
-        <link href="{{ STATIC_URL }}twitter-bootstrap/docs/assets/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-
-        <!-- Le fav and touch icons -->
-        <link rel="shortcut icon" href="images/favicon.ico">
-        <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
-    </head>
-
-    <body>
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
-                    <a class="brand" href="#">Carleton Honeynet Project</a>
-                    <div class="nav-collapse">
-                        <!--
-                        <ul class="nav">
-                            <li class="active"><a href="#">Home</a></li>
-                            <li><a href="#about">About</a></li>
-                            <li><a href="#contact">Contact</a></li>
-                        </ul>
-                        -->
-                    </div><!--/.nav-collapse -->
-                </div>
+        <!--Button to go to attack packets-->
+        <div class = "row">
+            <div class = "btn-group">
+                <a class = "btn" id = "attack_button" href = "attack/">see attack packets</a>
             </div>
         </div>
+    </div>
+{% endblock %}
 
-        <div class = "container">
-            <div class = "row">
-                <div class = "span8">
-                    <div id = "placeholder" style="width:95%;height:300px;">
-                    </div>
-                </div>
-
-                <div class = "span4">
-                    <!--Attack Details-->
-                    <div class = "row">
-                        <div class = "well">
-                            <table id = "detailsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Attack Information</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Type:</td>
-                                        <td id = "type">No attack selected.</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Start Time:</td>
-                                        <td id = "start"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>End Time:</td>
-                                        <td id = "end"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Source IP:</td>
-                                        <td id = "source"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Destination IP:</td>
-                                        <td id = "dest"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Threat Level:</td>
-                                        <td id = "score"></td>
-                                    </tr>
-                                </tbody>                                 
-                            </table>
-                        </div>
-                    </div>
-                        
-                    <!--Button to go to attack packets-->
-                    <div class = "row">
-                        <div class = "btn-group">
-                            <a class = "btn" id = "attack_button" href = "attack/">see attack packets</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-                <div class = "row">
-                <div class = "span12">
-                    <!--Tabs-->
-                    <ul class = "nav nav-tabs">
-                        <li class = "active">
-                            <a href = "#attacks" data-toggle = "tab">Attacks</a>
-                        </li>
-                        <li>
-                            <a href = "#traffic" data-toggle = "tab">Traffic Analysis</a>
-                        </li>
-                    </ul>
-                    
-                    <!--Tab contents-->
-                    <div class = "tab-content">
-                        <!--Attacks tab contents-->
-                        <div class = "tab-pane active" id = "attacks">
-                            <table id = "attackTable" class = "table sortable">
-                                <thead>
-                                    <tr id = "attackRow">
-                                        <th style = "width: 4%">ID</th>
-                                        <th style = "width: 24%">Time</th>
-                                        <th style = "width: 24%">Source IP</th>
-                                        <th style = "width: 24%">Attack Type</th>
-                                        <th style = "width: 24%">Threat Level</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% if attack_list %}
-                                        {% for attack in attack_list %}
-                                            <tr id = "{% if attack.score > 500 %}high{% else %}{% if attack.score > 100 %}medium{% else %}low{% endif %}{% endif %}">
-                                                <td id = "idCol">{{ attack.id }}</td>
-                                                <td id = "timeCol">{{ attack.start_time }}</td>
-                                                <td id = "sourceCol">{{ attack.source_ip }}</td>
-                                                <td id = "typeCol">{{ attack.attack_type }}</td>
-                                                <td id = "scoreCol">{{ attack.score }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    {% else %}
-                                        <tr>
-                                            <td>No attacks found</td>
-                                        </tr>
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <!--Traffic Analysis tab contents-->
-                        <div class = "tab-pane" id = "traffic">
-                            <h2>Coming soon</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
+{% block bottom_row %}
+    <!--Tabs-->
+    <ul class = "nav nav-tabs">
+        <li class = "active">
+            <a href = "#attacks" data-toggle = "tab">Attacks</a>
+        </li>
+        <li>
+            <a href = "#traffic" data-toggle = "tab">Traffic Analysis</a>
+        </li>
+    </ul>
+    
+    <!--Tab contents-->
+    <div class = "tab-content">
+        <!--Attacks tab contents-->
+        <div class = "tab-pane active" id = "attacks">
+            <table id = "main_table" class = "table sortable">
+                <thead>
+                    <tr>
+                        <th style = "width: 4%">ID</th>
+                        <th style = "width: 24%">Time</th>
+                        <th style = "width: 24%">Source IP</th>
+                        <th style = "width: 24%">Attack Type</th>
+                        <th style = "width: 24%">Threat Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if attack_list %}
+                        {% for attack in attack_list %}
+                            <tr id = "{% if attack.score > 500 %}high{% else %}{% if attack.score > 100 %}medium{% else %}low{% endif %}{% endif %}">
+                                <td id = "idCol">{{ attack.id }}</td>
+                                <td id = "timeCol">{{ attack.start_time }}</td>
+                                <td id = "sourceCol">{{ attack.source_ip }}</td>
+                                <td id = "typeCol">{{ attack.attack_type }}</td>
+                                <td id = "scoreCol">{{ attack.score }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td>No attacks found</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
+        
+        <!--Traffic Analysis tab contents-->
+        <div class = "tab-pane" id = "traffic">
+            <h2>Coming soon</h2>
+        </div>
+    </div>
+{% endblock %}
 
-        <!-- Le javascript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/jquery.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-transition.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-alert.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-modal.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-dropdown.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-scrollspy.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-tab.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-tooltip.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-popover.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-button.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-collapse.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-carousel.js"></script>
-        <script src="{{ STATIC_URL }}twitter-bootstrap/docs/assets/js/bootstrap-typeahead.js"></script>
+{% block javascript %}
+    <!-- For flot-->
+    <script src="{{ STATIC_URL }}flot/jquery.flot.js"></script>
+    <script src="{{ STATIC_URL }}flot/jquery.flot.resize.js"></script>
+    
+    <!-- temporary, until we move past django objects
+    <script src="{{ STATIC_URL }}js/index.js"></script>
+    -->
+    
+    <script>
+        $(function () {
+            var d1 = [];
+            for (var i = 0; i < 14; i += 0.5)
+                d1.push([i, Math.sin(i)]);
 
-        <!-- for sortable table -->
-        <script src="{{ STATIC_URL }}/sorttable.js"></script>
+            var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
 
-        <!-- For flot-->
-        <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}flot/jquery.flot.js"></script>
-        <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}flot/jquery.flot.resize.js"></script>
+            // a null signifies separate line segments
+            var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
 
-        <script type="text/javascript">
-            $(function () {
-                var d1 = [];
-                for (var i = 0; i < 14; i += 0.5)
-                    d1.push([i, Math.sin(i)]);
+            var placeholder = $("#placeholder");
+            
+            var plot = $.plot(placeholder, [d1, d2, d3]);
 
-                var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
+            placeholder.resize(function () {
+            });
+        });
 
-                // a null signifies separate line segments
-                var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-
-                var placeholder = $("#placeholder");
+        //Function that handles clicking of rows on attack table
+        $(document).ready(function() {
+            $('#main_table td').click(function(event) {
+                var aid = $(this).parent().children('#idCol').text();
                 
-                var plot = $.plot(placeholder, [d1, d2, d3]);
-
-                placeholder.resize(function () {
-                });
+                {% for attack in attack_list %}
+                    if(aid == {{ attack.id }}){
+                        $('#type').text('{{ attack.attack_type }}');
+                        $('#start').text('{{ attack.start_time }}');
+                        $('#end').text('{{ attack.end_time }}');
+                        $('#source').text('{{ attack.source_ip }}');
+                        $('#dest').text('{{ attack.destination_ip }}');
+                        $('#score').text('{{ attack.score }}');
+                    }
+                {% endfor %}
+                
+                $('#attack_button').attr('href', 'attack/' + aid);
             });
-
-            //Function that handles clicking of rows on attack table
-            $(document).ready(function() {
-                $('#attackTable td').click(function(event) {
-                    var aid = $(this).parent().children('#idCol').text();
-                    
-                    {% for attack in attack_list %}
-                        if(aid == {{ attack.id }}){
-                            $('#type').text('{{ attack.attack_type }}');
-                            $('#start').text('{{ attack.start_time }}');
-                            $('#end').text('{{ attack.end_time }}');
-                            $('#source').text('{{ attack.source_ip }}');
-                            $('#dest').text('{{ attack.destination_ip }}');
-                            $('#score').text('{{ attack.score }}');
-                        }
-                    {% endfor %}
-                    
-                    $('#attack_button').attr('href', 'attack/' + aid);
-                });
-            });
-        </script>
-    </body>
-</html>
+        });
+    </script>
+{% endblock %}

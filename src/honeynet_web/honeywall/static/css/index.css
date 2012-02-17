@@ -1,0 +1,26 @@
+/*
+ *index.css
+ *
+ *for index.html, sets main table row colors according to threat level
+ *and associated hover colors
+ *
+ */
+
+#main_table tr#low {
+    background-color: #91ff7f;
+}
+#main_table tr#low:hover {
+    background-color: #39ff19;
+}
+#main_table tr#medium {
+    background-color: #ffff7f;
+}
+#main_table tr#medium:hover {
+    background-color: #ffff19;
+}
+#main_table tr#high {
+    background-color: #ff7f7f;
+}
+#main_table tr#high:hover {
+    background-color: #ff1919;
+}

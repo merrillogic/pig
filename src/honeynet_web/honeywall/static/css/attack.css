@@ -1,0 +1,15 @@
+/*
+ *attack.css
+ *
+ *for attack.html, removes background color from payload well and
+ *sets main table hover color to gray
+ *
+ */
+
+.well#payload{
+    background-color:#FFFFFF;
+}
+
+#main_table tr:hover {
+    background-color: #c0c0c0;
+}
