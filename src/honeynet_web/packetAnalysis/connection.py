@@ -104,10 +104,11 @@ class Connection(object):
             functions.append([analyzer.processPackets, packets])
         # Runs the first item in the list (function) with the second item as 
         # the argument
-        workers = Pool(processes=len(functions)
+        workers = Pool(processes=len(functions))
         runFunction = lambda x: x[0](x[1])
         # Runs the function to run each analyzer on the packets.
         results = workers.map(runFunction, functions)
+        print "Results of running threaded analyzers:", results
         # Increments the attacksfoundcount for each True value in the results
         countAttacksFound += reduce(lambda x, y: int(x) + int(y), results)
     
