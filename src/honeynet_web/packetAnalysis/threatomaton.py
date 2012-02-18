@@ -255,7 +255,7 @@ class Threatomaton(object):
         """ Mark the packet in the DB with the current Attack object's ID
         """
         if self.DEBUG: return
-        packet.attack = self.attack
+        packet.attacks.append(self.attack)
         packet.save()
 
 
