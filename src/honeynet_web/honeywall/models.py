@@ -61,7 +61,7 @@ class Packet(models.Model):
     # protocol can be 0-255
     protocol = models.IntegerField(null=True, blank=True)
 
-    attack = models.ForeignKey(Attack, null=True, blank=True)
+    attack = models.ManytoMany(Attack, null=True, blank=True)
     classification_time = models.DateTimeField(auto_now_add=False, blank=True, null=True)
 
     # store payload as encoded data
