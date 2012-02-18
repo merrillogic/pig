@@ -137,7 +137,7 @@ class Threatomaton(object):
         src.addTransition(trans)
 
 
-    def processPackets(self, packets):
+    def processPackets(self, packets, results=None):
         """ Check if the automaton has timed out and then feed each packet into
         self.processPacket;
 
@@ -146,6 +146,7 @@ class Threatomaton(object):
         """
         # flag a timeout if we have had an attack and the time since its last
         # packet seen is more than the timeout value
+        print self.attackType, "is starting"
         timeoutFlag = False
         if self.lastAttackTime:
             if len(packets):
@@ -170,6 +171,7 @@ class Threatomaton(object):
             i += 1
             #if i % 100 == 0: print "packet ", i
             self.processPacket(packet)
+        print self.attackType, "is finishing"
 
         # if we had flagged a timeout and the packets just processed did not
         # start an attack, then let the parent Connection know this is inactive
@@ -178,6 +180,8 @@ class Threatomaton(object):
 
         # if we detected an attack, let the Connection know
         if self.attack:
+            if results != None:
+                results.append(1)
             return True
 
 
