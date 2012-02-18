@@ -29,7 +29,7 @@ class Attack(models.Model):
                         ( 'mitm', 'Man in the Middle' )
                      )
     attack_type = models.CharField(max_length=4, choices=ATTACK_CHOICES)
-    false_positive = models.NullBooleanField()
+    false_positive = models.BooleanField(default=False)
 
     class Meta:
         # order newest first -- but by what measure?
@@ -61,7 +61,7 @@ class Packet(models.Model):
     # protocol can be 0-255
     protocol = models.IntegerField(null=True, blank=True)
 
-    attack = models.ManytoMany(Attack, null=True, blank=True)
+    attacks = models.ManytoMany(Attack, null=True, blank=True)
     classification_time = models.DateTimeField(auto_now_add=False, blank=True, null=True)
 
     # store payload as encoded data
