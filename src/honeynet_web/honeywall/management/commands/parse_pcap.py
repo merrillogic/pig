@@ -33,6 +33,8 @@ class Command(BaseCommand):
         except IntegrityError:
             transaction.rollback()
             sys.stderr.write('ERROR: %s was already parsed.\n' %pcap_file)
+        finally:
+            print
 
 
     def handle(self, *args, **options):

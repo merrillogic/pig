@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+# i hate deprecation warnings so much.
+import warnings
+warnings.filterwarnings("ignore")
+
 from django.core.management import execute_manager
 import imp
 try:
