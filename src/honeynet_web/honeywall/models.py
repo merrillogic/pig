@@ -95,7 +95,6 @@ class Packet(models.Model):
               u"Time: "+unicode(self.time)+u'\n'+\
               u"Protocol: "+unicode(self.protocol)+u'\n'+\
               u"Payload: "+unicode(self.payload)+u'\n'+\
-              #Should this be self.attacks?                 
-              u"Attack: "+unicode(self.attack)+u'\n'+\
+              u"Attack: "+unicode(self.attacks)+u'\n'+\
               u"Classification time: "+unicode(self.classification_time)
         return out
