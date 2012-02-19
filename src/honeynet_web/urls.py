@@ -1,19 +1,21 @@
 from django.conf.urls.defaults import patterns, include, url
-
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from tastypie.api import Api
+from honeywall.api import AttackResource, PacketResource
+
 admin.autodiscover()
+
+v1_api = Api(api_name='v1')
+v1_api.register(AttackResource())
+v1_api.register(PacketResource())
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', 'honeywall.views.dashboard'),
-    url(r'^api/attack/(?P<attack_id>\d+)/$', 'honeywall.api.attack'),
-    url(r'^api/attack/(?P<attack_id>\d+)/packets/$', 'honeywall.api.attack_packets'),
-    url(r'^api/attacks/$', 'honeywall.api.attacks'),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    #url(r'^$', 'honeywall.views.dashboard'),
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+
+    # API!
+    (r'^api/', include(v1_api.urls)),
 )

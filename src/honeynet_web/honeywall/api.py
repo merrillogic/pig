@@ -1,43 +1,31 @@
-from datetime import datetime
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from annoying.decorators import ajax_request
+import base64
+from tastypie import fields
+from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from honeywall.models import Packet, Attack
-from honeywall.utils import packet_to_dict, attack_to_dict
 
-@ajax_request
-def attack(request, attack_id):
-    if not request.method == 'GET':
-        return HttpResponse(status=405)
+class AttackResource(ModelResource):
+    packets = fields.ManyToManyField('honeywall.api.PacketResource', 'packet_set')
 
-    a = get_object_or_404(Attack, pk=attack_id)
-    return attack_to_dict(a)
+    class Meta:
+        queryset = Attack.objects.all()
+        resource_name = 'attack'
+        #includes = []
+        #filtering = {
+        #}
 
 
-@ajax_request
-def attack_packets(request, attack_id):
-    if not request.method == 'GET':
-        return HttpResponse(status=405)
+class PacketResource(ModelResource):
+    attacks = fields.ManyToManyField('honeywall.api.AttackResource', 'attacks')
 
-    a = get_object_or_404(Attack, pk=attack_id)
-    packets = Packet.objects.filter(attack=a).order_by('time')
+    class Meta:
+        queryset = Packet.objects.all()
+        resource_name = 'packet'
+        filtering = {
+            'attack': ALL_WITH_RELATIONS,
+        }
 
-    return [packet_to_dict(p) for p in packets]
+    #def dehydrate(self, bundle):
+        #bundle.data['payload'] = base64.decodestring(bundle.data['_payload'])
+        #del bundle.data['_payload']
 
-@ajax_request
-def attacks(request):
-    if not request.method == 'GET':
-        return HttpResponse(status=405)
-
-    since = request.GET.get('since')
-    if since:
-        try:
-            since = int(since)
-        except (ValueError, TypeError):
-            since = None
-
-    query = Attack.objects.all()
-    if since:
-        query = query.filter(start_time__gt=datetime.utcfromtimestamp(since))
-
-    return [attack_to_dict(a) for a in attacks]
+        #return bundle
