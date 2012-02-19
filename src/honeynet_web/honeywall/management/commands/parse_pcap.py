@@ -1,7 +1,8 @@
 from cProfile import Profile
 from optparse import make_option
+import sys
 from django.core.management.base import BaseCommand
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from honeynet_web.honeywall.models import Packet
 from Packeteer import PacketReader
 
@@ -20,13 +21,21 @@ class Command(BaseCommand):
     @transaction.commit_manually
     def _handle(self, *args, **options):
         pcap_file = args[0]
+        print 'Parsing %s' %pcap_file
         pcap = PacketReader(pcap_file)
 
-        for packet in pcap:
-            p = Packet(**packet)
-            p.save()
+        try:
+            for packet in pcap:
+                p = Packet(**packet)
+                p.save()
+            transaction.commit()
+            print '%s parsed successfully.' %pcap_file
+        except IntegrityError:
+            transaction.rollback()
+            sys.stderr.write('ERROR: %s was already parsed.\n' %pcap_file)
+        finally:
+            print
 
-        transaction.commit()
 
     def handle(self, *args, **options):
         if options['profile']:
