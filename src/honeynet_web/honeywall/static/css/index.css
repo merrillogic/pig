@@ -6,17 +6,23 @@
  *
  */
 
+#main_table tr#none{
+    background-color: #ffffff;
+}
+#main_table tr#none:hover{
+    background-color: #c0c0c0;
+}
 #main_table tr#low {
-    background-color: #91ff7f;
-}
-#main_table tr#low:hover {
-    background-color: #39ff19;
-}
-#main_table tr#medium {
     background-color: #ffff7f;
 }
+#main_table tr#low:hover {
+    background-color: #ffcc00;
+}
+#main_table tr#medium {
+    background-color: #ffcc66;
+}
 #main_table tr#medium:hover {
-    background-color: #ffff19;
+    background-color: #ff6600;
 }
 #main_table tr#high {
     background-color: #ff7f7f;

@@ -43,7 +43,7 @@
                     <tr>
                         <td></td>
                         <td>
-                            <input id = "falsePositive" type = "checkbox" /> False Positive
+                            <input id = "falsePositive" type = "checkbox" {% if attack.false_positive %}checked = "yes"{% endif %}/> False Positive
                         </td>
                     </tr>
                 </tbody>

@@ -54,7 +54,7 @@
         <!--Button to go to attack packets-->
         <div class = "row">
             <div class = "btn-group">
-                <a class = "btn" id = "attack_button" href = "attack/">see attack packets</a>
+                <a class = "btn" id = "attack_button">see attack packets</a>
             </div>
         </div>
     </div>
@@ -88,7 +88,15 @@
                 <tbody>
                     {% if attack_list %}
                         {% for attack in attack_list %}
-                            <tr id = "{% if attack.score > 500 %}high{% else %}{% if attack.score > 100 %}medium{% else %}low{% endif %}{% endif %}">
+                            <tr id = {% if attack.false_positive %}
+                                         "none"
+                                     {% else %}{% if attack.score > 500 %}
+                                         "high"
+                                     {% else %}{% if attack.score > 100 %}
+                                         "medium"
+                                     {% else %}
+                                         "low"
+                                     {% endif %}{% endif %}{% endif %}>
                                 <td id = "idCol">{{ attack.id }}</td>
                                 <td id = "timeCol">{{ attack.start_time }}</td>
                                 <td id = "sourceCol">{{ attack.source_ip }}</td>
@@ -123,18 +131,29 @@
     
     <script>
         $(function () {
-            var d1 = [];
-            for (var i = 0; i < 14; i += 0.5)
-                d1.push([i, Math.sin(i)]);
-
-            var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
-
-            // a null signifies separate line segments
-            var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
+            var all_packets = {
+                color: '#000000',
+                data: [[0, 53], [1, 48], [2, 55], [3, 44], [4, 58], [5, 54]],
+                label: 'all'
+            };
+            var low_threat = {
+                color: '#ffcc00',
+                data: [[0, 20], [1, 21], [2, 23], [3, 19], [4, 33], [5, 28]],
+                label: 'low threat'
+            };
+            var medium_threat = {
+                color: '#ff6600',
+                data: [[0, 5], [1, 7], [2, 6], [3, 10], [4, 9], [5, 4]],
+                label: 'medium threat'
+            };
+            var high_threat = {
+                color: '#ff1919',
+                data: [[0, 0], [1, 0], [2, 2], [3, 15], [4, 16], [5, 22]],
+                label: 'high threat'
+            };
 
             var placeholder = $("#placeholder");
-            
-            var plot = $.plot(placeholder, [d1, d2, d3]);
+            var plot = $.plot(placeholder, [all_packets, low_threat, medium_threat, high_threat]);
 
             placeholder.resize(function () {
             });
