@@ -77,7 +77,7 @@ class Threatomaton(object):
         self.nodes = []
         self.nodeMap = {}
         self.attackPackets = []
-        
+
         self.curState = self.SAFE
         startNode = Node(self.SAFE)
 
@@ -154,7 +154,7 @@ class Threatomaton(object):
                 self.noPacketTime = None
             elif not self.noPackets:
                 self.noPackets = True
-                self.noPacketTime = datetime.now() 
+                self.noPacketTime = datetime.now()
                 timeElapsed = timedelta()
             elif self.noPackets:
                 timeElapsed = datetime.now() - self.noPacketTime
@@ -213,11 +213,11 @@ class Threatomaton(object):
             self.reset(packet.time)
         # Otherwise, store update attack data
         else:
-            self.lastAttackTime = packet.time 
+            self.lastAttackTime = packet.time
             self.attackPackets.append(packet)
             # if moved from self.SAFE state, attack may have started, so flag it
             if prevState == self.SAFE and prevState != self.curState:
-                self.lastAttackStart = packet.time 
+                self.lastAttackStart = packet.time
             # if moved from self.PRELIM to self.THREAT, confirms that this is an
             # attack, so create an attack object and mark all stored packets
             # with its ID
@@ -255,7 +255,7 @@ class Threatomaton(object):
         """ Mark the packet in the DB with the current Attack object's ID
         """
         if self.DEBUG: return
-        packet.attacks.append(self.attack)
+        packet.attacks.add(self.attack)
         packet.save()
 
 
