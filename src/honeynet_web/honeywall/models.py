@@ -34,7 +34,7 @@ class Attack(models.Model):
     class Meta:
         # order newest first -- but by what measure?
         #ordering = ['-time']
-        pass
+        unique_together = ('time', 'source_ip', 'attack_type')
 
     def __str__(self):
         out = "Attack type: "+str(self.attack_type)+'\n'+\
