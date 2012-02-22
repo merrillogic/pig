@@ -201,7 +201,11 @@ class Threatomaton(object):
             
             # actually process the packets
             while (not packetQueue.empty()):
-                self.processPacket(packetQueue.get())
+                try:
+                    self.processPacket(packetQueue.get())
+                except Error, e:
+                    print "bamdiddly", e
+                    exit()
     
             # if we had flagged a timeout and the packets just processed did not
             # start an attack, then let the parent Connection know this is inactive
