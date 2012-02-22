@@ -23,10 +23,10 @@ class DOSAnalyzer(AttackAnalyzer):
     attackType = 'dos'
 
     def addAttackProfile(self):
-        for i in range(50):
+        for i in range(190):
             funct = lambda x: True
-            self.addPrelimNode(21)
+            self.addPrelimNode(5.1)
             self.addTransition(i, i+1, 1, [funct])
-        threat = self.addThreatNode(21)
+        threat = self.addThreatNode(5.1)
         self.addTransition(i+1, threat, 1, [funct])
         self.addTransition(threat, threat, 1, [funct])
