@@ -23,7 +23,7 @@ class AttackProcess(object):
         # boolean, so it's just 0 or 1 in an unsigned char.
         self.status = Value('b', 1)
         self.lock = Lock()
-        self.process = new Process(target=analyzer.processPackets, 
+        self.process = Process(target=analyzer.processPackets, 
                                     args=(self.queue, self.analyzerConnection, self.status,
                                             self.lock),
                                     name=(self.src + '->' + self.dest + ':' + analyzer.attackType))
