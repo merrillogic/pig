@@ -215,7 +215,7 @@ class Threatomaton(object):
             if self.attack:
                 status.value = 1
             
-            self.checkStop()
+            self.checkStop(connection)
         
 
 
