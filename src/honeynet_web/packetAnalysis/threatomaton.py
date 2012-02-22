@@ -170,11 +170,10 @@ class Threatomaton(object):
         # buffer any packets. Oh, before I buffer packets! Then if processor finishes quickly, it's 
         # okay.
         # SOLVED^ Just added a lock around necessary parts.
-
+        print self.attackType, "is starting"
         while ((self.stop == False) or (not packetQueue.empty())):
             # flag a timeout if we have had an attack and the time since its last
             # packet seen is more than the timeout value
-            print self.attackType, "is starting"
             timeoutFlag = False
             firstPacket = None
             if self.lastAttackTime:
@@ -202,13 +201,13 @@ class Threatomaton(object):
             # actually process the packets
             while (not packetQueue.empty()):
                 self.processPacket(packetQueue.get())
-            print self.attackType, "is finishing"
     
             # if we had flagged a timeout and the packets just processed did not
             # start an attack, then let the parent Connection know this is inactive
             lock.acquire()
             if timeoutFlag and not self.lastAttackStart and self.packetQueue.empty():
                 status.value = 0
+                print self.attackType, "is timing out or something"
             lock.release()
     
             # if we detected an attack, let the Connection know

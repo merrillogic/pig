@@ -16,17 +16,17 @@ from analyzers.all import *
 from multiprocessing import Process, Queue, Pipe, Value, Lock
 
 class AttackProcess(object):
-    def __init__(self, analyzer):
+    def __init__(self, analyzer, src, dest):
         self.pipe, analyzerConnection = Pipe()
-        self.queue = Queue.Queue()
+        self.queue = Queue()
         # status represents whether or not the analyzer has timed out. There's not a way to do a 
         # boolean, so it's just 0 or 1 in an unsigned char.
         self.status = Value('b', 1)
         self.lock = Lock()
         self.process = Process(target=analyzer.processPackets, 
-                                    args=(self.queue, self.analyzerConnection, self.status,
+                                    args=(self.queue, analyzerConnection, self.status,
                                             self.lock),
-                                    name=(self.src + '->' + self.dest + ':' + analyzer.attackType))
+                                    name=(src + '->' + dest + ':' + analyzer.attackType))
         self.process.start()
         
     def queuePacket(self, packet):
@@ -102,7 +102,7 @@ class Connection(object):
         # Initialize our processes
         self.processes = []
         for analyzer in self.analyzers:
-            self.processes.append(AttackProcess(analyzer))
+            self.processes.append(AttackProcess(analyzer, self.src, self.dest))
 
     def bufferPacket(self, packet):
         """ Add a packet to this Connection's packet buffer
