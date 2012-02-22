@@ -1,10 +1,24 @@
-import base64
+#import base64
+from django.core.urlresolvers import reverse
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from honeywall.models import Packet, Attack
 
 class AttackResource(ModelResource):
-    packets = fields.ManyToManyField('honeywall.api.PacketResource', 'packet_set')
+
+    def dehydrate(self, bundle):
+        url = reverse('api_dispatch_list', kwargs={'resource_name': 'packet',
+                                                   'api_name': 'v1',
+                                                   })
+        if '?' in url:
+            url += '&'
+        else:
+            url += '?'
+        url += 'attack=' + bundle.data['id']
+
+        bundle.data['packets'] = url
+
+        return bundle
 
     class Meta:
         queryset = Attack.objects.all()
@@ -15,7 +29,7 @@ class AttackResource(ModelResource):
 
 
 class PacketResource(ModelResource):
-    attacks = fields.ManyToManyField('honeywall.api.AttackResource', 'attacks')
+    attacks = fields.ToManyField('honeywall.api.AttackResource', 'attacks', 'packet')
 
     class Meta:
         queryset = Packet.objects.all()
@@ -23,9 +37,18 @@ class PacketResource(ModelResource):
         filtering = {
             'attacks': ALL_WITH_RELATIONS,
         }
+        allowed_methods=['get']
 
-    #def dehydrate(self, bundle):
-        #bundle.data['payload'] = base64.decodestring(bundle.data['_payload'])
-        #del bundle.data['_payload']
+    def build_filters(self, filters=None):
+        if filters is None:
+            filters = {}
+        print filters
 
-        #return bundle
+        orm_filters = super(PacketResource, self).build_filters(filters)
+
+        if 'attack' in filters:
+            a = int(filters['attack'])
+            orm_filters={'attacks__in': [a]}
+
+        return orm_filters
+
