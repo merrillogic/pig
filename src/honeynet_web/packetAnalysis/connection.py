@@ -37,7 +37,7 @@ class AttackProcess(object):
         self.lock.release()
         
     def killConnection(self):
-        self.pipe.send(packet)
+        self.pipe.send(False)
         self.process.join()
     
     def getMessage(self):

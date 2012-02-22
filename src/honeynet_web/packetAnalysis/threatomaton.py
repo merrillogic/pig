@@ -61,7 +61,8 @@ class Threatomaton(object):
     noPackets = False
     noPacketTime = None
 
-    # Marker for when to stop processing and terminate the process
+    # Marker for when to stop processing and terminate the process. Should never be set to false
+    # except here in initiation.
     stop = False
     
     # debug mode flag (prints attack data instead of saving to DB)
@@ -213,6 +214,8 @@ class Threatomaton(object):
             # if we detected an attack, let the Connection know
             if self.attack:
                 status.value = 1
+            
+            self.checkStop()
         
 
 
