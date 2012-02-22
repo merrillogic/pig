@@ -21,7 +21,7 @@ class PacketResource(ModelResource):
         queryset = Packet.objects.all()
         resource_name = 'packet'
         filtering = {
-            'attack': ALL_WITH_RELATIONS,
+            'attacks': ALL_WITH_RELATIONS,
         }
 
     #def dehydrate(self, bundle):
