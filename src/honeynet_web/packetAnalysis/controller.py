@@ -46,7 +46,7 @@ class Controller(object):
         deadCons = []
         for connectionID in self.connections:
             connection = self.connections[connectionID]
-            result = connection.analyzePackets()
+            result = connection.isActive()
             if result == False: # If the connection returns false, it will have
                                 # already stored everything it needs to in the
                                 # database, so it's safe to mark for deletion.

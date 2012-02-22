@@ -13,7 +13,44 @@ Public methods:
 # import the attack analyzers
 from analyzers.all import *
 #import multiprocessing library
-from multiprocessing import Process
+from multiprocessing import Process, Queue, Pipe, Value, Lock
+
+class AttackProcess(object):
+    def __init__(self, analyzer):
+        self.pipe, analyzerConnection = Pipe()
+        self.queue = Queue.Queue()
+        # status represents whether or not the analyzer has timed out. There's not a way to do a 
+        # boolean, so it's just 0 or 1 in an unsigned char.
+        self.status = Value('b', 1)
+        self.lock = Lock()
+        self.process = new Process(target=analyzer.processPackets, 
+                                    args=(self.queue, self.analyzerConnection, self.status,
+                                            self.lock),
+                                    name=(self.src + '->' + self.dest + ':' + analyzer.attackType))
+        self.process.start()
+        
+    def queuePacket(self, packet):
+        #Lock to prevent race condition with checking dead connection and adding packets.
+        self.lock.acquire()
+        self.status = 1
+        self.queue.put(packet)
+        self.lock.release()
+        
+    def killConnection(self):
+        self.pipe.send(packet)
+        self.process.join()
+    
+    def getMessage(self):
+        if self.pipe.poll():
+            return self.pipe.recv()
+        else:
+            return None
+            
+    def setAlive(self):
+        self.status = 1
+            
+    def checkForAttacks(self):
+        return self.status
 
 class Connection(object):
 
@@ -43,12 +80,10 @@ class Connection(object):
         self.src = src
         self.dest = dest
         
-        # Initialize our unique packet buffer and analyzer lists
+        # Initialize our unique analyzer list
         self.analyzers = []
-        self.packetBuffer = []
 
         # Initialize all of our AttackAnalyzers
-
         sqlinj = SQLInjectionAnalyzer(src, dest)
         self.analyzers.append(sqlinj)
 
@@ -63,15 +98,20 @@ class Connection(object):
 
         mitm = MitMAnalyzer(src, dest)
         self.analyzers.append(mitm)
+        
+        # Initialize our processes
+        self.processes = []
+        for analyzer in self.analyzers:
+            self.processes.append(AttackProcess(analyzer))
 
     def bufferPacket(self, packet):
         """ Add a packet to this Connection's packet buffer
         @param packet - The Packet object to add to the buffer
         """
-        self.packetBuffer.append(packet)
+        for process in self.processes:
+            process.queuePacket(packet)
 
-
-    def analyzePackets(self):
+    def isActive(self):
         """ Run attack analysis on all packets contained in this instance's
         packet buffer
 
@@ -79,48 +119,24 @@ class Connection(object):
                 if this Connection instance has seen no activity and can be
                 garbage-collected
         """
-        # To avoid overhead, only actually analyze the packets if there is a
-        # large enough packet set buffered, or if this has been called a couple
-        # times in a row
-        if len(self.packetBuffer) < self.minBufferSize:
-            if not self.analysisFlag:
-                self.analysisFlag = True
-                return
-
-        # Run all the attack analyses
-        countAttacksFound = 0   # The number of analyzers that returned a
-                                # positive result
-
-        # make a static copy of the packet buffer before we enter into threaded
-        # analyses
-        packetBufferCopy = self.packetBuffer[:]
-        # and de-buffer the packets we have copied for analysis
-        self.packetBuffer = self.packetBuffer[len(packetBufferCopy):]
-        # ANALYZE DAT SHIT
-
-        # Multiprocessed version. Messy.
-        functions = []
-        for analyzer in self.analyzers:
-            functions.append([analyzer, packetBufferCopy])
-        # Runs the first item in the list (function) with the second item as 
-        # the argument
         results = []
-        processes = []
-        # Runs the function to run each analyzer on the packets.
-        for analyzer in self.analyzers:
-            process = Process(target=analyzer.processPackets,
-                                    args=(packetBufferCopy, results),
-                                    name=analyzer.attackType)
-            process.start()
-            processes.append(process)
-        for process in processes:
-            process.join()
+        for process in self.processes:
+            results.append(process.checkForAttacks())
         print "Results of running threaded analyzers:", results
-        # Increments the attacksfoundcount for each True value in the results
-        countAttacksFound += sum(results)
-    
+
         # If all the attacks timed out, let the caller know that this
         # Connection is no longer necessary
-        if not countAttacksFound:
+        if sum(results) == 0:
             print "No attacks found"
             return False
+        else:
+            return None
+            
+    def killConnection(self):
+        """
+        Tells all the analyzers to finish processing what they have and then return.
+        This cleans up those processes, joining them back into this one, making it safe to delete
+        the connection without orphaning any processes.
+        """
+        for process in self.processes:
+            process.killConnection()

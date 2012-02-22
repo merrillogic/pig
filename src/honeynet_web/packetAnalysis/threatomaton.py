@@ -61,6 +61,9 @@ class Threatomaton(object):
     noPackets = False
     noPacketTime = None
 
+    # Marker for when to stop processing and terminate the process
+    stop = False
+    
     # debug mode flag (prints attack data instead of saving to DB)
     DEBUG = False
 
@@ -136,53 +139,82 @@ class Threatomaton(object):
         src = self.nodes[source]
         src.addTransition(trans)
 
-
-    def processPackets(self, packets, results=None):
-        """ Check if the automaton has timed out and then feed each packet into
-        self.processPacket;
-
-        @param packets - List of Packet objects to process
-        @return - False if timed out, None otherwise
+    def checkStop(self, connection):
         """
-        # flag a timeout if we have had an attack and the time since its last
-        # packet seen is more than the timeout value
-        print self.attackType, "is starting"
-        timeoutFlag = False
-        if self.lastAttackTime:
-            if len(packets):
-                timeElapsed = packets[0].time - self.lastAttackTime
-                self.noPackets = False
-                self.noPacketTime = None
-            elif not self.noPackets:
-                self.noPackets = True
-                self.noPacketTime = datetime.now() 
-                timeElapsed = timedelta()
-            elif self.noPackets:
-                timeElapsed = datetime.now() - self.noPacketTime
-            if (timeElapsed > self.curNode.timeout):
-                print "Timed out! AW SHIT YO"
-                self.reset(self.lastAttackTime)
-                # flag that this timed out
-                timeoutFlag = True
+        Checks the connection to see if True has been sent. If True has been sent, flags the
+        process to stop.
+        
+        @param connection - Connection object to check
+        """
+        if connection.poll():
+            val = connection.recv()
+            if val == True:
+                self.stop = True
 
-        # actually process the packets
-        i=0
-        for packet in packets:
-            i += 1
-            #if i % 100 == 0: print "packet ", i
-            self.processPacket(packet)
-        print self.attackType, "is finishing"
+    def processPackets(self, packetQueue, connection, status, lock):
+        """ Continually check if the automaton has timed out and then feed each packet from
+        the queue into self.processPacket; Exits if told to stop.
+        
+        @param packets - List of Packet objects to process
+        """
 
-        # if we had flagged a timeout and the packets just processed did not
-        # start an attack, then let the parent Connection know this is inactive
-        if timeoutFlag and not self.lastAttackStart:
-            return False
+        #MIGHT NEED TO RESTRUCTURE THIS. Worried about the method of sending true/false back.
+        # Should I just send it back when there are no more input packets?
+        # Maybe... If I keep this system, I need a way of not insta-timing out in connection,
+        # probably
+        #might need to check each packet for timeout, since it looks like that could be happening...
+        
+        #WARNING: Timeout need to be changed a bit. We need to be sure to never have status=0 if 
+        # there are packets remaining to be processed. Maybe set it at the beginning OH NO A RACE
+        # CONDITION. I THINK I NEED TO SOLVE IT IN CONNECTION. Like, set status to 1 as soon as I 
+        # buffer any packets. Oh, before I buffer packets! Then if processor finishes quickly, it's 
+        # okay.
+        # SOLVED^ Just added a lock around necessary parts.
 
-        # if we detected an attack, let the Connection know
-        if self.attack:
-            if results != None:
-                results.append(1)
-            return True
+        while ((self.stop == False) or (not packetQueue.empty()):
+            # flag a timeout if we have had an attack and the time since its last
+            # packet seen is more than the timeout value
+            print self.attackType, "is starting"
+            timeoutFlag = False
+            firstPacket = None
+            if self.lastAttackTime:
+                if not packetQueue.empty():
+                    firstPacket = packetQueue.get()
+                    timeElapsed = firstPacket.time - self.lastAttackTime
+                    self.noPackets = False
+                    self.noPacketTime = None
+                elif not self.noPackets:
+                    self.noPackets = True
+                    self.noPacketTime = datetime.now() 
+                    timeElapsed = timedelta()
+                elif self.noPackets:
+                    timeElapsed = datetime.now() - self.noPacketTime
+                if (timeElapsed > self.curNode.timeout):
+                    print "Timed out! AW SHIT YO"
+                    self.reset(self.lastAttackTime)
+                    # flag that this timed out
+                    timeoutFlag = True
+    
+            # if it exists, process the first packet
+            if firstPacket:
+                self.processPacket(firstPacket)
+            
+            # actually process the packets
+            while (not packetQueue.empty())
+                self.processPacket(packetQueue.get())
+            print self.attackType, "is finishing"
+    
+            # if we had flagged a timeout and the packets just processed did not
+            # start an attack, then let the parent Connection know this is inactive
+            lock.acquire()
+            if timeoutFlag and not self.lastAttackStart and self.packetQueue.empty():
+                status.value = 0
+            lock.release()
+    
+            # if we detected an attack, let the Connection know
+            if self.attack:
+                status.value = 1
+        
 
 
     def processPacket(self, packet):
