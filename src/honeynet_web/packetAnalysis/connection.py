@@ -32,14 +32,15 @@ class AttackProcess(object):
     def queuePacket(self, packet):
         #Lock to prevent race condition with checking dead connection and adding packets.
         self.lock.acquire()
-        self.status = 1
-        print "vvvvvvvvvvvvvvvvvvvvvvv"
+        self.status.value = 1
         try:
             self.queue.put(packet)
         except PicklingError, e:
             print "NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
             exit()
-        print "^^^^^^^^^^^^^^^^^^^^^^^"
+        except Error, e:
+            print "MAAAAAAYBE"
+            exit()
         self.lock.release()
         
     def killConnection(self):
@@ -53,10 +54,10 @@ class AttackProcess(object):
             return None
             
     def setAlive(self):
-        self.status = 1
+        self.status.value = 1
             
     def checkForAttacks(self):
-        return self.status
+        return self.status.value
 
 class Connection(object):
 
