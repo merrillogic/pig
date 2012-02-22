@@ -18,6 +18,7 @@ Private methods:
 - reset()
 
 """
+from django.db import transaction
 from datetime import datetime, timedelta
 
 from honeynet_web.honeywall.models import Attack
@@ -137,6 +138,7 @@ class Threatomaton(object):
         src.addTransition(trans)
 
 
+    @transaction.commit_manually
     def processPackets(self, packets):
         """ Check if the automaton has timed out and then feed each packet into
         self.processPacket;
@@ -170,6 +172,8 @@ class Threatomaton(object):
             i += 1
             #if i % 100 == 0: print "packet ", i
             self.processPacket(packet)
+
+        transaction.commit()
 
         # if we had flagged a timeout and the packets just processed did not
         # start an attack, then let the parent Connection know this is inactive
