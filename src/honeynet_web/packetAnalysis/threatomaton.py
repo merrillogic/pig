@@ -200,7 +200,7 @@ class Threatomaton(object):
                 self.processPacket(firstPacket)
             
             # actually process the packets
-            while (not packetQueue.empty())
+            while (not packetQueue.empty()):
                 self.processPacket(packetQueue.get())
             print self.attackType, "is finishing"
     
