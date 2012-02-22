@@ -38,6 +38,7 @@ class AttackProcess(object):
             self.queue.put(packet)
         except PicklingError, e:
             print "NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
+            exit()
         print "^^^^^^^^^^^^^^^^^^^^^^^"
         self.lock.release()
         
