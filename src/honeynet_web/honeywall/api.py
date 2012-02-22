@@ -8,8 +8,7 @@ class AttackResource(ModelResource):
 
     def dehydrate(self, bundle):
         url = reverse('api_dispatch_list', kwargs={'resource_name': 'packet',
-                                                   'api_name': 'v1',
-                                                   })
+                                                   'api_name': 'v1',})
         if '?' in url:
             url += '&'
         else:
@@ -24,8 +23,16 @@ class AttackResource(ModelResource):
         queryset = Attack.objects.all()
         resource_name = 'attack'
         #includes = []
-        #filtering = {
-        #}
+        filtering = {
+                'attack_type': ALL,
+                'classification_time': ALL,
+                'destination_ip': ALL,
+                'end_time': ALL,
+                'false_positive': ALL,
+                'score': ALL,
+                'source_ip': ALL,
+                'start_time': ALL,
+        }
 
 
 class PacketResource(ModelResource):
