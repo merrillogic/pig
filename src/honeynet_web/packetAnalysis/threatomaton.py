@@ -171,7 +171,7 @@ class Threatomaton(object):
         # okay.
         # SOLVED^ Just added a lock around necessary parts.
 
-        while ((self.stop == False) or (not packetQueue.empty()):
+        while ((self.stop == False) or (not packetQueue.empty())):
             # flag a timeout if we have had an attack and the time since its last
             # packet seen is more than the timeout value
             print self.attackType, "is starting"
