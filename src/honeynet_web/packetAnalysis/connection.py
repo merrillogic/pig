@@ -33,7 +33,12 @@ class AttackProcess(object):
         #Lock to prevent race condition with checking dead connection and adding packets.
         self.lock.acquire()
         self.status = 1
-        self.queue.put(packet)
+        print "vvvvvvvvvvvvvvvvvvvvvvv"
+        try:
+            self.queue.put(packet)
+        except PicklingError, e:
+            print "NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
+        print "^^^^^^^^^^^^^^^^^^^^^^^"
         self.lock.release()
         
     def killConnection(self):
@@ -108,10 +113,8 @@ class Connection(object):
         """ Add a packet to this Connection's packet buffer
         @param packet - The Packet object to add to the buffer
         """
-        print "errors incoming"
         for process in self.processes:
             process.queuePacket(packet)
-        print "errors happened"
 
     def isActive(self):
         """ Run attack analysis on all packets contained in this instance's
