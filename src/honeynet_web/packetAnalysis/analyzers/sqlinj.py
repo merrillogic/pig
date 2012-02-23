@@ -17,16 +17,23 @@ Functions to use are:
 
 """
 from attackanalyzer import AttackAnalyzer
+from re import search
 
 class SQLInjectionAnalyzer(AttackAnalyzer):
 
     attackType = 'sql'
 
     def isQuery(self, packet):
-        if '?' in packet.payload:
+        if search('^GET.*?.*HTTP/\d\.\d', packet.payload):
             return True
         else:
             return False
+
+    def hasSQLComment(self, packet):
+        if search('^GET.*;--.*HTTP/\d\.\d', packet.payload):
+            return True
+        else:
+            return False 
 
     def addAttackProfile(self):
         numPrelims = 5
