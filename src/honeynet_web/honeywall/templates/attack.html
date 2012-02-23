@@ -12,38 +12,38 @@
                 <thead>
                     <tr>
                         <th>Attack Information</th>
-                        <th></th>
+                        <th id = "aid">{{ attack_id }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Type:</td>
-                        <td>{{ attack.attack_type }}</td>
+                        <td id = "type"></td>
                     </tr>
                     <tr>
                         <td>Start Time:</td>
-                        <td>{{ attack.start_time }}</td>
+                        <td id = "start"></td>
                     </tr>
                     <tr>
                         <td>End Time:</td>
-                        <td>{{ attack.end_time }}</td>
+                        <td id = "end"></td>
                     </tr>
                     <tr>
                         <td>Source IP:</td>
-                        <td>{{ attack.source_ip }}</td>
+                        <td id = "source"></td>
                     </tr>
                     <tr>
                         <td>Dest IP:</td>
-                        <td>{{ attack.destination_ip }}</td>
+                        <td id = "destination"></td>
                     </tr>
                     <tr>
                         <td>Threat Level:</td>
-                        <td>{{ attack.score }}</td>
+                        <td id = "level"></td>
                     </tr>
                     <tr>
                         <td></td>
                         <td>
-                            <input id = "falsePositive" type = "checkbox" {% if attack.false_positive %}checked = "yes"{% endif %}/> False Positive
+                            <input id = "falsePositive" type = "checkbox"/> False Positive
                         </td>
                     </tr>
                 </tbody>
@@ -75,46 +75,27 @@
                 <th style = "width: 5%">protocol</th>
             </tr>
         </thead>
-        <tbody>
-            {% if packet_list %}
-                {% for packet in packet_list %}
-                    <tr>
-                        <td id = "idCol">{{ packet.packet_id }}</td>
-                        <td id = "timeCol">{{ packet.time }}</td>
-                        <td id = "srcIpCol">{{ packet.source_ip }}</td>
-                        <td id = "srcMacCol">{{ packet.source_mac }}</td>
-                        <td id = "srcPortCol">{{ packet.source_port }}</td>
-                        <td id = "destIpCol">{{ packet.destination_ip }}</td>
-                        <td id = "destMacCol">{{ packet.destination_mac }}</td>
-                        <td id = "destPortCol">{{ packet.destination_port }}</td>
-                        <td id = "protocolCol">{{ packet.protocol }}</td>
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td>No packets found</td>
-                </tr>
-            {% endif %}
+        <tbody data-bind = "foreach: packets">
+            <tr>
+                <td id = "idCol" data-bind = "text: pid"></td>
+                <td id = "timeCol" data-bind = "text: time"></td>
+                <td id = "srcIpCol" data-bind = "text: srcIp"></td>
+                <td id = "srcMacCol" data-bind = "text: srcMac"></td>
+                <td id = "srcPortCol" data-bind = "text: srcPort"></td>
+                <td id = "destIpCol" data-bind = "text: destIp"></td>
+                <td id = "destMacCol" data-bind = "text: destMac"></td>
+                <td id = "destPortCol" data-bind = "text: destPort"></td>
+                <td id = "protocolCol" data-bind = "text: protocol"></td>
+            </tr>
         </tbody>
     </table>
 {% endblock %}
 
-{% block javascript %}
-    <!-- temporary, until we move past django objects
-    <script src="{{ STATIC_URL }}js/attack.js"></script>
-    -->
+{% block javascript %}    
+    <!-- For knockout -->
+    <script src = "{{ STATIC_URL }}js/knockout-2.0.0.js"></script>
     
-    <script>
-        $(document).ready(function() {
-            $('#main_table td').click(function(event) {
-                var pid = $(this).parent().children('#idCol').text();
-                
-                {% for packet in packet_list %}
-                    if(pid == {{ packet.id }}){
-                        $('#payload_info').text('{{ packet.payload }}');
-                    }
-                {% endfor %}
-            });
-        });
-    </script>
+    <!-- attack.js -->
+    <script src = "{{ STATIC_URL }}js/attack.js"></script>
+
 {% endblock %}

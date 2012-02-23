@@ -10,9 +10,9 @@ def index(request):
     return HttpResponse(t.render(c))
 
 def attack(request, attack_id):
-    selected_attack = get_object_or_404(Attack, id=attack_id)
-    packet_list = Packet.objects.filter(attacks__in = [selected_attack])
+    #selected_attack = get_object_or_404(Attack, id=attack_id)
+    #packet_list = Packet.objects.filter(attacks__in = [selected_attack])
     t = loader.get_template('attack.html')
-    c = RequestContext(request, {'packet_list': packet_list, 'attack': selected_attack,})
+    c = RequestContext(request, {'attack_id': attack_id,})
 
     return HttpResponse(t.render(c))

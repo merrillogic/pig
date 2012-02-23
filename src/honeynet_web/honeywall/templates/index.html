@@ -85,7 +85,7 @@
                         <th style = "width: 24%">Threat Level</th>
                     </tr>
                 </thead>
-                <tbody id = "main_body" data-bind = "foreach: attacks">
+                <tbody data-bind = "foreach: attacks">
                     <tr data-bind = "attr: { id: level }">
                         <td id = "aid" data-bind = "text: aid"></td>
                         <td id = "attack_type"data-bind = "text: attackType"></td>
