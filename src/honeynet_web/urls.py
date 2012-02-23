@@ -13,8 +13,8 @@ v1_api.register(ClassifyResource())
 urlpatterns = patterns('',
     # Examples:
     #url(r'^$', 'honeywall.views.dashboard'),
-    url(r'^honeywall/$', 'honeywall.views.index'),
-    url(r'^honeywall/attack/(?P<attack_id>\d+)$', 'honeywall.views.attack'),
+    url(r'^$', 'honeywall.views.index'),
+    url(r'^attack/(?P<attack_id>\d+)$', 'honeywall.views.attack'),
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
