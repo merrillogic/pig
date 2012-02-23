@@ -74,47 +74,31 @@
     <!--Tab contents-->
     <div class = "tab-content">
         <!--Attacks tab contents-->
-        <div class = "tab-pane active" id = "attacks">
+        <div class = "tab-pane active" id = "attack_tab">
             <table id = "main_table" class = "table sortable">
                 <thead>
                     <tr>
                         <th style = "width: 4%">ID</th>
+                        <th style = "width: 24%">Attack Type</th>
                         <th style = "width: 24%">Time</th>
                         <th style = "width: 24%">Source IP</th>
-                        <th style = "width: 24%">Attack Type</th>
                         <th style = "width: 24%">Threat Level</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% if attack_list %}
-                        {% for attack in attack_list %}
-                            <tr id = {% if attack.false_positive %}
-                                         "none"
-                                     {% else %}{% if attack.score > 500 %}
-                                         "high"
-                                     {% else %}{% if attack.score > 100 %}
-                                         "medium"
-                                     {% else %}
-                                         "low"
-                                     {% endif %}{% endif %}{% endif %}>
-                                <td id = "idCol">{{ attack.id }}</td>
-                                <td id = "timeCol">{{ attack.start_time }}</td>
-                                <td id = "sourceCol">{{ attack.source_ip }}</td>
-                                <td id = "typeCol">{{ attack.attack_type }}</td>
-                                <td id = "scoreCol">{{ attack.score }}</td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td>No attacks found</td>
-                        </tr>
-                    {% endif %}
+                <tbody id = "main_body" data-bind = "foreach: attacks">
+                    <tr data-bind = "attr: { id: level }">
+                        <td id = "aid" data-bind = "text: aid"></td>
+                        <td id = "attack_type"data-bind = "text: attackType"></td>
+                        <td id = "time" data-bind = "text: time"></td>
+                        <td id = "source_ip" data-bind = "text: sourceIp"></td>
+                        <td id = "threat_level" data-bind = "text: threatLevel"></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
         
         <!--Traffic Analysis tab contents-->
-        <div class = "tab-pane" id = "traffic">
+        <div class = "tab-pane" id = "traffic_analysis_tab">
             <h2>Coming soon</h2>
         </div>
     </div>
@@ -122,61 +106,12 @@
 
 {% block javascript %}
     <!-- For flot-->
-    <script src="{{ STATIC_URL }}flot/jquery.flot.js"></script>
-    <script src="{{ STATIC_URL }}flot/jquery.flot.resize.js"></script>
+    <script src = "{{ STATIC_URL }}flot/jquery.flot.js"></script>
+    <script src = "{{ STATIC_URL }}flot/jquery.flot.resize.js"></script>
     
-    <!-- temporary, until we move past django objects
+    <!-- For knockout -->
+    <script src = "{{ STATIC_URL }}js/knockout-2.0.0.js"></script>
+    
+    <!-- index.js -->
     <script src="{{ STATIC_URL }}js/index.js"></script>
-    -->
-    
-    <script>
-        $(function () {
-            var all_packets = {
-                color: '#000000',
-                data: [[0, 53], [1, 48], [2, 55], [3, 44], [4, 58], [5, 54]],
-                label: 'all'
-            };
-            var low_threat = {
-                color: '#ffcc00',
-                data: [[0, 20], [1, 21], [2, 23], [3, 19], [4, 33], [5, 28]],
-                label: 'low threat'
-            };
-            var medium_threat = {
-                color: '#ff6600',
-                data: [[0, 5], [1, 7], [2, 6], [3, 10], [4, 9], [5, 4]],
-                label: 'medium threat'
-            };
-            var high_threat = {
-                color: '#ff1919',
-                data: [[0, 0], [1, 0], [2, 2], [3, 15], [4, 16], [5, 22]],
-                label: 'high threat'
-            };
-
-            var placeholder = $("#placeholder");
-            var plot = $.plot(placeholder, [all_packets, low_threat, medium_threat, high_threat]);
-
-            placeholder.resize(function () {
-            });
-        });
-
-        //Function that handles clicking of rows on attack table
-        $(document).ready(function() {
-            $('#main_table td').click(function(event) {
-                var aid = $(this).parent().children('#idCol').text();
-                
-                {% for attack in attack_list %}
-                    if(aid == {{ attack.id }}){
-                        $('#type').text('{{ attack.attack_type }}');
-                        $('#start').text('{{ attack.start_time }}');
-                        $('#end').text('{{ attack.end_time }}');
-                        $('#source').text('{{ attack.source_ip }}');
-                        $('#dest').text('{{ attack.destination_ip }}');
-                        $('#score').text('{{ attack.score }}');
-                    }
-                {% endfor %}
-                
-                $('#attack_button').attr('href', 'attack/' + aid);
-            });
-        });
-    </script>
 {% endblock %}
