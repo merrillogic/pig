@@ -18,6 +18,8 @@ $(document).ready(function() {
         $('#source').text(jsonAttack.source_ip);
         $('#dest').text(jsonAttack.destination_ip);
         $('#score').text(jsonAttack.score);
+        
+        $('#attack_button').attr('href', 'attack/' + aid);
     });
 });
 
