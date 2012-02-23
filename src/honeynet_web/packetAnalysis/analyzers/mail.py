@@ -40,9 +40,6 @@ class MailAnalyzer(AttackAnalyzer):
         #sets a low limit and high limit for specific threat level
 
         #SMTP
-        if packet.dest_port == 25:
-            print packet.protocol
-            raw_input()
         if packet.dest_port == 25 and \
            packet.payload.lower().startswith('mail from:') and \
            mailRxNum > lowLimit and \
@@ -56,7 +53,7 @@ class MailAnalyzer(AttackAnalyzer):
 
     def addAttackProfile(self):
         prelimNodes = 5
-        threatNodex = 3
+        threatNodes = 3
         prelimNodeIndecise = []
         threatNodeIndecise = []
         transitionFunctions = [self.rxMoreMail,
@@ -64,12 +61,12 @@ class MailAnalyzer(AttackAnalyzer):
                                self.rxTooMuchMail]
         
         #add prelimNodex
-        for i in range(prelimNodes)
+        for i in range(prelimNodes):
             #1 second timeout
             prelimNodeIndecise.append(self.addPrelimNode(1000))
 
         #add separate threat node for each threat level, store index in list
-        for i in range(threatLevels):
+        for i in range(threatNodes):
             #1 second timeout
             threatNodeIndecise.append(self.addThreatNode(1000))
 
