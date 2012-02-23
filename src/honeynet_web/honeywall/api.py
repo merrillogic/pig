@@ -3,6 +3,7 @@ from tastypie.authorization import Authorization
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from honeywall.models import Packet, Attack
+from honeywall.utils import protocol_lookup
 
 class ClassifyResource(ModelResource):
     class Meta:
@@ -46,6 +47,12 @@ class AttackResource(ModelResource):
 
 class PacketResource(ModelResource):
     attacks = fields.ToManyField('honeywall.api.AttackResource', 'attacks', 'packet')
+
+    def dehydrate(self, bundle):
+        if bundle.data['protocol']:
+            bundle.data['protocol'] = protocol_lookup(bundle.data['protocol'])
+
+        return bundle
 
     class Meta:
         queryset = Packet.objects.all()
