@@ -53,7 +53,7 @@ class MitMAnalyzer(AttackAnalyzer):
                 return packet.source_ip != self.arp_tables['MAC'][packet.source_mac]
             return False
 
-        return (_wrong_ip_mac(packet) or _wrong_mac_ip(packet)) and _outside_network(packet)
+        return (_wrong_ip_mac(packet) or _wrong_mac_ip(packet)) and not(_outside_network(packet))
 
 
     def addAttackProfile(self):
