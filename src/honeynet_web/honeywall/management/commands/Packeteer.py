@@ -87,11 +87,13 @@ class Packeteer(object):
                 d['source_ip'] = IPLayer.src
             if hasIPField('dst'):
                 d['destination_ip'] = IPLayer.dst
-        
-        if 'sport' in self.packet.fields:
-            d['source_port'] = self.packet.sport
-        if 'dport' in self.packet.fields:
-            d['dest_port'] = self.packet.dport
+       
+        if self.packet.haslayer(IP):
+            if 'sport' in IPLayer.payload.fields:
+                d['source_port'] = self.packet.sport
+            if 'dport' in IPLayer.payload.fields:
+                d['dest_port'] = self.packet.dport
+
         if 'dst' in self.packet.fields:
             d['destination_mac'] = self.packet.dst
            
