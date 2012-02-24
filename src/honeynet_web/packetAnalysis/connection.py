@@ -32,7 +32,7 @@ class AttackProcess(object):
         
     def queuePacket(self, packet):
         #Lock to prevent race condition with checking dead connection and adding packets.
-        serializedPacket = serializers.serializer("json", [packet, ])
+        serializedPacket = serializers.serialize("json", [packet, ])
         self.lock.acquire()
         self.status.value = 1
         self.queue.put(serializedPacket)
