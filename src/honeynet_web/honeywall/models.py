@@ -29,12 +29,12 @@ class Attack(models.Model):
                         ( 'mitm', 'Man in the Middle' )
                      )
     attack_type = models.CharField(max_length=4, choices=ATTACK_CHOICES)
-    false_positive = models.NullBooleanField()
+    false_positive = models.BooleanField(default=False)
 
     class Meta:
         # order newest first -- but by what measure?
-        #ordering = ['-time']
-        pass
+        ordering = ['-start_time']
+        unique_together = ('start_time', 'source_ip', 'attack_type')
 
     def __str__(self):
         out = "Attack type: "+str(self.attack_type)+'\n'+\
@@ -61,7 +61,7 @@ class Packet(models.Model):
     # protocol can be 0-255
     protocol = models.IntegerField(null=True, blank=True)
 
-    attack = models.ForeignKey(Attack, null=True, blank=True)
+    attacks = models.ManyToManyField(Attack, null=True, blank=True)
     classification_time = models.DateTimeField(auto_now_add=False, blank=True, null=True)
 
     # store payload as encoded data
@@ -82,7 +82,7 @@ class Packet(models.Model):
 
     class Meta:
         # order newest first
-        #ordering = ['-time']
+        ordering = ['-time']
         unique_together = ('time', 'source_ip')
 
     def __unicode__(self):
@@ -95,6 +95,6 @@ class Packet(models.Model):
               u"Time: "+unicode(self.time)+u'\n'+\
               u"Protocol: "+unicode(self.protocol)+u'\n'+\
               u"Payload: "+unicode(self.payload)+u'\n'+\
-              u"Attack: "+unicode(self.attack)+u'\n'+\
+              u"Attack: "+unicode(self.attacks)+u'\n'+\
               u"Classification time: "+unicode(self.classification_time)
         return out

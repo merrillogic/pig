@@ -23,10 +23,16 @@ class DOSAnalyzer(AttackAnalyzer):
     attackType = 'dos'
 
     def addAttackProfile(self):
-        for i in range(50):
+        for i in range(200):
             funct = lambda x: True
-            self.addPrelimNode(21)
+            self.addPrelimNode(5.1)
             self.addTransition(i, i+1, 1, [funct])
-        threat = self.addThreatNode(21)
+        threat = self.addThreatNode(5.1)
         self.addTransition(i+1, threat, 1, [funct])
         self.addTransition(threat, threat, 1, [funct])
+
+        fraggle = lambda x: x.source_port == 19 or x.destination_port == 19
+        self.addTransition(0, threat, 100, [fraggle])
+
+        land = lambda x: x.source_ip == x.destination_ip
+        self.addTransition(0, threat, 150, [land]) 

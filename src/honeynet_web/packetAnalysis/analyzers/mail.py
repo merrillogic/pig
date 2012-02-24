@@ -19,82 +19,48 @@ Functions to use are:
 from attackanalyzer import AttackAnalyzer
 
 class MailAnalyzer(AttackAnalyzer):
-
     attackType = 'mail'
-    mailRxNum = 0
 
     def rxNewMail(self, packet):
-        return self.rxMailTemp(packet, -1, 50)
-
-    def rxMoreMail(self, packet):
-        return self.rxMailTemp(packet, 49, 100)
-
-    def rxHeavyMail(self, packet):
-        return self.rxMailTemp(packet, 99, 250)
-
-    def rxTooMuchMail(self, packet):
-        return self.rxMailTemp(packet, 249, 1000) #upper limit of 1000, set by exim
-
-    def rxMailTemp(self, packet, lowLimit, highLimit):
         #checks if this packet is SMTP and begins with keywords 'mail from:'
         #which indicates a new piece of mail
         #sets a low limit and high limit for specific threat level
 
-        #SMTP
-        if packet.protocol == 25 and \
-           packet.payload.startswith('mail from:') and \
-           mailRxNum > lowLimit and \
-           mailRxNum < highLimit:
-            mailRxNum += 1
-            #print True
+        #SMTP IS PORT 25            
+        if packet.dest_port == 25 and \
+           packet.payload.lower().startswith('mail from:'):
             return True
         else:
-            #print False
             return False
 
     def addAttackProfile(self):
-        prelimNodeIndex = self.addPrelimNode(300000) #5 minute timeout, for mail
-        threatNodeIndecise = []
-        threatLevels = 3
+        numPrelimNodes = 5
+        prelimNodes = []
+        threatNode = -1
+        
+        #add prelimNodex
+        for i in range(numPrelimNodes):
+            #1 second timeout
+            prelimNodes.append(self.addPrelimNode(1000))
 
-        #add separate threat node for each threat level, store index in list
-        for i in range(threatLevels):
-            #5 minute timeout
-            threatNodeIndecise.append(self.addThreatNode(300000))
+        #add threatNode
+        threatNode = self.addThreatNode(1000)
 
-        #started receiving mail
-        self.addTransition(self.SAFE,
-                           prelimNodeIndex,
-                           0,
+        prevNode = self.SAFE
+
+        for curNode in prelimNodes:
+            #transition to next prelim node
+            self.addTransition(prevNode,
+                               curNode,
+                               5,
+                               [self.rxNewMail])
+            prevNode = curNode
+
+        self.addTransition(prevNode,
+                           threatNode,
+                           10,
                            [self.rxNewMail])
-        #receive more mail, same connection
-        self.addTransition(prelimNodeIndex, 
-                           prelimNodeIndex, 
-                           0,
+        self.addTransition(threatNode,
+                           threatNode,
+                           15,
                            [self.rxNewMail])
-        #move to threatOne if # >= 50
-        self.addTransition(prelimNodeIndex, 
-                           threatNodeIndecise[0], 
-                           1, 
-                           [self.rxMoreMail])
-        #receive 50 or more pieces of mail, same connection
-        self.addTransition(threatNodeIndecise[0], 
-                           threatNodeIndecise[0], 
-                           1, 
-                           [self.rxMoreMail])
-        #move to threatTwo if # >= 100
-        self.addTransition(threatNodeIndecise[0], 
-                           threatNodeIndecise[1], 
-                           2, 
-                           [self.rxHeavyMail])
-        #receive 100 or more pieces of mail, same connection
-        self.addTransition(threatNodeIndecise[1], 
-                           threatNodeIndecise[1], 
-                           2, 
-                           [self.rxHeavyMail])
-        #move to threatThree if # >= 250
-        self.addTransition(threatNodeIndecise[1], 
-                           threatNodeIndecise[2], 
-                           3, 
-                           [self.rxTooMuchMail])
-

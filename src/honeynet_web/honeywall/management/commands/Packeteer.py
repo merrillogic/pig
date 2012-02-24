@@ -69,53 +69,41 @@ class Packeteer(object):
         d['time'] = datetime.utcfromtimestamp(self.packet.time)
         d['source_mac'] = self.packet.src
 
-
+        hasIPField = lambda x: x in IPLayer.fields
         # optional fields
-        try:
+        if hasIPField('id'):
             d['packet_id'] = IPLayer.id
-        except AttributeError:
-            pass
 
-        try:
+        if hasIPField('proto'):
             d['protocol'] = IPLayer.proto
-        except AttributeError:
-            pass
-        try:
-            if self.packet.haslayer(ARP):
+            
+        if self.packet.haslayer(ARP):
+            if hasIPField('psrc'):
                 d['source_ip'] = IPLayer.psrc
-            else:
-                d['source_ip'] = self.packet.payload.src
-        except AttributeError:
-            pass
-        try:
-            if self.packet.haslayer(ARP):
+            if hasIPField('pdst'):
                 d['destination_ip'] = IPLayer.pdst
-            else:
+        else:
+            if hasIPField('src'):
+                d['source_ip'] = IPLayer.src
+            if hasIPField('dst'):
                 d['destination_ip'] = IPLayer.dst
-        except AttributeError:
-            pass
-        try:
-            d['source_port'] = self.packet.sport
-        except AttributeError:
-            pass
-        try:
-            d['dest_port'] = self.packet.dport
-        except AttributeError:
-            pass
-        try:
+       
+        if self.packet.haslayer(IP):
+            if 'sport' in IPLayer.payload.fields:
+                d['source_port'] = self.packet.sport
+            if 'dport' in IPLayer.payload.fields:
+                d['dest_port'] = self.packet.dport
+
+        if 'dst' in self.packet.fields:
             d['destination_mac'] = self.packet.dst
-        except AttributeError:
-            pass
-        try:
-            if str(self.packet.lastlayer()):
-                d['payload'] = str(self.packet.lastlayer())
-            else:
-                d['payload'] = ''
-        except AttributeError:
-            pass
+           
+        if str(self.packet.lastlayer()):
+            d['payload'] = str(self.packet.lastlayer())
+        else:
+            d['payload'] = ''
 
         if not d.get('source_ip'):
-            print 'HALP'
+            print "Unexpected error! Source IP not found!"
             self.packet.show()
 
         return d

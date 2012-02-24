@@ -1,0 +1,31 @@
+0:00 sql
+0:20 -sql
+0:25 mail
+0:55 -mail
+1:00 single
+1:20 -single
+1:30 dos
+1:45 -dos
+1:50 arp
+2:10 -arp
+
+3:00 dos
+3:05 sql
+3:10 mail
+3:15 arp
+3:20 pass
+3:30 -dos
+3:35 -arp
+3:40 -mail
+3:45 -pass
+3:50 -sql
+
+4:00 darkdance
+4:00 reddit
+5:00 sql
+5:05 dos
+5:10 mail
+5:15 ncrack
+5:20 arp
+5:40 -mail
+however long dancedark is +4:00 -all

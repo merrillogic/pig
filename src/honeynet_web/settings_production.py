@@ -16,3 +16,4 @@ DATABASES =  {
     }
 }
 
+STATIC_ROOT = '/home/logger/static/'

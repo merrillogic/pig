@@ -18,6 +18,7 @@ Private methods:
 - reset()
 
 """
+from django.db import transaction
 from datetime import datetime, timedelta
 
 from honeynet_web.honeywall.models import Attack
@@ -83,7 +84,7 @@ class Threatomaton(object):
         self.nodes = []
         self.nodeMap = {}
         self.attackPackets = []
-        
+
         self.curState = self.SAFE
         startNode = Node(self.SAFE)
 
@@ -159,12 +160,11 @@ class Threatomaton(object):
             val = connection.recv()
             if val == True:
                 self.stop = True
-
+                
+    @transaction.commit_manually
     def processPackets(self, packetQueue, connection, status, lock):
         """ Continually check if the automaton has timed out and then feed each packet from
         the queue into self.processPacket; Exits if told to stop.
-        
-        @param packets - List of Packet objects to process
         """
 
         #MIGHT NEED TO RESTRUCTURE THIS. Worried about the method of sending true/false back.
@@ -223,10 +223,10 @@ class Threatomaton(object):
             if self.attack:
                 status.value = 1
             
+            #transaction.commit()
+            
             self.checkStop(connection)
         
-
-
     def processPacket(self, packet):
         """ Update the machine state and attack data based on the contents of
         the input packet
@@ -259,11 +259,11 @@ class Threatomaton(object):
             self.reset(packet.time)
         # Otherwise, store update attack data
         else:
-            self.lastAttackTime = packet.time 
+            self.lastAttackTime = packet.time
             self.attackPackets.append(packet)
             # if moved from self.SAFE state, attack may have started, so flag it
             if prevState == self.SAFE and prevState != self.curState:
-                self.lastAttackStart = packet.time 
+                self.lastAttackStart = packet.time
             # if moved from self.PRELIM to self.THREAT, confirms that this is an
             # attack, so create an attack object and mark all stored packets
             # with its ID
@@ -301,7 +301,7 @@ class Threatomaton(object):
         """ Mark the packet in the DB with the current Attack object's ID
         """
         if self.DEBUG: return
-        packet.attack = self.attack
+        packet.attacks.add(self.attack)
         packet.save()
 
 
