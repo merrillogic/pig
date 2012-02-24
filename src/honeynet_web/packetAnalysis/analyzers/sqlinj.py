@@ -110,7 +110,7 @@ ESCAPE 	OVER 	WRITETEXT
         threat = self.addThreatNode()
         
         self.addTransition(0, 1, 1, [self.isQuery])
-        self.addTransition(0, threat, [self.hasSQLComment])
+        self.addTransition(0, threat, numPrelims*2, [self.hasSQLComment])
         for prelimIndex in range(1, numPrelims):
             #for the first numPrelims-1 nodes...
             self.addTransition(prelimIndex, prelimIndex + 1, prelimIndex+1, [self.isQuery])
