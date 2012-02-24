@@ -8,13 +8,45 @@
 
 var aid = $('#aid').text();
 
+//fills in attack information table
+function fillAttackInformation(){
+    var jsonAttack = JSON.parse(getAttack());
+
+    $('#type').text(jsonAttack.attack_type);
+    $('#start').text(jsonAttack.start_time);
+    $('#end').text(jsonAttack.end_time);
+    $('#source').text(jsonAttack.source_ip);
+    $('#destination').text(jsonAttack.destination_ip);
+    $('#level').text(jsonAttack.score);
+    document.getElementById("falsePositive").checked = jsonAttack.false_positive;
+}
+
+function getAttack(){
+    var xmlHttp = null;
+    
+    xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", '/api/v1/attack/' + aid + '/', false);
+    xmlHttp.send(null);
+
+    return xmlHttp.responseText;
+}
+
+//handles updating false positive
+function updateFalsePositive(checkbox){
+    var xmlHttp = new XMLHttpRequest();
+    
+    xmlHttp.open("PUT", '/api/v1/classify/' + aid + '/', false);
+    xmlHttp.setRequestHeader('Content-Type', 'application/json');    
+    xmlHttp.send('{"false_positive": ' + checkbox.checked + '}');
+}
+
 //Function that handles clicking of rows on attack table
 $(document).ready(function() {
     $('#main_table td').click(function(event) {
         var pid = $(this).parent().children('#idCol').text();
         var jsonPacket = JSON.parse(getPacket(pid));
         
-        $('#payload_info').text(jsonPacket._payload);
+        $('#payload_info').text(base64Decode(jsonPacket._payload));
     });
 });
 
@@ -25,7 +57,6 @@ function getPacket(pid){
     xmlHttp.open("GET", '/api/v1/packet/' + pid + '/', false);
     xmlHttp.send(null);
     
-    alert(xmlHttp.responseText);
     return xmlHttp.responseText;
 }
 
@@ -66,4 +97,5 @@ function getPackets(){
     return xmlHttp.responseText;
 };
 
+fillAttackInformation();
 ko.applyBindings(new packetsViewModel());
