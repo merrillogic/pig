@@ -33,7 +33,7 @@ class Attack(models.Model):
 
     class Meta:
         # order newest first -- but by what measure?
-        #ordering = ['-time']
+        ordering = ['-start_time']
         unique_together = ('start_time', 'source_ip', 'attack_type')
 
     def __str__(self):
@@ -82,7 +82,7 @@ class Packet(models.Model):
 
     class Meta:
         # order newest first
-        #ordering = ['-time']
+        ordering = ['-time']
         unique_together = ('time', 'source_ip')
 
     def __unicode__(self):
