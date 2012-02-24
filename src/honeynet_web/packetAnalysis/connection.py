@@ -14,6 +14,7 @@ Public methods:
 from analyzers.all import *
 #import multiprocessing library
 from multiprocessing import Process, Queue, Pipe, Value, Lock
+from django.core import serializers
 
 class AttackProcess(object):
     def __init__(self, analyzer, src, dest):
@@ -31,16 +32,10 @@ class AttackProcess(object):
         
     def queuePacket(self, packet):
         #Lock to prevent race condition with checking dead connection and adding packets.
+        serializedPacket = serializers.serializer("json", [packet, ])
         self.lock.acquire()
         self.status.value = 1
-        try:
-            self.queue.put(packet)
-        except PicklingError, e:
-            print "NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
-            exit()
-        except Error, e:
-            print "MAAAAAAYBE"
-            exit()
+        self.queue.put(serializedPacket)
         self.lock.release()
         
     def killConnection(self):

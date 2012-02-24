@@ -22,6 +22,8 @@ from datetime import datetime, timedelta
 
 from honeynet_web.honeywall.models import Attack
 
+from django.core import serializers
+
 from node import Node
 from transition import Transition
 
@@ -140,6 +142,12 @@ class Threatomaton(object):
         src = self.nodes[source]
         src.addTransition(trans)
 
+    def dequeuePacket(self, queue):
+        """
+        Pops a packet from the given queue, and deserializes it
+        """
+        return serializers.deserialize("json", queue.get()).next().object
+
     def checkStop(self, connection):
         """
         Checks the connection to see if True has been sent. If True has been sent, flags the
@@ -179,7 +187,7 @@ class Threatomaton(object):
             firstPacket = None
             if self.lastAttackTime:
                 if not packetQueue.empty():
-                    firstPacket = packetQueue.get()
+                    firstPacket = self.dequeuePacket(packetQueue)
                     timeElapsed = firstPacket.time - self.lastAttackTime
                     self.noPackets = False
                     self.noPacketTime = None
@@ -201,11 +209,7 @@ class Threatomaton(object):
             
             # actually process the packets
             while (not packetQueue.empty()):
-                try:
-                    self.processPacket(packetQueue.get())
-                except Error, e:
-                    print "bamdiddly", e
-                    exit()
+                self.processPacket(self.dequeuePacket(packetQueue))
     
             # if we had flagged a timeout and the packets just processed did not
             # start an attack, then let the parent Connection know this is inactive
@@ -263,7 +267,7 @@ class Threatomaton(object):
             # if moved from self.PRELIM to self.THREAT, confirms that this is an
             # attack, so create an attack object and mark all stored packets
             # with its ID
-            elif prevState == self.PRELIM and self.curState == self.THREAT:
+            elif prevState != self.THREAT and self.curState == self.THREAT:
                 # initialize the Attack object for this attack
                 self.initializeAttack()
                 # and mark the packets we've seen so far
