@@ -15,7 +15,7 @@ from analyzers.all import *
 #import multiprocessing library
 from multiprocessing import Process, Queue, Pipe, Value, Lock
 from django.core import serializers
-from signal import SIGINT, SIGALRM
+from signal import SIGINT, SIGCONT
 from os import kill
 from time import sleep
 
@@ -33,6 +33,8 @@ class AttackProcess(object):
                                     name=(src + '->' + dest + ':' + analyzer.attackType))
         self.process.start()
         print "started process:", self.process.pid
+        print self.process.is_alive()
+        sleep(.5)
          
     def queuePacket(self, packet):
         #Lock to prevent race condition with checking dead connection and adding packets.
@@ -45,12 +47,12 @@ class AttackProcess(object):
     
     def wakeUp(self):
         #send alarm signal
-        print "process id:", self.process.pid
+        print "waking process id:", self.process.pid, self.process.is_alive()
         success = False
         while success == False:
             try:
                 print "wake up!"
-                kill(self.process.pid, SIGALRM)
+                kill(self.process.pid, SIGCONT)
                 success=True
             except OSError, e:
                 sleep(.1)
@@ -65,7 +67,7 @@ class AttackProcess(object):
                 joined = True
             else:
                 print "kill!"
-                kill(self.process.pid, SIGALRM)
+                kill(self.process.pid, SIGCONT)
     
     def getMessage(self):
         if self.pipe.poll():

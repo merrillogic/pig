@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 from honeynet_web.honeywall.models import Attack
 
 from django.core import serializers
-from signal import pause, signal, SIG_IGN, SIGALRM
+from signal import pause, signal, SIG_IGN, SIGCONT
 from node import Node
 from transition import Transition
 from os import getpid
@@ -169,7 +169,7 @@ class Threatomaton(object):
         
         print "starting threatomaton", getpid()
         sys.stdout.flush()
-        signal(SIGALRM, doNothing)        
+        signal(SIGCONT, doNothing)        
         while ((self.stop == False) or (not packetQueue.empty())):
             # flag a timeout if we have had an attack and the time since its last
             # packet seen is more than the timeout value
@@ -194,7 +194,7 @@ class Threatomaton(object):
                 status.value = 1
             lock.release()
             self.checkStop(connection)
-            #transaction.commit()
+            transaction.commit()
             #warning thread issues?
             if packetQueue.empty() and self.stop == False:
                 #Pause until we are sent a signal to wake us up
