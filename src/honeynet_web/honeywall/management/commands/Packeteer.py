@@ -1,6 +1,3 @@
-from datetime import datetime
-from scapy.all import *
-
 '''
 USAGE:
 from Packeteer import *
@@ -23,9 +20,9 @@ ID# -> 'packet_id'
 Flags -> 'flags'
 Time -> 'time'
 protocol -> 'protocol'
-
-
 '''
+from datetime import datetime
+from scapy.all import *
 
 
 class PacketReader(object):
@@ -47,6 +44,7 @@ class PacketReader(object):
     def getPacketChunk(self, size):
         '''
         Breaks off a size number of packets and returns them in a list.
+	For debugging purposes.
         '''
         returnList = []
         for item in range(size):
@@ -71,6 +69,7 @@ class Packeteer(object):
 
         hasIPField = lambda x: x in IPLayer.fields
         # optional fields
+	# here we'll have to check if each attribute exists before grabbing it
         if hasIPField('id'):
             d['packet_id'] = IPLayer.id
 
