@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from tastypie.api import Api
-from honeywall.api import AnalysisResource, AttackResource, PacketResource, ClassifyResource
+from honeywall.api import AttackResource, PacketResource, ClassifyResource
 
 admin.autodiscover()
 
