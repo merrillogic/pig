@@ -31,6 +31,17 @@ class Attack(models.Model):
     attack_type = models.CharField(max_length=4, choices=ATTACK_CHOICES)
     false_positive = models.BooleanField(default=False)
 
+    @property
+    def threat_level(self):
+        if not self.score:
+            return 'none'
+        elif self.score < 50000:
+            return 'low'
+        elif self.score < 100000:
+            return 'medium'
+        elif self.score > 100000:
+            return 'high'
+
     class Meta:
         # order newest first -- but by what measure?
         ordering = ['-start_time']
