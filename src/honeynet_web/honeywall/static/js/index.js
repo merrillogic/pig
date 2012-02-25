@@ -5,6 +5,7 @@
  *row clicks on main table
  *
  */
+ 
 
 //Function that handles clicking of rows on attack table
 $(document).ready(function() {
@@ -69,6 +70,7 @@ $(function () {
  *Knockout driven dynamic table entries
  */
 function attack(attackEntry){
+    //attack object, stored in array as a row for the attack table
     var self = this;
     self.aid = ko.observable(attackEntry.id);
     self.attackType = ko.observable(attackEntry.attack_type);
@@ -76,36 +78,117 @@ function attack(attackEntry){
     self.sourceIp = ko.observable(attackEntry.source_ip);
     self.threatLevel = ko.observable(attackEntry.score);
     
+    //level determined to color code table
     if(attackEntry.false_positive){
-        self.level = "none";
+        self.level = ko.observable("none");
     }else if(attackEntry.score >= 100000){
-        self.level = "high";    
+        self.level = ko.observable("high");
     }else if(attackEntry.score >= 50000){
-        self.level = "medium";
+        self.level = ko.observable("medium");
     }else{
-        self.level = "low";
+        self.level = ko.observable("low");
     }
 };
 
-function attacksViewModel(){
-    var self = this;
-    var jsonAttackObj = JSON.parse(getAttacks());
-    var attackList = jsonAttackObj.objects;
-    self.attacks = ko.observableArray([]);
+function updateAttackEntry(attackObj, newAttack){
+    //used to update an already existing entry with the given new attack
+    attackObj.aid(newAttack.id);
+    attackObj.attackType(newAttack.attack_type);
+    attackObj.time(newAttack.start_time);
+    attackObj.sourceIp(newAttack.source_ip);
+    attackObj.threatLevel(newAttack.score);
     
-    for(var i = 0; i < attackList.length; i++){
-        self.attacks.push(new attack(attackList[i]));
+    if(newAttack.false_positive){
+        attackObj.level("none");
+    }else if(newAttack.score >= 100000){
+        attackObj.level("high");
+    }else if(newAttack.score >= 50000){
+        attackObj.level("medium");
+    }else{
+        attackObj.level("low");
+    }
+}
+
+function attacksViewModel(){
+    //main attacks model, handles all changes with attack table
+    var self = this;
+    var attackList = null;
+    var jsonAttackObj = getAttacks();
+    self.attacks = ko.observableArray([]); //observable array, serves as attack table
+    
+    //iterate through every attack in the json object, create attack object and store in array
+    for(var i = 0; i < jsonAttackObj.objects.length; i++){
+        self.attacks.push(new attack(jsonAttackObj.objects[i]));
+    }
+    
+    self.filter_button = function (){
+        //called when filter search is enacted
+        var filter = removeWhite($('#filter_entry').val());
+        var jsonFilteredAttacks = getAttackFiltered(filter); //get filtered attacks
+        
+        //TODO: what if one is bigger than the other the other way?
+        //iterate through entire attack table
+        for(var i = 0; i < self.attacks().length; i++){
+            //if at this index, an attack exists within the json object array
+            if(i < jsonFilteredAttacks.objects.length){
+                //change the entry to reflect the filtered attack that was retrieved 
+                updateAttackEntry(self.attacks()[i], jsonFilteredAttacks.objects[i]);
+            }else{
+                //done with filtered attacks, but entries are left in the array so remove them
+                self.attacks.remove(self.attacks()[i]);
+            }
+        }
+    };
+    
+    self.clear_button = function (){
+        //called when clear button is clicked
+        $('#filter_entry').val("");
+        var jsonAttackObj = getAttacks();
+        
+        //restore original attack table
+        for(var i = 0; i < jsonAttackObj.objects.length; i++){
+            if(i < self.attacks().length){
+                updateAttackEntry(self.attacks()[i], jsonAttackObj.objects[i]);
+            }else{
+                self.attacks.push(new attack(jsonAttackObj.objects[i]));
+            }
+        }
     }
 };
 
 function getAttacks(){
+    //get list of attacks using a GET request to server
     var xmlHttp = null;
     
     xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", '/api/v1/attack/?format=json', false);
     xmlHttp.send(null);
     
-    return xmlHttp.responseText;
-};
+    return JSON.parse(xmlHttp.responseText);
+}
 
-ko.applyBindings(new attacksViewModel());
+function getAttackFiltered(filter){
+    //get list of attacks that fit the filter request
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.open("GET", '/api/v1/attack/?' + filter, false);
+    xmlHttp.send(null);
+    
+    return JSON.parse(xmlHttp.responseText);
+}
+
+function removeWhite(string){
+    //removes all white spaces from given string
+    var newString = "";
+    
+    for(var i = 0; i < string.length; i++){
+        if(string[i] != " "){
+            newString += string[i];
+        }
+    }
+
+    return newString;
+}
+
+attacksTable = new attacksViewModel();
+ko.applyBindings(attacksTable);

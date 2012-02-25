@@ -64,44 +64,51 @@
     <!--Tabs-->
     <ul class = "nav nav-tabs">
         <li class = "active">
-            <a href = "#attacks" data-toggle = "tab">Attacks</a>
+            <a href = "#attack_tab" data-toggle = "tab">Attacks</a>
         </li>
         <li>
-            <a href = "#traffic" data-toggle = "tab">Traffic Analysis</a>
+            <a href = "#traffic_analysis_tab" data-toggle = "tab">Traffic Analysis</a>
         </li>
     </ul>
     
     <!--Tab contents-->
     <div class = "tab-content">
         <!--Attacks tab contents-->
+        
         <div class = "tab-pane active" id = "attack_tab">
-            <table id = "main_table" class = "table sortable">
-                <thead>
-                    <tr>
-                        <th style = "width: 4%">ID</th>
-                        <th style = "width: 24%">Attack Type</th>
-                        <th style = "width: 24%">Time</th>
-                        <th style = "width: 24%">Source IP</th>
-                        <th style = "width: 24%">Threat Level</th>
-                    </tr>
-                </thead>
-                <tbody data-bind = "foreach: attacks">
-                    <tr data-bind = "attr: { id: level }">
-                        <td id = "aid" data-bind = "text: aid"></td>
-                        <td id = "attack_type"data-bind = "text: attackType"></td>
-                        <td id = "time" data-bind = "text: time"></td>
-                        <td id = "source_ip" data-bind = "text: sourceIp"></td>
-                        <td id = "threat_level" data-bind = "text: threatLevel"></td>
-                    </tr>
-                </tbody>
-            </table>
+                <form class = "form-search" id = "attack_filter">
+                    <label id = "filter_label" style = "width: 5%">Filter: </label>
+                    <input id = "filter_entry" style = "width: 70%" type = "text" value = "" />
+                    <button style = "width: 10%" class = "btn" data-bind = "click: filter_button">Apply</button>
+                    <button style = "width: 10%" class = "btn" data-bind = "click: clear_button">Clear</button>
+                </form>
+                <table id = "main_table" class = "table sortable">
+                    <thead>
+                        <tr>
+                            <th style = "width: 4%">ID</th>
+                            <th style = "width: 24%">Attack Type</th>
+                            <th style = "width: 24%">Time</th>
+                            <th style = "width: 24%">Source IP</th>
+                            <th style = "width: 24%">Threat Level</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind = "foreach: attacks">
+                        <tr data-bind = "attr: { id: level }">
+                            <td id = "aid" data-bind = "text: aid"></td>
+                            <td id = "attack_type"data-bind = "text: attackType"></td>
+                            <td id = "time" data-bind = "text: time"></td>
+                            <td id = "source_ip" data-bind = "text: sourceIp"></td>
+                            <td id = "threat_level" data-bind = "text: threatLevel"></td>
+                        </tr>
+                    </tbody>
+                </table>
         </div>
         
         <!--Traffic Analysis tab contents-->
         <div class = "tab-pane" id = "traffic_analysis_tab">
             <h2>Coming soon</h2>
         </div>
-    </div>
+    </div> <!-- tab content -->
 {% endblock %}
 
 {% block javascript %}
