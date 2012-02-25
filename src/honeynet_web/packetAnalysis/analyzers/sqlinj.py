@@ -101,7 +101,7 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         if search('^GET.*?.*' + SQLCodePossibilities + '*.*' + self.httpIDRE, packet.payload) != None:
             return True
         else:
-            False
+            return False
 
     def addAttackProfile(self):
         numPrelims = 5
