@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from tastypie.api import Api
-from honeywall.api import AttackResource, PacketResource, ClassifyResource
+from honeywall.api import AnalysisResource, AttackResource, PacketResource, ClassifyResource
 
 admin.autodiscover()
 
@@ -21,4 +21,5 @@ urlpatterns = patterns('',
 
     # API!
     (r'^api/', include(v1_api.urls)),
+    url(r'^api/v1/traffic_analysis', 'honeywall.views.traffic_analysis'),
 )
