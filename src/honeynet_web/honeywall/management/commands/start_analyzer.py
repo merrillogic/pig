@@ -15,7 +15,8 @@ class Command(BaseCommand):
             # pull the next 10,000 unprocessed packets
             print "Pulling new packets..."
             newPackets = Packet.objects.filter(
-                            classification_time__isnull=True)[:10000]
+                            classification_time__isnull=True).order_by(
+                                                                'time')[:10000]
             # mark them as fed into the analyzers
             print "Marking them as seen..."
             timenow = datetime.now()
