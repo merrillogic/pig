@@ -36,7 +36,7 @@ class Controller(object):
         # packets
         self.packetBuffer = []
 
-    def processPackets(self):
+    def pruneConnections(self):
         """
         Tells each connection to analyze their packet buffers. If the
         connection has all automata in safe states and has not received packets

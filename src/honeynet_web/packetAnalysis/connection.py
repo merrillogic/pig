@@ -17,6 +17,7 @@ from multiprocessing import Process, Queue, Pipe, Value, Lock
 from django.core import serializers
 from signal import SIGINT, SIGALRM
 from os import kill
+from time import sleep
 
 class AttackProcess(object):
     def __init__(self, analyzer, src, dest):
@@ -31,7 +32,8 @@ class AttackProcess(object):
                                             self.lock),
                                     name=(src + '->' + dest + ':' + analyzer.attackType))
         self.process.start()
-        
+        print "started process:", self.process.pid
+         
     def queuePacket(self, packet):
         #Lock to prevent race condition with checking dead connection and adding packets.
         serializedPacket = serializers.serialize("json", [packet, ])
@@ -44,11 +46,26 @@ class AttackProcess(object):
     def wakeUp(self):
         #send alarm signal
         print "process id:", self.process.pid
-        kill(self.process.pid, SIGALRM)
-
+        success = False
+        while success == False:
+            try:
+                print "wake up!"
+                kill(self.process.pid, SIGALRM)
+                success=True
+            except OSError, e:
+                sleep(.1)
+            
     def killConnection(self):
         self.pipe.send(True)
-        self.process.join()
+        joined = False
+        print "attempting to kill process", self.process.pid
+        while joined == False:
+            self.process.join(.1)
+            if not self.process.is_alive():
+                joined = True
+            else:
+                print "kill!"
+                kill(self.process.pid, SIGALRM)
     
     def getMessage(self):
         if self.pipe.poll():
@@ -59,7 +76,7 @@ class AttackProcess(object):
     def setAlive(self):
         self.status.value = 1
             
-    def checkForAttacks(self):
+    def checkStatus(self):
         return self.status.value
 
 class Connection(object):
@@ -90,6 +107,8 @@ class Connection(object):
         self.src = src
         self.dest = dest
         
+        print "starting connection:", src, "->", dest
+
         # Initialize our unique analyzer list
         self.analyzers = []
         '''
@@ -132,9 +151,7 @@ class Connection(object):
         results = []
         for process in self.processes:
             process.wakeUp()
-            results.append(process.checkForAttacks())
-        print "Results of running threaded analyzers:", results
-
+            results.append(process.checkStatus())
         # If all the attacks timed out, let the caller know that this
         # Connection is no longer necessary
         if sum(results) == 0:

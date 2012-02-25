@@ -24,9 +24,10 @@ from datetime import datetime, timedelta
 from honeynet_web.honeywall.models import Attack
 
 from django.core import serializers
-from signal import pause, signal, SIGINT, SIGALRM
+from signal import pause, signal, SIG_IGN, SIGALRM
 from node import Node
 from transition import Transition
+from os import getpid
 
 class Threatomaton(object):
 
@@ -150,17 +151,20 @@ class Threatomaton(object):
         """
         return serializers.deserialize("json", queue.get()).next().object
 
-    #A AND B ARE MEANINGLESS
-    class stop(self, a=None, b=None):
-        self.stop = True
+    def checkStop(self, connection):
+        if connection.poll():
+            val = connection.recv()
+            if val == True:
+                self.stop = True
                 
     @transaction.commit_manually
     def processPackets(self, packetQueue, connection, status, lock):
         """ Continually check if the automaton has timed out and then feed each packet from
         the queue into self.processPacket; Exits if told to stop.
         """
-        signal(SIGINT, self.stop())
-        signal(SIGALRM, SIG_IGN)
+        
+        print "starting threatomaton", getpid()
+        signal(SIGALRM, SIG_IGN)        
         while ((self.stop == False) or (not packetQueue.empty())):
             # flag a timeout if we have had an attack and the time since its last
             # packet seen is more than the timeout value
@@ -172,9 +176,10 @@ class Threatomaton(object):
                 #timout at.
                 if self.currentAttackTimeout:
                     if curPacket.time > self.currentAttackTimeout:
-                        print "timeout"
+                        print "timeout", getpid()
                         timeoutFlag = True
                         self.reset()
+                print "processing packet:", getpid()
                 self.processPacket(curPacket)
             #If there are no more packets to process and there is not a
             #potential attack still in progress, say that the connection is dead.
@@ -185,16 +190,19 @@ class Threatomaton(object):
             else:
                 status.value = 1
             lock.release()
+            self.checkStop(connection)
             #transaction.commit()
-            if status.value == 0 and self.stop == False:
+            #warning thread issues?
+            if packetQueue.empty() and self.stop == False:
                 #Pause until we are sent a signal to wake us up
+                print "pausing", getpid()
                 pause()
                 #Thread safety note: Once we have received this signal, it is
                 # assumed the new packets are already in the queue
                 #Thread safety note 2: It is possible to deadlock here. The
                 # SIGINT before joining must be continually (discretely)
                 # sent until Joined.
-                
+        print "Ending..."
         
     def processPacket(self, packet):
         """ Update the machine state and attack data based on the contents of
