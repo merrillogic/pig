@@ -82,6 +82,7 @@
                     <button style = "width: 10%" class = "btn" data-bind = "click: filter_button">Apply</button>
                     <button style = "width: 10%" class = "btn" data-bind = "click: clear_button">Clear</button>
                 </form>
+                
                 <table id = "main_table" class = "table sortable">
                     <thead>
                         <tr>
@@ -106,7 +107,17 @@
         
         <!--Traffic Analysis tab contents-->
         <div class = "tab-pane" id = "traffic_analysis_tab">
-            <h2>Coming soon</h2>
+            <table class = "table">
+                <tr>
+                    <th>Attack Type</th>
+                    <th>Last Occurance</th>
+                    <th>Average Score</th>
+                    <th>Highest Score</th>
+                    <th>Frequency</th>
+                    <th>% of Traffic</th>
+                    <th>% of False Positives</th>
+                </tr>
+            </table>
         </div>
     </div> <!-- tab content -->
 {% endblock %}

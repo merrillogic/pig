@@ -128,14 +128,27 @@ function attacksViewModel(){
         
         //TODO: what if one is bigger than the other the other way?
         //iterate through entire attack table
-        for(var i = 0; i < self.attacks().length; i++){
-            //if at this index, an attack exists within the json object array
-            if(i < jsonFilteredAttacks.objects.length){
-                //change the entry to reflect the filtered attack that was retrieved 
-                updateAttackEntry(self.attacks()[i], jsonFilteredAttacks.objects[i]);
-            }else{
-                //done with filtered attacks, but entries are left in the array so remove them
-                self.attacks.remove(self.attacks()[i]);
+        //this is good if # of stuff in attack table > # of stuff in filtered json
+        
+        if(jsonFilteredAttacks.objects.length <= self.attacks().length){
+            for(var i = 0; i < self.attacks().length; i++){
+                //if at this index, an attack exists within the json object array
+                if(i < jsonFilteredAttacks.objects.length){
+                    //change the entry to reflect the filtered attack that was retrieved 
+                    updateAttackEntry(self.attacks()[i], jsonFilteredAttacks.objects[i]);
+                }else{
+                    //done with filtered attacks, but entries are left in the array so remove them
+                    self.attacks.remove(self.attacks()[i]);
+                    i--;
+                }
+            }
+        }else{
+            for(var i = 0; i < jsonFilteredAttacks.objects.length; i++){
+                if(i < self.attacks().length){
+                    updateAttackEntry(self.attacks()[i], jsonFilteredAttacks.objects[i]);
+                }else{
+                    self.attacks.push(new attack(jsonFilteredAttacks.objects[i]));
+                }
             }
         }
     };
@@ -143,13 +156,21 @@ function attacksViewModel(){
     self.clear_button = function (){
         //called when clear button is clicked
         $('#filter_entry').val("");
+
+        self.getUpdate();
+    }
+    
+    self.getUpdate = function(){
+        //get most recent attacks
         var jsonAttackObj = getAttacks();
         
-        //restore original attack table
+        //put into array and thus in table
         for(var i = 0; i < jsonAttackObj.objects.length; i++){
             if(i < self.attacks().length){
+                //overwrite existing entries
                 updateAttackEntry(self.attacks()[i], jsonAttackObj.objects[i]);
             }else{
+                //create new attack row
                 self.attacks.push(new attack(jsonAttackObj.objects[i]));
             }
         }
@@ -190,5 +211,15 @@ function removeWhite(string){
     return newString;
 }
 
+
 attacksTable = new attacksViewModel();
 ko.applyBindings(attacksTable);
+
+//function that updates the table every so often
+window.setInterval(function(){
+    //only does it if you are not filtering attacks
+    if($('#filter_entry').val() == ""){
+        attacksTable.getUpdate();
+        //alert("updated");
+    }
+}, 60000);//1 minute
