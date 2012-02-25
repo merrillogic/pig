@@ -94,7 +94,7 @@
                         </tr>
                     </thead>
                     <tbody data-bind = "foreach: attacks">
-                        <tr data-bind = "attr: { id: level }">
+                        <tr data-bind = "attr: { id: level }, click: $parent.row_click">
                             <td id = "aid" data-bind = "text: aid"></td>
                             <td id = "attack_type"data-bind = "text: attackType"></td>
                             <td id = "time" data-bind = "text: time"></td>

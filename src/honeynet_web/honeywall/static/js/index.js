@@ -5,34 +5,6 @@
  *row clicks on main table
  *
  */
- 
-
-//Function that handles clicking of rows on attack table
-$(document).ready(function() {
-    $('#main_table td').click(function(event) {
-        var aid = $(this).parent().children('#aid').text();
-        var jsonAttack = JSON.parse(getAttack(aid));
-
-        $('#type').text(jsonAttack.attack_type);
-        $('#start').text(jsonAttack.start_time);
-        $('#end').text(jsonAttack.end_time);
-        $('#source').text(jsonAttack.source_ip);
-        $('#dest').text(jsonAttack.destination_ip);
-        $('#score').text(jsonAttack.score);
-        
-        $('#attack_button').attr('href', 'attack/' + aid);
-    });
-});
-
-function getAttack(aid){
-    var xmlHttp = null;
-    
-    xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", '/api/v1/attack/' + aid + '/?format=json', false);
-    xmlHttp.send(null);
-    
-    return xmlHttp.responseText;
-}
 
 /*
  *Flot driven dynamic plot
@@ -62,7 +34,7 @@ $(function () {
     var placeholder = $("#placeholder");
     var plot = $.plot(placeholder, [all_packets, low_threat, medium_threat, high_threat]);
 
-    placeholder.resize(function () {
+    placeholder.resize(function(){
     });
 });
 
@@ -121,16 +93,13 @@ function attacksViewModel(){
         self.attacks.push(new attack(jsonAttackObj.objects[i]));
     }
     
-    self.filter_button = function (){
+    self.filter_button = function(){
         //called when filter search is enacted
         var filter = removeWhite($('#filter_entry').val());
         var jsonFilteredAttacks = getAttackFiltered(filter); //get filtered attacks
         
-        //TODO: what if one is bigger than the other the other way?
-        //iterate through entire attack table
-        //this is good if # of stuff in attack table > # of stuff in filtered json
-        
         if(jsonFilteredAttacks.objects.length <= self.attacks().length){
+            //there are more attacks currently in the table than needed
             for(var i = 0; i < self.attacks().length; i++){
                 //if at this index, an attack exists within the json object array
                 if(i < jsonFilteredAttacks.objects.length){
@@ -143,21 +112,37 @@ function attacksViewModel(){
                 }
             }
         }else{
+            //there are more filtered attacks than we can currently fit in the table
             for(var i = 0; i < jsonFilteredAttacks.objects.length; i++){
+                //if at this index, a table entry exists
                 if(i < self.attacks().length){
+                    //change the entry to reflect the filtered attack that was retrieved
                     updateAttackEntry(self.attacks()[i], jsonFilteredAttacks.objects[i]);
                 }else{
+                    //no more room in the table, create new row
                     self.attacks.push(new attack(jsonFilteredAttacks.objects[i]));
                 }
             }
         }
     };
     
-    self.clear_button = function (){
+    self.clear_button = function(){
         //called when clear button is clicked
         $('#filter_entry').val("");
 
         self.getUpdate();
+    }
+    
+    self.row_click = function(){
+        //called when table row is clicked
+        var jsonAttack = getAttack(this.aid());
+        
+        $('#type').text(jsonAttack.attack_type);
+        $('#start').text(jsonAttack.start_time);
+        $('#end').text(jsonAttack.end_time);
+        $('#source').text(jsonAttack.source_ip);
+        $('#dest').text(jsonAttack.destination_ip);
+        $('#score').text(jsonAttack.score);
     }
     
     self.getUpdate = function(){
@@ -176,6 +161,16 @@ function attacksViewModel(){
         }
     }
 };
+
+function getAttack(aid){
+    var xmlHttp = null;
+    
+    xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", '/api/v1/attack/' + aid + '/?format=json', false);
+    xmlHttp.send(null);
+    
+    return JSON.parse(xmlHttp.responseText);
+}
 
 function getAttacks(){
     //get list of attacks using a GET request to server
