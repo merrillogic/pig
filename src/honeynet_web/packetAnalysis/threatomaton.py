@@ -28,6 +28,10 @@ from signal import pause, signal, SIG_IGN, SIGALRM
 from node import Node
 from transition import Transition
 from os import getpid
+import sys
+
+def doNothing(a, b):
+    return
 
 class Threatomaton(object):
 
@@ -164,12 +168,11 @@ class Threatomaton(object):
         """
         
         print "starting threatomaton", getpid()
-        signal(SIGALRM, SIG_IGN)        
+        sys.stdout.flush()
+        signal(SIGALRM, doNothing)        
         while ((self.stop == False) or (not packetQueue.empty())):
             # flag a timeout if we have had an attack and the time since its last
             # packet seen is more than the timeout value
-            timeoutFlag = False
-            firstPacket = None
             if not packetQueue.empty():
                 curPacket = self.dequeuePacket(packetQueue)
                 #If there is a previous attack, then we know there is a time to
@@ -177,9 +180,9 @@ class Threatomaton(object):
                 if self.currentAttackTimeout:
                     if curPacket.time > self.currentAttackTimeout:
                         print "timeout", getpid()
-                        timeoutFlag = True
                         self.reset()
                 print "processing packet:", getpid()
+                sys.stdout.flush()
                 self.processPacket(curPacket)
             #If there are no more packets to process and there is not a
             #potential attack still in progress, say that the connection is dead.
@@ -196,7 +199,10 @@ class Threatomaton(object):
             if packetQueue.empty() and self.stop == False:
                 #Pause until we are sent a signal to wake us up
                 print "pausing", getpid()
+                sys.stdout.flush()
                 pause()
+                print "unpaused", getpid()
+                sys.stdout.flush()
                 #Thread safety note: Once we have received this signal, it is
                 # assumed the new packets are already in the queue
                 #Thread safety note 2: It is possible to deadlock here. The
