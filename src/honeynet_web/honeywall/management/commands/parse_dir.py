@@ -1,3 +1,5 @@
+'''Debugging command that parses a directory of pcap files into the db.
+'''
 from cProfile import Profile
 from optparse import make_option
 from django.core.management.base import BaseCommand
