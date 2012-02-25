@@ -16,6 +16,7 @@ class ClassifyResource(ModelResource):
 
 
 class AttackResource(ModelResource):
+    threat_level = fields.CharField(attribute='threat_level')
 
     def dehydrate(self, bundle):
         url = reverse('api_dispatch_list', kwargs={'resource_name': 'packet', 'api_name': 'v1',})
