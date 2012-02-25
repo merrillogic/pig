@@ -97,7 +97,7 @@ END 	ORDER 	WHILE
 ERRLVL 	OUTER 	WITH
 ESCAPE 	OVER 	WRITETEXT
         '''
-        SQLCodePossibilities = '[]'
+        SQLCodePossibilities = '[.]'
         if search('^GET.*?.*' + SQLCodePossibilities + '.*HTTP/\d\.\d\n', packet.payload):
             return True
         else:
@@ -106,8 +106,8 @@ ESCAPE 	OVER 	WRITETEXT
     def addAttackProfile(self):
         numPrelims = 5
         for i in range(numPrelims):
-            self.addPrelimNode(500)
-        threat = self.addThreatNode()
+            self.addPrelimNode(1000)
+        threat = self.addThreatNode(60000)
         
         self.addTransition(0, 1, 1, [self.isQuery])
         self.addTransition(0, threat, numPrelims*2, [self.hasSQLComment])
