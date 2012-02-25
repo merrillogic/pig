@@ -3,8 +3,6 @@ from django.contrib import admin
 from tastypie.api import Api
 from honeywall.api import AttackResource, PacketResource, ClassifyResource
 
-#admin.autodiscover()
-
 v1_api = Api(api_name='v1')
 v1_api.register(AttackResource())
 v1_api.register(PacketResource())
@@ -15,9 +13,6 @@ urlpatterns = patterns('',
     #url(r'^$', 'honeywall.views.dashboard'),
     url(r'^$', 'honeywall.views.index'),
     url(r'^attack/(?P<attack_id>\d+)$', 'honeywall.views.attack'),
-
-    # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
 
     # API!
     (r'^api/', include(v1_api.urls)),
