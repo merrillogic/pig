@@ -1,4 +1,9 @@
 '''
+Packeteer: Everything you ever wanted from a packet.
+Reads a pcap file, parses each packet, and grabs out the interesting
+  bits to make them easily accessible via a dictionary.
+
+
 USAGE:
 from Packeteer import *
 packetList = PacketReader("pcapFile")
