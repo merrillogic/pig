@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 from honeynet_web.honeywall.models import Attack
 
 from django.core import serializers
-
+from signal import pause, signal, SIGINT, SIGALRM
 from node import Node
 from transition import Transition
 
@@ -54,6 +54,7 @@ class Threatomaton(object):
     attack = None
     lastAttackStart = None
     lastAttackTime = None
+    currentAttackTimeout = None
     attackDuration = 0
     attackScore = 0
     attackPackets = None
@@ -149,83 +150,51 @@ class Threatomaton(object):
         """
         return serializers.deserialize("json", queue.get()).next().object
 
-    def checkStop(self, connection):
-        """
-        Checks the connection to see if True has been sent. If True has been sent, flags the
-        process to stop.
-        
-        @param connection - Connection object to check
-        """
-        if connection.poll():
-            val = connection.recv()
-            if val == True:
-                self.stop = True
+    #A AND B ARE MEANINGLESS
+    class stop(self, a=None, b=None):
+        self.stop = True
                 
     @transaction.commit_manually
     def processPackets(self, packetQueue, connection, status, lock):
         """ Continually check if the automaton has timed out and then feed each packet from
         the queue into self.processPacket; Exits if told to stop.
         """
-
-        #MIGHT NEED TO RESTRUCTURE THIS. Worried about the method of sending true/false back.
-        # Should I just send it back when there are no more input packets?
-        # Maybe... If I keep this system, I need a way of not insta-timing out in connection,
-        # probably
-        #might need to check each packet for timeout, since it looks like that could be happening...
-        
-        #WARNING: Timeout need to be changed a bit. We need to be sure to never have status=0 if 
-        # there are packets remaining to be processed. Maybe set it at the beginning OH NO A RACE
-        # CONDITION. I THINK I NEED TO SOLVE IT IN CONNECTION. Like, set status to 1 as soon as I 
-        # buffer any packets. Oh, before I buffer packets! Then if processor finishes quickly, it's 
-        # okay.
-        # SOLVED^ Just added a lock around necessary parts.
-        print self.attackType, "is starting"
+        signal(SIGINT, self.stop())
+        signal(SIGALRM, SIG_IGN)
         while ((self.stop == False) or (not packetQueue.empty())):
             # flag a timeout if we have had an attack and the time since its last
             # packet seen is more than the timeout value
             timeoutFlag = False
             firstPacket = None
-            if self.lastAttackTime:
-                if not packetQueue.empty():
-                    firstPacket = self.dequeuePacket(packetQueue)
-                    timeElapsed = firstPacket.time - self.lastAttackTime
-                    self.noPackets = False
-                    self.noPacketTime = None
-                elif not self.noPackets:
-                    self.noPackets = True
-                    self.noPacketTime = datetime.now() 
-                    timeElapsed = timedelta()
-                elif self.noPackets:
-                    timeElapsed = datetime.now() - self.noPacketTime
-                if (timeElapsed > self.curNode.timeout):
-                    print "Timed out! AW SHIT YO"
-                    self.reset(self.lastAttackTime)
-                    # flag that this timed out
-                    timeoutFlag = True
-    
-            # if it exists, process the first packet
-            if firstPacket:
-                self.processPacket(firstPacket)
-            
-            # actually process the packets
-            while (not packetQueue.empty()):
-                self.processPacket(self.dequeuePacket(packetQueue))
-    
-            # if we had flagged a timeout and the packets just processed did not
-            # start an attack, then let the parent Connection know this is inactive
+            if not packetQueue.empty():
+                curPacket = self.dequeuePacket(packetQueue)
+                #If there is a previous attack, then we know there is a time to
+                #timout at.
+                if self.currentAttackTimeout:
+                    if curPacket.time > self.currentAttackTimeout:
+                        print "timeout"
+                        timeoutFlag = True
+                        self.reset()
+                self.processPacket(curPacket)
+            #If there are no more packets to process and there is not a
+            #potential attack still in progress, say that the connection is dead.
             lock.acquire()
-            if timeoutFlag and not self.lastAttackStart and self.packetQueue.empty():
+            if packetQueue.empty() and not self.currentAttackTimeout:
                 status.value = 0
-                print self.attackType, "is timing out or something"
-            lock.release()
-    
-            # if we detected an attack, let the Connection know
-            if self.attack:
+            #Otherwise, keep it active
+            else:
                 status.value = 1
-            
+            lock.release()
             #transaction.commit()
-            
-            self.checkStop(connection)
+            if status.value == 0 and self.stop == False:
+                #Pause until we are sent a signal to wake us up
+                pause()
+                #Thread safety note: Once we have received this signal, it is
+                # assumed the new packets are already in the queue
+                #Thread safety note 2: It is possible to deadlock here. The
+                # SIGINT before joining must be continually (discretely)
+                # sent until Joined.
+                
         
     def processPacket(self, packet):
         """ Update the machine state and attack data based on the contents of
@@ -260,6 +229,9 @@ class Threatomaton(object):
         # Otherwise, store update attack data
         else:
             self.lastAttackTime = packet.time
+            #ALERT: THIS LINE MIGHT BREAK THINGS. CAN I ADD A TIMEDELTA TO A
+            #DATETIME?
+            self.currentAttackTimeout = packet.time + self.curNode.timeout
             self.attackPackets.append(packet)
             # if moved from self.SAFE state, attack may have started, so flag it
             if prevState == self.SAFE and prevState != self.curState:
@@ -277,7 +249,6 @@ class Threatomaton(object):
             # to get marked is the one we just processed
             elif self.curState == self.THREAT:
                 self.markPacket(packet)
-
 
     def initializeAttack(self):
         """ Initialize an Attack instance with the data we've recorded so far
@@ -327,13 +298,16 @@ class Threatomaton(object):
         """
         print "reset!"
         if self.attack:
-            self.attack.end_time = resetTime
+            #ALERT: CHANGED TO lastAttackTime from resetTime. Does that end up
+            #breaking things with a None?
+            self.attack.end_time = self.lastAttackTime
             self.attack.score = self.attackScore
             self.exportAttackData()
 
         self.attack = None
         self.lastAttackStart = None
         self.lastAttackTime = None
+        self.currentAttackTimeout = None
         # set the current Node to the initial (self.SAFE) node
         self.curNode = self.nodes[0]
         self.curState = self.SAFE

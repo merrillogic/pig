@@ -15,6 +15,8 @@ from analyzers.all import *
 #import multiprocessing library
 from multiprocessing import Process, Queue, Pipe, Value, Lock
 from django.core import serializers
+from signal import SIGINT, SIGALRM
+from os import kill
 
 class AttackProcess(object):
     def __init__(self, analyzer, src, dest):
@@ -37,7 +39,13 @@ class AttackProcess(object):
         self.status.value = 1
         self.queue.put(serializedPacket)
         self.lock.release()
-        
+        self.wakeUp()
+    
+    def wakeUp(self):
+        #send alarm signal
+        print "process id:", self.process.pid
+        kill(self.process.pid, SIGALRM)
+
     def killConnection(self):
         self.pipe.send(True)
         self.process.join()
@@ -84,14 +92,14 @@ class Connection(object):
         
         # Initialize our unique analyzer list
         self.analyzers = []
-
+        '''
         # Initialize all of our AttackAnalyzers
         sqlinj = SQLInjectionAnalyzer(src, dest)
         self.analyzers.append(sqlinj)
-
+        '''
         dos = DOSAnalyzer(src, dest)
         self.analyzers.append(dos)
-
+        '''
         passcrack = PassCrackAnalyzer(src, dest)
         self.analyzers.append(passcrack)
 
@@ -100,7 +108,7 @@ class Connection(object):
 
         mitm = MitMAnalyzer(src, dest)
         self.analyzers.append(mitm)
-        
+        '''
         # Initialize our processes
         self.processes = []
         for analyzer in self.analyzers:
@@ -123,6 +131,7 @@ class Connection(object):
         """
         results = []
         for process in self.processes:
+            process.wakeUp()
             results.append(process.checkForAttacks())
         print "Results of running threaded analyzers:", results
 
