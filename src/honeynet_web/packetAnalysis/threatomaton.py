@@ -225,7 +225,7 @@ class Threatomaton(object):
             # if moved from self.PRELIM to self.THREAT, confirms that this is an
             # attack, so create an attack object and mark all stored packets
             # with its ID
-            elif prevState == self.PRELIM and self.curState == self.THREAT:
+            elif prevState != self.THREAT and self.curState == self.THREAT:
                 # initialize the Attack object for this attack
                 self.initializeAttack()
                 # and mark the packets we've seen so far

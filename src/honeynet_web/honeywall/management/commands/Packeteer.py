@@ -1,4 +1,9 @@
 '''
+Packeteer: Everything you ever wanted from a packet.
+Reads a pcap file, parses each packet, and grabs out the interesting
+  bits to make them easily accessible via a dictionary.
+
+
 USAGE:
 from Packeteer import *
 packetList = PacketReader("pcapFile")
@@ -44,7 +49,7 @@ class PacketReader(object):
     def getPacketChunk(self, size):
         '''
         Breaks off a size number of packets and returns them in a list.
-	For debugging purposes.
+        For debugging purposes.
         '''
         returnList = []
         for item in range(size):
@@ -69,7 +74,7 @@ class Packeteer(object):
 
         hasIPField = lambda x: x in IPLayer.fields
         # optional fields
-	# here we'll have to check if each attribute exists before grabbing it
+        # here we'll have to check if each attribute exists before grabbing it
         if hasIPField('id'):
             d['packet_id'] = IPLayer.id
 
