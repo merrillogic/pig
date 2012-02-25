@@ -18,10 +18,10 @@ Private methods:
 - reset()
 
 """
-from django.db import transaction
+from django.db import transaction, connection
 from datetime import datetime, timedelta
 
-from honeynet_web.honeywall.models import Attack
+from honeynet_web.honeywall.models import Attack, Packet
 
 from django.core import serializers
 from signal import pause, signal, SIG_IGN, SIGCONT
@@ -153,23 +153,25 @@ class Threatomaton(object):
         """
         Pops a packet from the given queue, and deserializes it
         """
-        return serializers.deserialize("json", queue.get()).next().object
+        return Packet.objects.get(id=serializers.deserialize("json", queue.get()).next().object.id)
 
-    def checkStop(self, connection):
-        if connection.poll():
-            val = connection.recv()
+    def checkStop(self, pipe):
+        if pipe.poll():
+            val = pipe.recv()
             if val == True:
                 self.stop = True
                 
-    @transaction.commit_manually
-    def processPackets(self, packetQueue, connection, status, lock):
+    #@transaction.commit_manually
+    def processPackets(self, packetQueue, pipe, status, lock):
         """ Continually check if the automaton has timed out and then feed each packet from
         the queue into self.processPacket; Exits if told to stop.
         """
         
-        print "starting threatomaton", getpid()
+        #print "starting threatomaton", getpid()
         sys.stdout.flush()
-        signal(SIGCONT, doNothing)        
+        signal(SIGCONT, doNothing)
+        connection.close()        
+        
         while ((self.stop == False) or (not packetQueue.empty())):
             # flag a timeout if we have had an attack and the time since its last
             # packet seen is more than the timeout value
@@ -179,9 +181,9 @@ class Threatomaton(object):
                 #timout at.
                 if self.currentAttackTimeout:
                     if curPacket.time > self.currentAttackTimeout:
-                        print "timeout", getpid()
+                        #print "timeout", getpid()
                         self.reset()
-                print "processing packet:", getpid()
+                #print "processing packet:", getpid()
                 sys.stdout.flush()
                 self.processPacket(curPacket)
             #If there are no more packets to process and there is not a
@@ -193,22 +195,22 @@ class Threatomaton(object):
             else:
                 status.value = 1
             lock.release()
-            self.checkStop(connection)
-            transaction.commit()
+            self.checkStop(pipe)
+            #transaction.commit()
             #warning thread issues?
             if packetQueue.empty() and self.stop == False:
                 #Pause until we are sent a signal to wake us up
-                print "pausing", getpid()
+                #print "pausing", getpid()
                 sys.stdout.flush()
                 pause()
-                print "unpaused", getpid()
+                #print "unpaused", getpid()
                 sys.stdout.flush()
                 #Thread safety note: Once we have received this signal, it is
                 # assumed the new packets are already in the queue
                 #Thread safety note 2: It is possible to deadlock here. The
                 # SIGINT before joining must be continually (discretely)
                 # sent until Joined.
-        print "Ending..."
+        #print "Ending..."
         
     def processPacket(self, packet):
         """ Update the machine state and attack data based on the contents of
@@ -279,6 +281,7 @@ class Threatomaton(object):
         self.attack.attack_type = self.attackType
         # save it so we can mark the collected attackPackets
         if not self.DEBUG:
+            #print "yeah so, here it is.................................."
             self.attack.save()
 
 
@@ -286,7 +289,14 @@ class Threatomaton(object):
         """ Mark the packet in the DB with the current Attack object's ID
         """
         if self.DEBUG: return
+        #print "ASADIHASILDHASIODRHYWILAEHWILADHSIOAHDSA", self.attack.source_ip
+        #a = Attack.objects.get(id=self.attack.id)
+        #print 'FUCK FUCK FUCKF UCK', self.attack._state.db
+        #print 'wtf robopenises', packet._state.db
+        #self.attack.save()
+        #packet.save()
         packet.attacks.add(self.attack)
+        #packet.attacks.add(a)
         packet.save()
 
 

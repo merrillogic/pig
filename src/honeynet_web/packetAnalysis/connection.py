@@ -18,6 +18,7 @@ from django.core import serializers
 from signal import SIGINT, SIGCONT
 from os import kill
 from time import sleep
+from honeynet_web.honeywall.models import Packet
 
 class AttackProcess(object):
     def __init__(self, analyzer, src, dest):
@@ -34,7 +35,7 @@ class AttackProcess(object):
         self.process.start()
         print "started process:", self.process.pid
         print self.process.is_alive()
-        sleep(.5)
+        #sleep(.5)
          
     def queuePacket(self, packet):
         #Lock to prevent race condition with checking dead connection and adding packets.
@@ -47,16 +48,17 @@ class AttackProcess(object):
     
     def wakeUp(self):
         #send alarm signal
-        print "waking process id:", self.process.pid, self.process.is_alive()
+        #print "waking process id:", self.process.pid, self.process.is_alive()
         success = False
         while success == False:
             try:
-                print "wake up!"
+                #print "wake up!"
                 kill(self.process.pid, SIGCONT)
                 success=True
             except OSError, e:
+                #return
                 sleep(.1)
-            
+
     def killConnection(self):
         self.pipe.send(True)
         joined = False
@@ -67,8 +69,12 @@ class AttackProcess(object):
                 joined = True
             else:
                 print "kill!"
-                kill(self.process.pid, SIGCONT)
-    
+                try:
+                    kill(self.process.pid, SIGCONT)
+                except OSError, e:
+                    #If it doesn't exist, it's already dead. Our work is done.
+                    return    
+
     def getMessage(self):
         if self.pipe.poll():
             return self.pipe.recv()
@@ -120,7 +126,7 @@ class Connection(object):
         '''
         dos = DOSAnalyzer(src, dest)
         self.analyzers.append(dos)
-        '''
+        
         passcrack = PassCrackAnalyzer(src, dest)
         self.analyzers.append(passcrack)
 
@@ -129,7 +135,7 @@ class Connection(object):
 
         mitm = MitMAnalyzer(src, dest)
         self.analyzers.append(mitm)
-        '''
+        
         # Initialize our processes
         self.processes = []
         for analyzer in self.analyzers:
@@ -157,7 +163,7 @@ class Connection(object):
         # If all the attacks timed out, let the caller know that this
         # Connection is no longer necessary
         if sum(results) == 0:
-            print "No attacks found"
+            print "Nothings happening on", self.src, '->', self.dest
             return False
         else:
             return None

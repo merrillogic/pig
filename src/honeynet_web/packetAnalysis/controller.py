@@ -7,6 +7,7 @@ controller.py
 # TODO: Figure out multi-threading.
 
 from connection import Connection
+from honeynet_web.honeywall.models import Packet
 
 class Controller(object):
     def __init__(self):
@@ -26,6 +27,8 @@ class Controller(object):
         their respective connections.
         """
         for packet in self.packetBuffer:
+            #if (packet.source_ip == '137.22.73.140' and 
+            #            packet.destination_ip == '137.22.73.129'):
             id = packet.source_ip + packet.destination_ip
             if id not in self.connections.keys():
                 self.connections[id] = Connection(packet.source_ip,
@@ -51,6 +54,8 @@ class Controller(object):
                                 # already stored everything it needs to in the
                                 # database, so it's safe to mark for deletion.
                 deadCons.append(connectionID)
+                print "killing", connectionID
         # and get rid of the connections that have timed out
         for deadConID in deadCons:
+            self.connections[deadConID].killConnections()
             del self.connections[deadConID]
