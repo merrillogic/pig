@@ -22,15 +22,16 @@ from re import search
 class SQLInjectionAnalyzer(AttackAnalyzer):
 
     attackType = 'sql'
+    httpIDRE = 'HTTP/\d\.\d\r\n'
 
     def isQuery(self, packet):
-        if search('^GET.*?.*HTTP/\d\.\d\n', packet.payload):
+        if search('^GET.*?.*' + self.httpIDRE, packet.payload):
             return True
         else:
             return False
 
     def hasSQLComment(self, packet):
-        if search('^GET.*?.*;--.*HTTP/\d\.\d\n', packet.payload):
+        if search('^GET.*?.*;--.*' + self.httpIDRE, packet.payload):
             return True
         else:
             return False 
@@ -98,7 +99,7 @@ ERRLVL 	OUTER 	WITH
 ESCAPE 	OVER 	WRITETEXT
         '''
         SQLCodePossibilities = '[.]'
-        if search('^GET.*?.*' + SQLCodePossibilities + '.*HTTP/\d\.\d\n', packet.payload):
+        if search('^GET.*?.*' + SQLCodePossibilities + '.*' + self.httpIDRE, packet.payload):
             return True
         else:
             False
