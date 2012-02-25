@@ -6,6 +6,10 @@
  *
  */
 
+#filter_label{
+    text-align: right;
+}
+
 #main_table tr#none{
     background-color: #ffffff;
 }
