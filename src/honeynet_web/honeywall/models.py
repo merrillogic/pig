@@ -64,9 +64,10 @@ class TrafficPoint(models.Model):
     num_high_packets = models.IntegerField()
     num_medium_packets = models.IntegerField()
     num_low_packets = models.IntegerField()
-    
+
     class Meta:
         #order newest first
+        unique_together = ('time',)
         ordering = ['-time']
 
 class Packet(models.Model):
@@ -122,4 +123,4 @@ class Packet(models.Model):
               u"Attack: "+unicode(self.attacks)+u'\n'+\
               u"Classification time: "+unicode(self.classification_time)
         return out
-        
+
