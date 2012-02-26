@@ -87,7 +87,7 @@ class Packet(models.Model):
     attacks = models.ManyToManyField(Attack, null=True, blank=True)
     classification_time = models.DateTimeField(auto_now_add=False, blank=True, null=True)
 
-    traffic_point = models.ForeignKey(TrafficPoint, null=True)
+    traffic_point = models.ForeignKey(TrafficPoint, blank=True, null=True)
 
     # store payload as encoded data
     _payload = models.TextField(db_column='payload', blank=True)

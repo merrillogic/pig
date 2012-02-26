@@ -2,8 +2,15 @@ from django.core.urlresolvers import reverse
 from tastypie.authorization import Authorization
 from tastypie import fields
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
-from honeywall.models import Packet, Attack
+from honeywall.models import Packet, Attack, TrafficPoint
 from honeywall.utils import protocol_lookup
+
+class TrafficResource(ModelResource):
+    class Meta:
+        queryset = TrafficPoint.objects.all()
+        allowed_methods = ['get']
+        resource_name = 'plot_data'
+        limit = 48
 
 class ClassifyResource(ModelResource):
     class Meta:
