@@ -17,5 +17,4 @@ urlpatterns = patterns('',
     # API!
     (r'^api/', include(v1_api.urls)),
     url(r'^api/v1/traffic_analysis', 'honeywall.views.traffic_analysis'),
-    url(r'^api/v1/plot_data', 'honeywall.views.plot_data'),
 )
