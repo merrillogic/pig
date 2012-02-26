@@ -67,7 +67,7 @@ class TrafficPoint(models.Model):
 
     class Meta:
         #order newest first
-        unique_together = ('time')
+        unique_together = ('time',)
         ordering = ['-time']
 
 class Packet(models.Model):
