@@ -58,6 +58,17 @@ class Attack(models.Model):
               "False Positive?: "+str(self.false_positive)
         return out
 
+class TrafficPoint(models.Model):
+    time = models.DateTimeField(auto_now_add=True, primary_key=True)
+    num_all_packets = models.IntegerField()
+    num_high_packets = models.IntegerField()
+    num_medium_packets = models.IntegerField()
+    num_low_packets = models.IntegerField()
+    
+    class Meta:
+        #order newest first
+        ordering = ['-time']
+
 class Packet(models.Model):
     source_ip = models.IPAddressField()
     destination_ip = models.IPAddressField(null=True, blank=True)
@@ -111,15 +122,4 @@ class Packet(models.Model):
               u"Attack: "+unicode(self.attacks)+u'\n'+\
               u"Classification time: "+unicode(self.classification_time)
         return out
-        
-class TrafficPoint(models.Model):
-    time = models.DateTimeField(auto_now_add=True, primary_key=True)
-    num_all_packets = models.IntegerField()
-    num_high_packets = models.IntegerField()
-    num_medium_packets = models.IntegerField()
-    num_low_packets = models.IntegerField()
-    
-    class Meta:
-        #order newest first
-        ordering = ['-time']
         
