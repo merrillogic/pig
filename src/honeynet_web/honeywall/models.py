@@ -33,13 +33,13 @@ class Attack(models.Model):
 
     @property
     def threat_level(self):
-        if not self.score:
+        if not self.score or self.false_positive:
             return 'none'
         elif self.score < 50000:
             return 'low'
         elif self.score < 100000:
             return 'medium'
-        elif self.score > 100000:
+        elif self.score >= 100000:
             return 'high'
 
     class Meta:
