@@ -25,18 +25,36 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
     httpIDRE = 'HTTP/\d\.\d\r\n'
 
     def isQuery(self, packet):
+        """
+        Returns True if the packet is an HTTP GET that looks like it has a
+         query in it.
+        
+        @param packet - The packet to search in
+        """
         if search('^GET.*?.*' + self.httpIDRE, packet.payload) != None:
             return True
         else:
             return False
 
     def hasSQLComment(self, packet):
-        if search('^GET.*?.*;--.*' + self.httpIDRE, packet.payload) != None:
+        """
+        Returns True if the packet is an HTTP GET that looks like it has an
+         sql comment in it.
+        
+        @param packet - The packet to search in
+        """
+        if search('^GET.*?.*(;.)*--.*' + self.httpIDRE, packet.payload) != None:
             return True
         else:
             return False 
             
     def hasSQLCode(self, packet):
+        """
+        Returns True if the packet has any sql code in the query, false if 
+         not
+        
+        @param packet - The packet to search in
+        """
         sqlKeyWords = ["ADD", "EXCEPT", "PERCENT",
                         "ALL", "EXEC", "PLAN",
                         "ALTER", "EXECUTE", "PRECISION",
@@ -98,25 +116,33 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         SQLCodePossibilities = ''
         for word in sqlKeyWords:
             SQLCodePossibilities += '(' + word + ')|'
-        if search('^GET.*?.*' + SQLCodePossibilities + '*.*' + self.httpIDRE, packet.payload) != None:
+        if search('^GET.*?.*' + SQLCodePossibilities + '*.*' + \
+                    self.httpIDRE, packet.payload) != None:
             return True
         else:
             return False
 
     def addAttackProfile(self):
+        """
+        Sets up an automata to detect SQL attacks. It has a chain of nodes with length
+         numPrelims that are the path to detect likely automated attacks, they check
+         for just queries. Each node on this path has a 'fast track' transition
+         to the threat node if any query has sql code or an sql comment in it.
+        """
         numPrelims = 15
         for i in range(numPrelims):
             self.addPrelimNode(1000)
         threat = self.addThreatNode(60000)
-        
+
+        self.addTransition(0, threat, numPrelims*10, [self.hasSQLCode, self.hasSQLComment])
         self.addTransition(0, 1, 1, [self.isQuery])
-        self.addTransition(0, threat, numPrelims*10, [self.hasSQLComment, self.hasSQLCode])
         for prelimIndex in range(1, numPrelims):
             #for the first numPrelims-1 nodes...
+            self.addTransition(prelimIndex, threat, numPrelims * 10, 
+                                    [self.hasSQLComment, self.hasSQLCode])
             self.addTransition(prelimIndex, prelimIndex + 1, prelimIndex+1, [self.isQuery])
-            self.addTransition(prelimIndex, threat, numPrelims * 10, [self.hasSQLComment, self.hasSQLCode])
-        
+
         #Add transitions for looping in threat.
+        self.addTransition(threat, threat, numPrelims * 10, 
+                                    [self.hasSQLComment, self.hasSQLCode])
         self.addTransition(threat, threat, numPrelims, [self.isQuery])
-        self.addTransition(threat, threat, numPrelims * 10, [self.hasSQLComment, self.hasSQLCode])
-        
