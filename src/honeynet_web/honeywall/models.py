@@ -75,6 +75,8 @@ class Packet(models.Model):
     attacks = models.ManyToManyField(Attack, null=True, blank=True)
     classification_time = models.DateTimeField(auto_now_add=False, blank=True, null=True)
 
+    traffic_point = models.ForeignKey(TrafficPoint, 
+
     # store payload as encoded data
     _payload = models.TextField(db_column='payload', blank=True)
 
@@ -109,3 +111,15 @@ class Packet(models.Model):
               u"Attack: "+unicode(self.attacks)+u'\n'+\
               u"Classification time: "+unicode(self.classification_time)
         return out
+        
+class TrafficPoint(models.Model):
+    time = models.DateTimeField(auto_now_add=True, primary_key=True)
+    num_all_packets = models.IntegerField()
+    num_high_packets = models.IntegerField()
+    num_medium_packets = models.IntegerField()
+    num_low_packets = models.IntegerField()
+    
+    class Meta:
+        #order newest first
+        ordering = ['-time']
+        
