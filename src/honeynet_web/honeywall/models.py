@@ -59,7 +59,7 @@ class Attack(models.Model):
         return out
 
 class TrafficPoint(models.Model):
-    time = models.DateTimeField(primary_key=True)
+    time = models.DateTimeField()
     num_all_packets = models.IntegerField()
     num_high_packets = models.IntegerField()
     num_medium_packets = models.IntegerField()
