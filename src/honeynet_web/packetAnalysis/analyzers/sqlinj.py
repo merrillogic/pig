@@ -104,7 +104,7 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
             return False
 
     def addAttackProfile(self):
-        numPrelims = 5
+        numPrelims = 15
         for i in range(numPrelims):
             self.addPrelimNode(1000)
         threat = self.addThreatNode(60000)
