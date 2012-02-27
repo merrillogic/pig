@@ -15,6 +15,10 @@
 }
 #main_table td#pid{
     text-align: center;
+    width: 5%;
+}
+#main_table td#time{
+    text-align: center;
     width: 20%;
 }
 #main_table td#srcIp{
@@ -47,6 +51,10 @@
 }
 
 #table_header th#pid{
+    text-align: center;
+    width: 5%;
+}
+#table_header th#time{
     text-align: center;
     width: 20%;
 }
