@@ -53,7 +53,7 @@ function attack(attackEntry){
     self.score = ko.observable(attackEntry.score);
 
     
-    self.link = ko.observable('/static/attack/' + self.aid + '/');
+    self.link = ko.observable('/attack/' + self.aid());
     //level determined to color code table
     self.level = ko.observable(attackEntry.threat_level);
     /*
@@ -78,6 +78,7 @@ function updateAttackEntry(attackObj, newAttack){
     attackObj.destinationIp(newAttack.destination_ip);
     attackObj.score(newAttack.score);
     attackObj.level(newAttack.threat_level);
+    attackObj.link('/attack/' + self.aid());
     /*
     if(newAttack.false_positive){
         attackObj.level("none");
@@ -143,20 +144,7 @@ function attacksViewModel(){
     }
 
     self.row_click = function(){
-        //called when table row is clicked
-
-        //var jsonAttack = getAttack(this.aid());
-        
-        /*
-        $('#type').text(jsonAttack.attack_type);
-        $('#start').text(jsonAttack.start_time);
-        $('#end').text(jsonAttack.end_time);
-        $('#source').text(jsonAttack.source_ip);
-        $('#dest').text(jsonAttack.destination_ip);
-        $('#score').text(jsonAttack.score);
-        
-        $('#attack_button').attr('href', 'attack/' + this.aid());
-        */
+        window.location = alethis.link()
     }
 
     self.getUpdate = function(){
@@ -193,8 +181,6 @@ function getAttacks(){
     xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", '/api/v1/attack/?format=json', false);
     xmlHttp.send(null);
-
-    alert(xmlHttp.resonseText);
 
     return JSON.parse(xmlHttp.responseText);
 }

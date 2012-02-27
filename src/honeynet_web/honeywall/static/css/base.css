@@ -84,6 +84,6 @@ table#table_header{
 
 div#table_holder{
     overflow: auto;
-    height: 300px;
+    height: 250px;
     width: 100%
 }
