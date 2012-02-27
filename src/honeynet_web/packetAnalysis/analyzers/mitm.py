@@ -60,6 +60,6 @@ class MitMAnalyzer(AttackAnalyzer):
         i = self.addThreatNode(10000) #10 second timeout
         prelim = self.addPrelimNode(10000)
 
-        self.addTransition(0, prelim, 500, [self.isARPThreat])
-        self.addTransition(prelim, i, 500, [self.isARPThreat])
-        self.addTransition(i, i, 500, [self.isARPThreat])
+        self.addTransition(0, prelim, 25, [self.isARPThreat])
+        self.addTransition(prelim, i, 25, [self.isARPThreat])
+        self.addTransition(i, i, 25, [self.isARPThreat])
