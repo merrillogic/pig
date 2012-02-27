@@ -82,16 +82,6 @@ table#table_header{
     width: 16px;
 }
 
-
-
-
-/*attack info table displaying attack details*/
-table#attack_info {
-}
-#attack_info td {
-    padding: 8px;
-}
-
 div#table_holder{
     overflow: auto;
     height: 300px;
