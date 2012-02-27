@@ -35,7 +35,7 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         @param packet - The packet to search in
         """
         if search('^GET.*\?.*' + self.httpIDRE, packet.payload, I) != None:
-	    return True
+            return True
         else:
             return False
 
@@ -47,7 +47,7 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         @param packet - The packet to search in
         """
         if search('^GET.*\?.*(;.*)*--.*' + self.httpIDRE, packet.payload, I) != None:
-	    return True
+            return True
         else:
             return False 
             
@@ -119,11 +119,11 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         SQLCodePossibilities = '(.*('
         for word in sqlKeyWords:
             SQLCodePossibilities += '' + word + '|'
-	SQLCodePossibilities = SQLCodePossibilities[:-1] + ').*)'
-	#print SQLCodePossibilities
+        SQLCodePossibilities = SQLCodePossibilities[:-1] + ').*)'
+        #print SQLCodePossibilities
         if search('^GET.*\?.*' + SQLCodePossibilities + '.*' + \
                     self.httpIDRE, packet.payload, I) != None:
-	    return True
+            return True
         else:
             return False
 

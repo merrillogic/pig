@@ -27,10 +27,10 @@ class DOSAnalyzer(AttackAnalyzer):
              200 packets over one second.
 	'''
         funct = lambda x: True
-        for i in range(200):
-            self.addPrelimNode(5.1)
+        for i in range(1000):
+            self.addPrelimNode(1.1)
             self.addTransition(i, i+1, 1, [funct])
-        threat = self.addThreatNode(10.1)
+        threat = self.addThreatNode(5.1)
         self.addTransition(i+1, threat, 1, [funct])
         self.addTransition(threat, threat, 1, [funct])
 
