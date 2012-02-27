@@ -6,7 +6,18 @@
  *
  */
 
-#filter_label{
+img {
+    max-height: 250px;
+    width: auto;
+    overflow: hidden;
+}
+
+#plot{
+    height: 250px;
+    width: auto;
+}
+
+#form_label{
     text-align: right;
 }
 

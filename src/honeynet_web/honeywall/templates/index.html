@@ -5,57 +5,12 @@
 {% endblock %}
 
 {% block top_row %}
-    <div class = "span8">
-        <div id = "placeholder" style="width:95%;height:300px;">
-        </div>
+    <div class = "span3">
+        <img src = "{{ STATIC_URL }}logo1.png" />
     </div>
-
-    <div class = "span4">
-        <!--Attack Details-->
-        <div class = "row">
-            <div class = "well">
-                <table id = "attack_info">
-                    <thead>
-                        <tr>
-                            <th>Attack Information</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Type:</td>
-                            <td id = "type">No attack selected.</td>
-                        </tr>
-                        <tr>
-                            <td>Start Time:</td>
-                            <td id = "start"></td>
-                        </tr>
-                        <tr>
-                            <td>End Time:</td>
-                            <td id = "end"></td>
-                        </tr>
-                        <tr>
-                            <td>Source IP:</td>
-                            <td id = "source"></td>
-                        </tr>
-                        <tr>
-                            <td>Destination IP:</td>
-                            <td id = "dest"></td>
-                        </tr>
-                        <tr>
-                            <td>Threat Level:</td>
-                            <td id = "score"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div> <!-- well -->
-        </div> <!-- row -->
-
-        <!--Button to go to attack packets-->
-        <div class = "row">
-            <div class = "btn-group">
-                <a class = "btn" id = "attack_button">see attack packets</a>
-            </div>
+    
+    <div class = "span9">
+        <div id = "plot">
         </div>
     </div>
 {% endblock %}
@@ -83,25 +38,30 @@
                     <button style = "width: 10%" class = "btn" data-bind = "click: clear_button">Clear</button>
                 </form>
 
-                <table id = "main_table" class = "table sortable">
+                <table id = "table_header">
                     <thead>
                         <tr>
-                            <th style = "width: 4%">ID</th>
-                            <th style = "width: 12%">Attack Type</th>
-                            <th style = "width: 21%">Time</th>
-                            <th style = "width: 21%">Source IP</th>
-                            <th style = "width: 21%">Destination IP</th>
-                            <th style = "width: 21%">Threat Level</th>
+                            <th id = "aid">ID</th>
+                            <th id = "attack_type">Attack Type</th>
+                            <th id = "start_time">Start Time</th>
+                            <th id = "end_time">End Time</th>
+                            <th id = "source_ip">Source IP</th>
+                            <th id = "destination_ip">Destination IP</th>
+                            <th id = "score">Score</th>
                         </tr>
                     </thead>
+                </table>
+
+                <table id = "main_table" class = "table">
                     <tbody data-bind = "foreach: attacks">
-                        <tr data-bind = "attr: { id: level }, click: $parent.row_click">
+                        <tr data-bind = "attr: { href: link, id: level }, click: $parent.row_click">
                             <td id = "aid" data-bind = "text: aid"></td>
                             <td id = "attack_type"data-bind = "text: attackType"></td>
-                            <td id = "time" data-bind = "text: time"></td>
+                            <td id = "start_time" data-bind = "text: startTime"></td>
+                            <td id = "end_time" data-bind = "text: endTime"></td>
                             <td id = "source_ip" data-bind = "text: sourceIp"></td>
-                            <td id = "desintation_ip" data-bind = "text: destinationIp"></td>
-                            <td id = "threat_level" data-bind = "text: threatLevel"></td>
+                            <td id = "destination_ip" data-bind = "text: destinationIp"></td>
+                            <td id = "score" data-bind = "text: score"></td>
                         </tr>
                     </tbody>
                 </table>

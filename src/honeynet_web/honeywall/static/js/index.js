@@ -28,10 +28,10 @@ $(function () {
     var high_threat = {
         color: '#ff1919',
         data: [[0, 0], [1, 0], [2, 2], [3, 15], [4, 16], [5, 22]],
-        label: 'high threat'
+        label: 'high threat',
     };
 
-    var placeholder = $("#placeholder");
+    var placeholder = $("#plot");
     var plot = $.plot(placeholder, [all_packets, low_threat, medium_threat, high_threat]);
 
     placeholder.resize(function(){
@@ -46,12 +46,17 @@ function attack(attackEntry){
     var self = this;
     self.aid = ko.observable(attackEntry.id);
     self.attackType = ko.observable(attackEntry.attack_type);
-    self.time = ko.observable(attackEntry.start_time);
+    self.startTime = ko.observable(attackEntry.start_time);
+    self.endTime = ko.observable(attackEntry.end_time);
     self.sourceIp = ko.observable(attackEntry.source_ip);
     self.destinationIp = ko.observable(attackEntry.destination_ip);
-    self.threatLevel = ko.observable(attackEntry.score);
+    self.score = ko.observable(attackEntry.score);
 
+    
+    self.link = ko.observable('/static/attack/' + self.aid + '/');
     //level determined to color code table
+    self.level = ko.observable(attackEntry.threat_level);
+    /*
     if(attackEntry.false_positive){
         self.level = ko.observable("none");
     }else if(attackEntry.score >= 100000){
@@ -60,18 +65,20 @@ function attack(attackEntry){
         self.level = ko.observable("medium");
     }else{
         self.level = ko.observable("low");
-    }
+    }*/
 };
 
 function updateAttackEntry(attackObj, newAttack){
     //used to update an already existing entry with the given new attack
     attackObj.aid(newAttack.id);
     attackObj.attackType(newAttack.attack_type);
-    attackObj.time(newAttack.start_time);
+    attackObj.startTime(newAttack.start_time);
+    attackObj.endTime(newAttack.end_time);
     attackObj.sourceIp(newAttack.source_ip);
     attackObj.destinationIp(newAttack.destination_ip);
-    attackObj.threatLevel(newAttack.score);
-
+    attackObj.score(newAttack.score);
+    attackObj.level(newAttack.threat_level);
+    /*
     if(newAttack.false_positive){
         attackObj.level("none");
     }else if(newAttack.score >= 100000){
@@ -80,7 +87,7 @@ function updateAttackEntry(attackObj, newAttack){
         attackObj.level("medium");
     }else{
         attackObj.level("low");
-    }
+    }*/
 }
 
 function attacksViewModel(){
@@ -97,7 +104,7 @@ function attacksViewModel(){
 
     self.filter_button = function(){
         //called when filter search is enacted
-        var filter = removeWhite($('#filter_entry').val());
+        var filter = removeWhite($('#form_entry').val());
         var jsonFilteredAttacks = getAttackFiltered(filter); //get filtered attacks
 
         if(jsonFilteredAttacks.objects.length <= self.attacks().length){
@@ -130,21 +137,26 @@ function attacksViewModel(){
 
     self.clear_button = function(){
         //called when clear button is clicked
-        $('#filter_entry').val("");
+        $('#form_entry').val("");
 
         self.getUpdate();
     }
 
     self.row_click = function(){
         //called when table row is clicked
-        var jsonAttack = getAttack(this.aid());
 
+        //var jsonAttack = getAttack(this.aid());
+        
+        /*
         $('#type').text(jsonAttack.attack_type);
         $('#start').text(jsonAttack.start_time);
         $('#end').text(jsonAttack.end_time);
         $('#source').text(jsonAttack.source_ip);
         $('#dest').text(jsonAttack.destination_ip);
         $('#score').text(jsonAttack.score);
+        
+        $('#attack_button').attr('href', 'attack/' + this.aid());
+        */
     }
 
     self.getUpdate = function(){
@@ -182,6 +194,8 @@ function getAttacks(){
     xmlHttp.open("GET", '/api/v1/attack/?format=json', false);
     xmlHttp.send(null);
 
+    alert(xmlHttp.resonseText);
+
     return JSON.parse(xmlHttp.responseText);
 }
 
@@ -215,7 +229,7 @@ ko.applyBindings(attacksTable);
 //function that updates the table every so often
 window.setInterval(function(){
     //only does it if you are not filtering attacks
-    if($('#filter_entry').val() == ""){
+    if($('#form_entry').val() == ""){
         attacksTable.getUpdate();
         //alert("updated");
     }
