@@ -96,8 +96,8 @@ function attacksViewModel(){
     var self = this;
     var attackList = null;
     var jsonAttackObj = getAttacks();
-    self.nextPage = jsonAttackObj.meta.next;
-    self.previousPage = jsonAttackObj.meta.previous;
+    self.nextPage = ko.observable(jsonAttackObj.meta.next);
+    self.previousPage = ko.observable(jsonAttackObj.meta.previous);
     self.attacks = ko.observableArray([]); //observable array, serves as attack table
 
     //iterate through every attack in the json object, create attack object and store in array
@@ -123,8 +123,8 @@ function attacksViewModel(){
 
     self.attack_from_url = function(url){
         var jsonFilteredAttacks = getAttacksFromURL(url); //get filtered attacks
-        self.nextPage = jsonFilteredAttacks.meta.next;
-        self.previousPage = jsonFilteredAttacks.meta.previous;
+        self.nextPage(jsonFilteredAttacks.meta.next);
+        self.previousPage(jsonFilteredAttacks.meta.previous);
 
         if(jsonFilteredAttacks.objects.length <= self.attacks().length){
             //there are more attacks currently in the table than needed
