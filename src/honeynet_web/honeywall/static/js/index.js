@@ -203,14 +203,13 @@ function getAttacks(){
 
 function getFilterURL(filter){
     //build URL for filter
-    return '/api/v1/attack?' + filter;
+    return "/api/v1/attack?format=json&" + filter;
 }
 
 function getAttacksFromURL(url){
     //get list of attacks from url
     var xmlHttp = new XMLHttpRequest();
 
-    //xmlHttp.open("GET", '/api/v1/attack/?' + filter, false);
     xmlHttp.open("GET", url, false);
     xmlHttp.send(null);
 
