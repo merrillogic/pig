@@ -35,13 +35,21 @@ class MitMAnalyzer(AttackAnalyzer):
         return self.__arp_tables
 
     def isARPThreat(self, packet):
+        def _class_d(packet):
+            """Reserved IP addresses for multicast."""
+            source = packet.source_ip.split('.')
+            dest = packet.source_ip.split('.')
+
+            return int(source[0]) in range(224,240) or int(dest[0]) in range(224, 240)
+
         def _outside_network(packet):
             # assuming the network is a /24 subnet
             record = self.arp_tables['IP'].keys()[0]
             record = record.split('.')
-            p = packet.source_ip.split('.')
+            source = packet.source_ip.split('.')
+            dest = packet.source_ip.split('.')
 
-            return not p[:-1] == record[:-1]
+            return (not source[:-1] == record[:-1]) and (not dest[:-1] == record[:-1])
 
         def _wrong_ip_mac(packet):
             if packet.source_ip in self.arp_tables['IP']:
@@ -53,7 +61,7 @@ class MitMAnalyzer(AttackAnalyzer):
                 return packet.source_ip != self.arp_tables['MAC'][packet.source_mac]
             return False
 
-        return (_wrong_ip_mac(packet) or _wrong_mac_ip(packet)) and not(_outside_network(packet))
+        return (_wrong_ip_mac(packet) or _wrong_mac_ip(packet)) and not(_outside_network(packet)) and not(_class_d(packet))
 
 
     def addAttackProfile(self):
