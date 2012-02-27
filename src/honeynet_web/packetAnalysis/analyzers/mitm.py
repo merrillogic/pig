@@ -39,9 +39,10 @@ class MitMAnalyzer(AttackAnalyzer):
             # assuming the network is a /24 subnet
             record = self.arp_tables['IP'].keys()[0]
             record = record.split('.')
-            p = packet.source_ip.split('.')
+            source = packet.source_ip.split('.')
+            dest = packet.source_ip.split('.')
 
-            return not p[:-1] == record[:-1]
+            return (not source[:-1] == record[:-1]) and (not dest[:-1] == record[:-1])
 
         def _wrong_ip_mac(packet):
             if packet.source_ip in self.arp_tables['IP']:
