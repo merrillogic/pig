@@ -7,7 +7,7 @@
 
 body {
     /* 60px to make the container go all the way to the bottom of the topbar */
-    padding-top: 60px;    
+    padding-top: 60px;
 }
 
 /*basic table structure*/
@@ -20,6 +20,7 @@ table th, td {
 
 /*main table for holding list of attacks/packets*/
 table#main_table {
+    margin-bottom: 0px;
 }
 #main_table tr:hover {
     cursor: pointer;
