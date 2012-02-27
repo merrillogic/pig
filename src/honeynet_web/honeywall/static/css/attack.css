@@ -13,3 +13,71 @@
 #main_table tr:hover {
     background-color: #c0c0c0;
 }
+#main_table td#pid{
+    text-align: center;
+    width: 20%;
+}
+#main_table td#srcIp{
+    text-align: center;
+    width: 15%;
+}
+#main_table td#srcMac{
+    text-align: center;
+    width: 15%;
+}
+#main_table td#srcPort{
+    text-align: center;
+    width: 5%;
+}
+#main_table td#destIp{
+    text-align: center;
+    width: 15%;
+}
+#main_table td#destMac{
+    text-align: center;
+    width: 15%;
+}
+#main_table td#destPort{
+    text-align: center;
+    width: 5%;
+}
+#main_table td#protocol{
+    text-align: center;
+    width: 5%;
+}
+
+#table_header th#pid{
+    text-align: center;
+    width: 20%;
+}
+#table_header th#srcIp{
+    text-align: center;
+    width: 15%;
+}
+#table_header th#srcMac{
+    text-align: center;
+    width: 15%;
+}
+#table_header th#srcPort{
+    text-align: center;
+    width: 5%;
+}
+#table_header th#destIp{
+    text-align: center;
+    width: 15%;
+}
+#table_header th#destMac{
+    text-align: center;
+    width: 15%;
+}
+#table_header th#destPort{
+    text-align: center;
+    width: 5%;
+}
+#table_header th#protocol{
+    text-align: center;
+    width: 5%;
+}
+#table_header th#scroll_space{
+    width: 16px;
+}

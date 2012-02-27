@@ -61,34 +61,39 @@
 {% endblock %}
 
 {% block bottom_row %}
-     <table class = "table sortable" id = "main_table">
+    <table class = "table sortable" id = "main_table">
         <thead>
             <tr>
-                <th style = "width: 5%">id</th>
-                <th style = "width: 20%">time</th>
-                <th style = "width: 15%">src ip</th>
-                <th style = "width: 15%">src mac</th>
-                <th style = "width: 5%">src port</th>
-                <th style = "width: 15%">dest ip</th>
-                <th style = "width: 15%">dest mac</th>
-                <th style = "width: 5%">dest port</th>
-                <th style = "width: 5%">protocol</th>
+                <th id = "pid">id</th>
+                <th id = "time">time</th>
+                <th id = "srcIp">src ip</th>
+                <th id = "srcMac">src mac</th>
+                <th id = "srcPort">src port</th>
+                <th id = "destIp">dest ip</th>
+                <th id = "destMac">dest mac</th>
+                <th id = "destPort">dest port</th>
+                <th id = "protocol">protocol</th>
+                <th id = "scroll_space"></th>
             </tr>
         </thead>
-        <tbody data-bind = "foreach: packets">
-            <tr>
-                <td id = "idCol" data-bind = "text: pid"></td>
-                <td id = "timeCol" data-bind = "text: time"></td>
-                <td id = "srcIpCol" data-bind = "text: srcIp"></td>
-                <td id = "srcMacCol" data-bind = "text: srcMac"></td>
-                <td id = "srcPortCol" data-bind = "text: srcPort"></td>
-                <td id = "destIpCol" data-bind = "text: destIp"></td>
-                <td id = "destMacCol" data-bind = "text: destMac"></td>
-                <td id = "destPortCol" data-bind = "text: destPort"></td>
-                <td id = "protocolCol" data-bind = "text: protocol"></td>
-            </tr>
-        </tbody>
     </table>
+    <div id = "table_holder">
+        <table class = "table" id = "main_table">            
+            <tbody data-bind = "foreach: packets">
+                <tr>
+                    <td id = "pid" data-bind = "text: pid"></td>
+                    <td id = "time" data-bind = "text: time"></td>
+                    <td id = "srcIp" data-bind = "text: srcIp"></td>
+                    <td id = "srcMac" data-bind = "text: srcMac"></td>
+                    <td id = "srcPort" data-bind = "text: srcPort"></td>
+                    <td id = "destIp" data-bind = "text: destIp"></td>
+                    <td id = "destMac" data-bind = "text: destMac"></td>
+                    <td id = "destPort" data-bind = "text: destPort"></td>
+                    <td id = "protocol" data-bind = "text: protocol"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 {% block javascript %}    
