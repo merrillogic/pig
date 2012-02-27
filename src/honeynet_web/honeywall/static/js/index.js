@@ -78,7 +78,7 @@ function updateAttackEntry(attackObj, newAttack){
     attackObj.destinationIp(newAttack.destination_ip);
     attackObj.score(newAttack.score);
     attackObj.level(newAttack.threat_level);
-    attackObj.link('/attack/' + self.aid());
+    attackObj.link('/attack/' + attackObj.aid());
     /*
     if(newAttack.false_positive){
         attackObj.level("none");
@@ -144,7 +144,7 @@ function attacksViewModel(){
     }
 
     self.row_click = function(){
-        window.location = alethis.link()
+        window.location = this.link()
     }
 
     self.getUpdate = function(){
