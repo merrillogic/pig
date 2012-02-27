@@ -23,9 +23,9 @@ function fillAttackInformation(){
 
 function getAttack(){
     var xmlHttp = null;
-    
+
     xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", '/api/v1/attack/' + aid + '/', false);
+    xmlHttp.open("GET", '/api/v1/attack/' + aid + '/?format=json', false);
     xmlHttp.send(null);
 
     return xmlHttp.responseText;
@@ -34,9 +34,9 @@ function getAttack(){
 //handles updating false positive
 function updateFalsePositive(checkbox){
     var xmlHttp = new XMLHttpRequest();
-    
-    xmlHttp.open("PUT", '/api/v1/classify/' + aid + '/', false);
-    xmlHttp.setRequestHeader('Content-Type', 'application/json');    
+
+    xmlHttp.open("PUT", '/api/v1/classify/' + aid + '/?format=json', false);
+    xmlHttp.setRequestHeader('Content-Type', 'application/json');
     xmlHttp.send('{"false_positive": ' + checkbox.checked + '}');
 }
 
@@ -45,18 +45,18 @@ $(document).ready(function() {
     $('#main_table td').click(function(event) {
         var pid = $(this).parent().children('#idCol').text();
         var jsonPacket = JSON.parse(getPacket(pid));
-        
+
         $('#payload_info').text(base64Decode(jsonPacket._payload));
     });
 });
 
 function getPacket(pid){
     var xmlHttp = null;
-    
+
     xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", '/api/v1/packet/' + pid + '/', false);
+    xmlHttp.open("GET", '/api/v1/packet/' + pid + '/?format=json', false);
     xmlHttp.send(null);
-    
+
     return xmlHttp.responseText;
 }
 
@@ -81,7 +81,7 @@ function packetsViewModel(){
     var jsonPacketObj = JSON.parse(getPackets());
     var packetList = jsonPacketObj.objects;
     self.packets = ko.observableArray([]);
-    
+
     for(var i = 0; i < packetList.length; i++){
         self.packets.push(new packet(packetList[i]));
     }
@@ -89,11 +89,11 @@ function packetsViewModel(){
 
 function getPackets(){
     var xmlHttp = null;
-    
+
     xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", '/api/v1/packet/?attack=' + aid, false);
+    xmlHttp.open("GET", '/api/v1/packet/?format=json&attack=' + aid, false);
     xmlHttp.send(null);
-    
+
     return xmlHttp.responseText;
 };
 
