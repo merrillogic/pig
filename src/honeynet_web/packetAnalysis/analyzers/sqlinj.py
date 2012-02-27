@@ -17,7 +17,10 @@ Functions to use are:
 
 """
 from attackanalyzer import AttackAnalyzer
-from re import search
+#I apologize for this global "I" variable. It's to make re matching
+# be case insensitive, and used for the search function. Didn't want
+# to import the entire library for one variable.
+from re import search, I
 
 class SQLInjectionAnalyzer(AttackAnalyzer):
 
@@ -31,8 +34,8 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         
         @param packet - The packet to search in
         """
-        if search('^GET.*?.*' + self.httpIDRE, packet.payload) != None:
-            return True
+        if search('^GET.*\?.*' + self.httpIDRE, packet.payload, I) != None:
+	    return True
         else:
             return False
 
@@ -43,8 +46,8 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         
         @param packet - The packet to search in
         """
-        if search('^GET.*?.*(;.)*--.*' + self.httpIDRE, packet.payload) != None:
-            return True
+        if search('^GET.*\?.*(;.*)*--.*' + self.httpIDRE, packet.payload, I) != None:
+	    return True
         else:
             return False 
             
@@ -113,12 +116,14 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
                         "END", "ORDER", "WHILE",
                         "ERRLVL", "OUTER", "WITH",
                         "ESCAPE", "OVER", "WRITETEXT"]
-        SQLCodePossibilities = ''
+        SQLCodePossibilities = '(.*('
         for word in sqlKeyWords:
-            SQLCodePossibilities += '(' + word + ')|'
-        if search('^GET.*?.*' + SQLCodePossibilities + '*.*' + \
-                    self.httpIDRE, packet.payload) != None:
-            return True
+            SQLCodePossibilities += '' + word + '|'
+	SQLCodePossibilities = SQLCodePossibilities[:-1] + ').*)'
+	#print SQLCodePossibilities
+        if search('^GET.*\?.*' + SQLCodePossibilities + '.*' + \
+                    self.httpIDRE, packet.payload, I) != None:
+	    return True
         else:
             return False
 
@@ -133,16 +138,19 @@ class SQLInjectionAnalyzer(AttackAnalyzer):
         for i in range(numPrelims):
             self.addPrelimNode(1000)
         threat = self.addThreatNode(60000)
-
-        self.addTransition(0, threat, numPrelims*10, [self.hasSQLCode, self.hasSQLComment])
         self.addTransition(0, 1, 1, [self.isQuery])
-        for prelimIndex in range(1, numPrelims):
+        self.addTransition(0, threat, numPrelims*10, [self.hasSQLCode])
+        self.addTransition(0, threat, numPrelims*5, [self.hasSQLComment])
+        for prelimIndex in range(1, numPrelims+1):
             #for the first numPrelims-1 nodes...
             self.addTransition(prelimIndex, threat, numPrelims * 10, 
-                                    [self.hasSQLComment, self.hasSQLCode])
+                                    [self.hasSQLCode])
+            self.addTransition(prelimIndex, threat, numPrelims * 5, 
+                                    [self.hasSQLComment])
             self.addTransition(prelimIndex, prelimIndex + 1, prelimIndex+1, [self.isQuery])
-
         #Add transitions for looping in threat.
         self.addTransition(threat, threat, numPrelims * 10, 
-                                    [self.hasSQLComment, self.hasSQLCode])
+                                    [self.hasSQLCode])
+        self.addTransition(threat, threat, numPrelims * 5, 
+                                    [self.hasSQLComment])
         self.addTransition(threat, threat, numPrelims, [self.isQuery])
