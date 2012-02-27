@@ -75,7 +75,7 @@ table#table_header{
 #table_header th#destination_ip{
     width: 15%;
 }
-#table_header th#threat_level{
+#table_header th#score{
     width: 10%;
 }
 #table_header th#scroll_space{
