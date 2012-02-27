@@ -123,6 +123,8 @@ function attacksViewModel(){
 
     self.attack_from_url = function(url){
         var jsonFilteredAttacks = getAttacksFromURL(url); //get filtered attacks
+        self.nextPage = jsonFilteredAttacks.meta.next;
+        self.previousPage = jsonFilteredAttacks.meta.previous;
 
         if(jsonFilteredAttacks.objects.length <= self.attacks().length){
             //there are more attacks currently in the table than needed
