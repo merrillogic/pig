@@ -48,8 +48,9 @@ function attack(attackEntry){
     self.attackType = ko.observable(attackEntry.attack_type);
     self.time = ko.observable(attackEntry.start_time);
     self.sourceIp = ko.observable(attackEntry.source_ip);
+    self.destinationIp = ko.observable(attackEntry.destination_ip);
     self.threatLevel = ko.observable(attackEntry.score);
-    
+
     //level determined to color code table
     if(attackEntry.false_positive){
         self.level = ko.observable("none");
@@ -68,8 +69,9 @@ function updateAttackEntry(attackObj, newAttack){
     attackObj.attackType(newAttack.attack_type);
     attackObj.time(newAttack.start_time);
     attackObj.sourceIp(newAttack.source_ip);
+    attackObj.destinationIp(newAttack.destination_ip);
     attackObj.threatLevel(newAttack.score);
-    
+
     if(newAttack.false_positive){
         attackObj.level("none");
     }else if(newAttack.score >= 100000){
@@ -87,23 +89,23 @@ function attacksViewModel(){
     var attackList = null;
     var jsonAttackObj = getAttacks();
     self.attacks = ko.observableArray([]); //observable array, serves as attack table
-    
+
     //iterate through every attack in the json object, create attack object and store in array
     for(var i = 0; i < jsonAttackObj.objects.length; i++){
         self.attacks.push(new attack(jsonAttackObj.objects[i]));
     }
-    
+
     self.filter_button = function(){
         //called when filter search is enacted
         var filter = removeWhite($('#filter_entry').val());
         var jsonFilteredAttacks = getAttackFiltered(filter); //get filtered attacks
-        
+
         if(jsonFilteredAttacks.objects.length <= self.attacks().length){
             //there are more attacks currently in the table than needed
             for(var i = 0; i < self.attacks().length; i++){
                 //if at this index, an attack exists within the json object array
                 if(i < jsonFilteredAttacks.objects.length){
-                    //change the entry to reflect the filtered attack that was retrieved 
+                    //change the entry to reflect the filtered attack that was retrieved
                     updateAttackEntry(self.attacks()[i], jsonFilteredAttacks.objects[i]);
                 }else{
                     //done with filtered attacks, but entries are left in the array so remove them
@@ -125,18 +127,18 @@ function attacksViewModel(){
             }
         }
     };
-    
+
     self.clear_button = function(){
         //called when clear button is clicked
         $('#filter_entry').val("");
 
         self.getUpdate();
     }
-    
+
     self.row_click = function(){
         //called when table row is clicked
         var jsonAttack = getAttack(this.aid());
-        
+
         $('#type').text(jsonAttack.attack_type);
         $('#start').text(jsonAttack.start_time);
         $('#end').text(jsonAttack.end_time);
@@ -144,11 +146,11 @@ function attacksViewModel(){
         $('#dest').text(jsonAttack.destination_ip);
         $('#score').text(jsonAttack.score);
     }
-    
+
     self.getUpdate = function(){
         //get most recent attacks
         var jsonAttackObj = getAttacks();
-        
+
         //put into array and thus in table
         for(var i = 0; i < jsonAttackObj.objects.length; i++){
             if(i < self.attacks().length){
@@ -164,22 +166,22 @@ function attacksViewModel(){
 
 function getAttack(aid){
     var xmlHttp = null;
-    
+
     xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", '/api/v1/attack/' + aid + '/?format=json', false);
     xmlHttp.send(null);
-    
+
     return JSON.parse(xmlHttp.responseText);
 }
 
 function getAttacks(){
     //get list of attacks using a GET request to server
     var xmlHttp = null;
-    
+
     xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", '/api/v1/attack/?format=json', false);
     xmlHttp.send(null);
-    
+
     return JSON.parse(xmlHttp.responseText);
 }
 
@@ -189,14 +191,14 @@ function getAttackFiltered(filter){
 
     xmlHttp.open("GET", '/api/v1/attack/?' + filter, false);
     xmlHttp.send(null);
-    
+
     return JSON.parse(xmlHttp.responseText);
 }
 
 function removeWhite(string){
     //removes all white spaces from given string
     var newString = "";
-    
+
     for(var i = 0; i < string.length; i++){
         if(string[i] != " "){
             newString += string[i];

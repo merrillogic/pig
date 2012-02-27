@@ -46,11 +46,11 @@
                             <td>Threat Level:</td>
                             <td id = "score"></td>
                         </tr>
-                    </tbody>                                 
+                    </tbody>
                 </table>
             </div> <!-- well -->
         </div> <!-- row -->
-            
+
         <!--Button to go to attack packets-->
         <div class = "row">
             <div class = "btn-group">
@@ -70,11 +70,11 @@
             <a href = "#traffic_analysis_tab" data-toggle = "tab">Traffic Analysis</a>
         </li>
     </ul>
-    
+
     <!--Tab contents-->
     <div class = "tab-content">
         <!--Attacks tab contents-->
-        
+
         <div class = "tab-pane active" id = "attack_tab">
                 <form class = "form-search" id = "attack_filter">
                     <label id = "filter_label" style = "width: 5%">Filter: </label>
@@ -82,15 +82,16 @@
                     <button style = "width: 10%" class = "btn" data-bind = "click: filter_button">Apply</button>
                     <button style = "width: 10%" class = "btn" data-bind = "click: clear_button">Clear</button>
                 </form>
-                
+
                 <table id = "main_table" class = "table sortable">
                     <thead>
                         <tr>
                             <th style = "width: 4%">ID</th>
-                            <th style = "width: 24%">Attack Type</th>
-                            <th style = "width: 24%">Time</th>
-                            <th style = "width: 24%">Source IP</th>
-                            <th style = "width: 24%">Threat Level</th>
+                            <th style = "width: 12%">Attack Type</th>
+                            <th style = "width: 21%">Time</th>
+                            <th style = "width: 21%">Source IP</th>
+                            <th style = "width: 21%">Destination IP</th>
+                            <th style = "width: 21%">Threat Level</th>
                         </tr>
                     </thead>
                     <tbody data-bind = "foreach: attacks">
@@ -99,12 +100,13 @@
                             <td id = "attack_type"data-bind = "text: attackType"></td>
                             <td id = "time" data-bind = "text: time"></td>
                             <td id = "source_ip" data-bind = "text: sourceIp"></td>
+                            <td id = "desintation_ip" data-bind = "text: destinationIp"></td>
                             <td id = "threat_level" data-bind = "text: threatLevel"></td>
                         </tr>
                     </tbody>
                 </table>
         </div>
-        
+
         <!--Traffic Analysis tab contents-->
         <div class = "tab-pane" id = "traffic_analysis_tab">
             <table class = "table">
@@ -126,10 +128,10 @@
     <!-- For flot-->
     <script src = "{{ STATIC_URL }}flot/jquery.flot.js"></script>
     <script src = "{{ STATIC_URL }}flot/jquery.flot.resize.js"></script>
-    
+
     <!-- For knockout -->
     <script src = "{{ STATIC_URL }}js/knockout-2.0.0.js"></script>
-    
+
     <!-- index.js -->
     <script src="{{ STATIC_URL }}js/index.js"></script>
 {% endblock %}
