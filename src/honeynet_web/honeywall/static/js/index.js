@@ -106,12 +106,10 @@ function attacksViewModel(){
     }
 
     self.get_previous = function(){
-        console.log('preeeeeevious');
-        console.log(self.previousPage);
-        self.attack_from_url(self.previousPage);
+        self.attack_from_url(self.previousPage());
     }
     self.get_next = function(){
-        self.attack_from_url(self.nextPage);
+        self.attack_from_url(self.nextPage());
     }
 
     self.filter_button = function(){
