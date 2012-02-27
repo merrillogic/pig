@@ -52,7 +52,7 @@ function attack(attackEntry){
     self.destinationIp = ko.observable(attackEntry.destination_ip);
     self.score = ko.observable(attackEntry.score);
 
-    
+
     self.link = ko.observable('/attack/' + self.aid());
     //level determined to color code table
     self.level = ko.observable(attackEntry.threat_level);
@@ -96,6 +96,8 @@ function attacksViewModel(){
     var self = this;
     var attackList = null;
     var jsonAttackObj = getAttacks();
+    self.nextPage = jsonAttackObj.meta.next;
+    self.previousPage = jsonAttackObj.meta.previous;
     self.attacks = ko.observableArray([]); //observable array, serves as attack table
 
     //iterate through every attack in the json object, create attack object and store in array
@@ -103,10 +105,24 @@ function attacksViewModel(){
         self.attacks.push(new attack(jsonAttackObj.objects[i]));
     }
 
+    self.get_previous = function(){
+        console.log('preeeeeevious');
+        console.log(self.previousPage);
+        self.attack_from_url(self.previousPage);
+    }
+    self.get_next = function(){
+        self.attack_from_url(self.nextPage);
+    }
+
     self.filter_button = function(){
         //called when filter search is enacted
         var filter = removeWhite($('#form_entry').val());
-        var jsonFilteredAttacks = getAttackFiltered(filter); //get filtered attacks
+        var url = getFilterURL(filter);
+        self.attack_from_url(url);
+    }
+
+    self.attack_from_url = function(url){
+        var jsonFilteredAttacks = getAttacksFromURL(url); //get filtered attacks
 
         if(jsonFilteredAttacks.objects.length <= self.attacks().length){
             //there are more attacks currently in the table than needed
@@ -185,11 +201,17 @@ function getAttacks(){
     return JSON.parse(xmlHttp.responseText);
 }
 
-function getAttackFiltered(filter){
-    //get list of attacks that fit the filter request
+function getFilterURL(filter){
+    //build URL for filter
+    return '/api/v1/attack?' + filter;
+}
+
+function getAttacksFromURL(url){
+    //get list of attacks from url
     var xmlHttp = new XMLHttpRequest();
 
-    xmlHttp.open("GET", '/api/v1/attack/?' + filter, false);
+    //xmlHttp.open("GET", '/api/v1/attack/?' + filter, false);
+    xmlHttp.open("GET", url, false);
     xmlHttp.send(null);
 
     return JSON.parse(xmlHttp.responseText);
