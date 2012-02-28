@@ -9,34 +9,81 @@
 /*
  *Flot driven dynamic plot
  */
-$(function () {
+function plotChart() {
+    var jsonTrafficPoints = getTrafficPoints();
+    var allPackets = [];
+    var highPackets = [];
+    var mediumPackets = [];
+    var lowPackets = [];
+    var times = [];
+    var time = null;
+    
+    for(var i = jsonTrafficPoints.objects.length - 1; i >= 0; i--){
+        time = Date.parse(jsonTrafficPoints.objects[i].time);
+        //alert(Date.parse(time));
+        times.push(time);
+        allPackets.push([time, jsonTrafficPoints.objects[i].num_all_packets]);
+        highPackets.push([time, jsonTrafficPoints.objects[i].num_high_packets]);
+        mediumPackets.push([time, jsonTrafficPoints.objects[i].num_medium_packets]);
+        lowPackets.push([time, jsonTrafficPoints.objects[i].num_low_packets]);
+    }
+    
     var all_packets = {
         color: '#000000',
-        data: [[0, 53], [1, 48], [2, 55], [3, 44], [4, 58], [5, 54]],
-        label: 'all'
+        data: allPackets,
+        label: 'all',
+        lines: { show: true },
+        points: { show: true }
     };
     var low_threat = {
         color: '#ffcc00',
-        data: [[0, 20], [1, 21], [2, 23], [3, 19], [4, 33], [5, 28]],
-        label: 'low threat'
+        data: lowPackets,
+        label: 'low threat',
+        lines: { show: true },
+        points: { show: true }
     };
     var medium_threat = {
         color: '#ff6600',
-        data: [[0, 5], [1, 7], [2, 6], [3, 10], [4, 9], [5, 4]],
-        label: 'medium threat'
+        data: mediumPackets,
+        label: 'medium threat',
+        lines: { show: true },
+        points: { show: true }
     };
     var high_threat = {
         color: '#ff1919',
-        data: [[0, 0], [1, 0], [2, 2], [3, 15], [4, 16], [5, 22]],
+        data: highPackets,
         label: 'high threat',
+        lines: { show: true },
+        points: { show: true }
     };
+    
+    var options = {
+        xaxis: {
+            mode: "time",
+            timeformat: "%y/%m/%d:%H:%M",
+            tick: times,
+            tickSize: [30, "minute"],
+            min: times[0]
+        }
+    }
 
     var placeholder = $("#plot");
-    var plot = $.plot(placeholder, [all_packets, low_threat, medium_threat, high_threat]);
+    var plot = $.plot(placeholder, [all_packets, low_threat, medium_threat, high_threat], options);
 
     placeholder.resize(function(){
     });
-});
+}
+
+function getTrafficPoints(){
+    //get list of points using a GET request to server
+    var xmlHttp = null;
+
+    xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", '/api/v1/plot_data/?format=json', false);
+    xmlHttp.send(null);
+
+    return JSON.parse(xmlHttp.responseText);
+}
 
 /*
  *Knockout driven dynamic table entries
@@ -88,12 +135,12 @@ function traffic(attackName, trafficEntry){
 
 function updateTrafficEntry(trafficObj, attackName, newTraffic){
     trafficObj.attackType(attackName);
-    trafficObj.lastOccurrence(trafficEntry.last_attack);
-    trafficObj.averageScore(trafficEntry.average_score);
-    trafficObj.highScore(trafficEntry.high_score);
-    trafficObj.perAttack(trafficEntry.percent_attacks);
-    trafficObj.perTraffic(trafficEntry.percent_traffic);
-    trafficObj.perFalsePositives(trafficEntry.percent_false_positives);
+    trafficObj.lastOccurrence(newTraffic.last_attack);
+    trafficObj.averageScore(newTraffic.average_score);
+    trafficObj.highScore(newTraffic.high_score);
+    trafficObj.perAttack(newTraffic.percent_attacks);
+    trafficObj.perTraffic(newTraffic.percent_traffic);
+    trafficObj.perFalsePositives(newTraffic.percent_false_positives);
 }
 
 function convertToPercent(string){
@@ -229,7 +276,7 @@ function attacksViewModel(){
         
         //update traffic entries
         for(entry in jsonTrafficObj){
-            updateTrafficEntry(self.traffics()[i], entry, jsonAttackObj[entry]);
+            updateTrafficEntry(self.traffics()[i], entry, jsonTrafficObj[entry]);
             i++;
         }
     }
@@ -297,6 +344,7 @@ function removeWhite(string){
 
 attacksViewTable = new attacksViewModel();
 ko.applyBindings(attacksViewTable);
+plotChart();
 
 //function that updates the table every so often
 window.setInterval(function(){
@@ -305,4 +353,6 @@ window.setInterval(function(){
         attacksViewTable.getUpdate();
         //alert("updated");
     }
+    
+    plotChart();
 }, 60000);//1 minute
