@@ -209,11 +209,13 @@ function attacksViewModel(){
     }
 
     self.getUpdate = function(){
-        //get most recent attacks
+        //get most recent json objects
         var jsonAttackObj = getAttacks();
-
+        var jsonTrafficObj = getTrafficAnalysis()
+        var i = 0;
+        
         //put into array and thus in table
-        for(var i = 0; i < jsonAttackObj.objects.length; i++){
+        for(i = 0; i < jsonAttackObj.objects.length; i++){
             if(i < self.attacks().length){
                 //overwrite existing entries
                 updateAttackEntry(self.attacks()[i], jsonAttackObj.objects[i]);
@@ -221,6 +223,14 @@ function attacksViewModel(){
                 //create new attack row
                 self.attacks.push(new attack(jsonAttackObj.objects[i]));
             }
+        }
+        
+        i = 0;
+        
+        //update traffic entries
+        for(entry in jsonTrafficObj){
+            updateTrafficEntry(self.traffics()[i], entry, jsonAttackObj[entry]);
+            i++;
         }
     }
 };
@@ -285,14 +295,14 @@ function removeWhite(string){
 }
 
 
-attacksTable = new attacksViewModel();
-ko.applyBindings(attacksTable);
+attacksViewTable = new attacksViewModel();
+ko.applyBindings(attacksViewTable);
 
 //function that updates the table every so often
 window.setInterval(function(){
     //only does it if you are not filtering attacks
     if($('#form_entry').val() == ""){
-        attacksTable.getUpdate();
+        attacksViewTable.getUpdate();
         //alert("updated");
     }
 }, 60000);//1 minute
