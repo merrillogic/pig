@@ -5,6 +5,18 @@
 {% endblock %}
 
 {% block top_row %}
+    <div class = "span3">
+        <img src = "{{ STATIC_URL }}logo1.png" />
+    </div>
+    
+    <div class = "span5">
+        <div class = "well" id = "payload">
+            <!-- Payload of selected packet -->
+            <h4>Packet Payload</h4>
+            <p id = "payload_info">no packet selected</p>
+        </div>
+    </div>
+    
     <div class = "span4">
         <div class = "well">
             <!--Attack Details-->
@@ -50,14 +62,6 @@
             </table>
         </div> <!-- well -->
     </div> <!-- span4 -->
-
-    <div class = "span8">
-        <div class = "well" id = "payload">
-            <!-- Payload of selected packet -->
-            <h4>Packet Payload</h4>
-            <p id = "payload_info">no packet selected</p>
-        </div>
-    </div>
 {% endblock %}
 
 {% block bottom_row %}
@@ -94,6 +98,15 @@
             </tbody>
         </table>
     </div>
+    
+    <ul class="pager">
+        <li class="previous">
+            <a href="#" data-bind="click: get_previous, visible: previousPage">&larr; Newer</a>
+        </li>
+        <li class="next">
+            <a href="#" data-bind="click: get_next, visible: nextPage">Older &rarr;</a>
+        </li>
+    </ul>
 {% endblock %}
 
 {% block javascript %}    

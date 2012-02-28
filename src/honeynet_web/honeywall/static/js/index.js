@@ -52,20 +52,10 @@ function attack(attackEntry){
     self.destinationIp = ko.observable(attackEntry.destination_ip);
     self.score = ko.observable(attackEntry.score);
 
-
     self.link = ko.observable('/attack/' + self.aid());
+    
     //level determined to color code table
     self.level = ko.observable(attackEntry.threat_level);
-    /*
-    if(attackEntry.false_positive){
-        self.level = ko.observable("none");
-    }else if(attackEntry.score >= 100000){
-        self.level = ko.observable("high");
-    }else if(attackEntry.score >= 50000){
-        self.level = ko.observable("medium");
-    }else{
-        self.level = ko.observable("low");
-    }*/
 };
 
 function updateAttackEntry(attackObj, newAttack){
@@ -79,16 +69,6 @@ function updateAttackEntry(attackObj, newAttack){
     attackObj.score(newAttack.score);
     attackObj.level(newAttack.threat_level);
     attackObj.link('/attack/' + attackObj.aid());
-    /*
-    if(newAttack.false_positive){
-        attackObj.level("none");
-    }else if(newAttack.score >= 100000){
-        attackObj.level("high");
-    }else if(newAttack.score >= 50000){
-        attackObj.level("medium");
-    }else{
-        attackObj.level("low");
-    }*/
 }
 
 function attacksViewModel(){
