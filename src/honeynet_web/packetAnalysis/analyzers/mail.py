@@ -32,6 +32,15 @@ class MailAnalyzer(AttackAnalyzer):
             return True
         else:
             return False
+            
+    def rxMailComponent(self, packet):
+        #checks if this packet is part of the mail chain
+        
+        if packet.dest_port == 25 and \
+           not packet.payload.lower().startswith('mail from:'):
+            return True
+        else:
+            return False
 
     def addAttackProfile(self):
         numPrelimNodes = 5
@@ -49,11 +58,18 @@ class MailAnalyzer(AttackAnalyzer):
         prevNode = self.SAFE
 
         for curNode in prelimNodes:
+            
+            self.addTransition(curNode,
+                               curNode,
+                               1,
+                               [self.rxMailComponent])
+            
             #transition to next prelim node
             self.addTransition(prevNode,
                                curNode,
                                5,
                                [self.rxNewMail])
+
             prevNode = curNode
 
         self.addTransition(prevNode,
@@ -64,3 +80,7 @@ class MailAnalyzer(AttackAnalyzer):
                            threatNode,
                            15,
                            [self.rxNewMail])
+        self.addTransition(threatNode,
+                           threatNode,
+                           1,
+                           [self.rxMailComponent])               
