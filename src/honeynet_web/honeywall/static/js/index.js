@@ -19,7 +19,8 @@ function plotChart() {
     var time = null;
     
     for(var i = jsonTrafficPoints.objects.length - 1; i >= 0; i--){
-        time = Date.parse(jsonTrafficPoints.objects[i].time);
+        //append +00:00 to ensure times match up with database showing up
+        time = Date.parse(jsonTrafficPoints.objects[i].time + "+00:00");
         //alert(Date.parse(time));
         times.push(time);
         allPackets.push([time, jsonTrafficPoints.objects[i].num_all_packets]);
