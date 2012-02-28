@@ -136,11 +136,11 @@ function traffic(attackName, trafficEntry){
 function updateTrafficEntry(trafficObj, attackName, newTraffic){
     trafficObj.attackType(attackName);
     trafficObj.lastOccurrence(newTraffic.last_attack);
-    trafficObj.averageScore(newTraffic.average_score);
+    trafficObj.averageScore(roundToNearestHundreth(newTraffic.average_score));
     trafficObj.highScore(newTraffic.high_score);
-    trafficObj.perAttack(newTraffic.percent_attacks);
-    trafficObj.perTraffic(newTraffic.percent_traffic);
-    trafficObj.perFalsePositives(newTraffic.percent_false_positives);
+    trafficObj.perAttack(convertToPercent(newTraffic.percent_attacks));
+    trafficObj.perTraffic(convertToPercent(newTraffic.percent_traffic));
+    trafficObj.perFalsePositives(convertToPercent(newTraffic.percent_false_positives));
 }
 
 function convertToPercent(string){
