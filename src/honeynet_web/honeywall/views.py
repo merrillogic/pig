@@ -2,14 +2,14 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.db.models import Avg, Max, Count, Q
 from annoying.decorators import ajax_request
-from honeywall.models import Attack, Packet
-import datetime
+from honeywall.models import Attack, Packet, RecordCount
 
 @ajax_request
 def traffic_analysis(request):
     d = {}
     total_attack_count = Attack.objects.filter(false_positive=False).count()
-    total_packet_count = Packet.objects.count()
+    total_packet_count, created = RecordCount.objects.get_or_create(record='packets')
+    total_packet_count = total_packet_count.record_count
 
     for attack_type, description in Attack.ATTACK_CHOICES:
         attacks = Attack.objects.filter(attack_type=attack_type, false_positive=False).order_by('-start_time')
@@ -35,7 +35,7 @@ def traffic_analysis(request):
             d[attack_type]['percent_false_positives'] = None
 
     return d
-    
+
 def index(request):
     t = loader.get_template('index.html')
     c = RequestContext(request, None)
