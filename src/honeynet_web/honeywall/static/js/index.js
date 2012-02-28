@@ -60,7 +60,7 @@ function plotChart() {
     var options = {
         xaxis: {
             mode: "time",
-            timeformat: "%m/%d:%H:%M",
+            timeformat: "%m/%d\n%H:%M",
             tick: times,
             tickSize: [1, "hour"],
             min: times[0]
