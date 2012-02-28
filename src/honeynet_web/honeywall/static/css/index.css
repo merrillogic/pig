@@ -81,22 +81,88 @@ img {
 }
 #table_header th#attack_type{
     width: 10%;
+    text-align: center;
 }
 #table_header th#start_time{
     width: 20%;
+    text-align: center;
 }
 #table_header th#end_time{
     width: 20%;
+    text-align: center;
 }
 #table_header th#source_ip{
     width: 15%;
+    text-align: center;
 }
 #table_header th#destination_ip{
     width: 15%;
+    text-align: center;
 }
 #table_header th#score{
     width: 10%;
+    text-align: center;
 }
 #table_header th#scroll_space{
     width: 16px;
+    text-align: center;
+}
+
+table#secondary_table{
+}
+#secondary_table th#type{
+    width: 10%;
+    text-align: center;
+}
+#secondary_table th#last{
+    width: 25%;
+    text-align: center;
+}
+#secondary_table th#avg{
+    width: 10%;
+    text-align: center;
+}
+#secondary_table th#high{
+    width: 10%;
+    text-align: center;
+}
+#secondary_table th#perAttack{
+    width: 15%;
+    text-align: center;
+}
+#secondary_table th#perTraffic{
+    width: 15%;
+    text-align: center;
+}
+#secondary_table th#perFalse{
+    width: 15%;
+    text-align: center;
+}
+#secondary_table td#type{
+    width: 10%;
+    text-align: center;
+}
+#secondary_table td#last{
+    width: 25%;
+    text-align: center;
+}
+#secondary_table td#avg{
+    width: 10%;
+    text-align: center;
+}
+#secondary_table td#high{
+    width: 10%;
+    text-align: center;
+}
+#secondary_table td#perAttack{
+    width: 15%;
+    text-align: center;
+}
+#secondary_table td#perTraffic{
+    width: 15%;
+    text-align: center;
+}
+#secondary_table td#perFalse{
+    width: 15%;
+    text-align: center;
 }

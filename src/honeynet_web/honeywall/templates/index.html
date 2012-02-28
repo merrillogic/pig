@@ -79,16 +79,29 @@
 
         <!--Traffic Analysis tab contents-->
         <div class = "tab-pane" id = "traffic_analysis_tab">
-            <table class = "table">
-                <tr>
-                    <th>Attack Type</th>
-                    <th>Last Occurance</th>
-                    <th>Average Score</th>
-                    <th>Highest Score</th>
-                    <th>Frequency</th>
-                    <th>% of Traffic</th>
-                    <th>% of False Positives</th>
-                </tr>
+            <table id = "secondary_table" class = "table">
+                <thead>
+                    <tr>
+                        <th id = "type">Attack Type</th>
+                        <th id = "last">Last Occurrence</th>
+                        <th id = "avg">Average Score</th>
+                        <th id = "high">High Score</th>
+                        <th id = "perAttack">% of Attacks</th>
+                        <th id = "perTraffic">% of Traffic</th>
+                        <th id = "perFalse">% of False Positives</th>
+                    </tr>
+                </thead>
+                <tbody data-bind = "foreach: traffics">
+                    <tr>
+                        <td id = "type" data-bind = "text: attackType"></td>
+                        <td id = "last" data-bind = "text: lastOccurrence"></td>
+                        <td id = "avg" data-bind = "text: averageScore"></td>
+                        <td id = "high" data-bind = "text: highScore"></td>
+                        <td id = "perAttack" data-bind = "text: perAttack"></td>
+                        <td id = "perTraffic" data-bind = "text: perTraffic"></td>
+                        <td id = "perFalse" data-bind = "text: perFalsePositives"></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div> <!-- tab content -->
