@@ -1,6 +1,19 @@
 import base64
 from django.db import models
+from django.db.models.signals import pre_save, post_delete, post_save
+from django.dispatch.dispatcher import receiver
 from macaddress.fields import MACAddressField
+
+class RecordCount(models.Model):
+    record_count = models.IntegerField(default=0)
+    CHOICES = (
+                ('packets', 'packet count'),
+                ('attacks_low', 'low priorty attack count'),
+                ('attacks_medium', 'medium priorty attack count'),
+                ('attacks_high', 'high priorty attack count'),
+                ('attacks_false', 'false positive count'),
+              )
+    record = models.CharField(max_length=20, choices=CHOICES)
 
 class ARPRecord(models.Model):
     ip = models.IPAddressField()
@@ -124,3 +137,18 @@ class Packet(models.Model):
               u"Classification time: "+unicode(self.classification_time)
         return out
 
+@receiver(pre_save, sender=Packet, dispatch_uid='packet_pre_save')
+def update_packet_count(sender, instance, **kwargs):
+    if instance.id:
+        # already existed oh snap
+        pass
+    else:
+        c, created = RecordCount.objects.get_or_create(record='packets')
+        c.record_count += 1
+        c.save()
+
+@receiver(post_delete, sender=Packet, dispatch_uid='packet_post_delete')
+def update_packet_count_on_delete(sender, instance, **kwargs):
+    c, created = RecordCount.objects.get_or_create(record='packets')
+    c.record_count -= 1
+    c.save()
