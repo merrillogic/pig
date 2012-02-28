@@ -84,7 +84,7 @@
     <div id = "table_holder">
         <table class = "table" id = "main_table">            
             <tbody data-bind = "foreach: packets">
-                <tr>
+                <tr data-bind = "click: $parent.row_click">
                     <td id = "pid" data-bind = "text: pid"></td>
                     <td id = "time" data-bind = "text: time"></td>
                     <td id = "srcIp" data-bind = "text: srcIp"></td>

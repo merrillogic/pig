@@ -40,26 +40,6 @@ function updateFalsePositive(checkbox){
     xmlHttp.send('{"false_positive": ' + checkbox.checked + '}');
 }
 
-//Function that handles clicking of rows on attack table
-$(document).ready(function() {
-    $('#main_table td').click(function(event) {
-        var pid = $(this).parent().children('#idCol').text();
-        var jsonPacket = JSON.parse(getPacket(pid));
-
-        $('#payload_info').text(base64Decode(jsonPacket._payload));
-    });
-});
-
-function getPacket(pid){
-    var xmlHttp = null;
-
-    xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", '/api/v1/packet/' + pid + '/?format=json', false);
-    xmlHttp.send(null);
-
-    return xmlHttp.responseText;
-}
-
 /*
  *Knockout driven dynamic packet table entry
  */
@@ -140,6 +120,13 @@ function packetsViewModel(){
             }
         }
     }
+    
+    self.row_click = function(){
+        var jsonPacket = JSON.parse(getPacket(this.pid()));
+
+        $('#payload_info').text(base64Decode(jsonPacket._payload));
+
+    }
 };
 
 function getPackets(){
@@ -160,6 +147,16 @@ function getPacketsFromURL(url){
     xmlHttp.send(null);
 
     return JSON.parse(xmlHttp.responseText);
+}
+
+function getPacket(pid){
+    var xmlHttp = null;
+
+    xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", '/api/v1/packet/' + pid + '/?format=json', false);
+    xmlHttp.send(null);
+    
+    return xmlHttp.responseText;
 }
 
 fillAttackInformation();
