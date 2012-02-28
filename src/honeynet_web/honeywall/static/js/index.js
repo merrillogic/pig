@@ -65,6 +65,10 @@ function plotChart() {
             tick: times,
             tickSize: [1, "hour"],
             min: times[0]
+        },
+        legend: {
+            show: true,
+            noColumns: 4
         }
     }
 
