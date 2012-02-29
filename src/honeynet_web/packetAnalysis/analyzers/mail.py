@@ -74,11 +74,11 @@ class MailAnalyzer(AttackAnalyzer):
 
         self.addTransition(prevNode,
                            threatNode,
-                           10,
+                           15,
                            [self.rxNewMail])
         self.addTransition(threatNode,
                            threatNode,
-                           15,
+                           30,
                            [self.rxNewMail])
         self.addTransition(threatNode,
                            threatNode,

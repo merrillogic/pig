@@ -19,7 +19,8 @@ function plotChart() {
     var time = null;
 
     for(var i = jsonTrafficPoints.objects.length - 1; i >= 0; i--){
-        time = Date.parse(jsonTrafficPoints.objects[i].time);
+        //append +00:00 to ensure times match up with database showing up
+        time = Date.parse(jsonTrafficPoints.objects[i].time + "+00:00");
         //alert(Date.parse(time));
         times.push(time);
         allPackets.push([time, jsonTrafficPoints.objects[i].num_all_packets]);
@@ -60,10 +61,14 @@ function plotChart() {
     var options = {
         xaxis: {
             mode: "time",
-            timeformat: "%y/%m/%d:%H:%M",
+            timeformat: "%m/%d\n%H:%M",
             tick: times,
-            tickSize: [30, "minute"],
+            tickSize: [1, "hour"],
             min: times[0]
+        },
+        legend: {
+            show: true,
+            noColumns: 4
         }
     }
 
@@ -136,11 +141,11 @@ function traffic(attackName, trafficEntry){
 function updateTrafficEntry(trafficObj, attackName, newTraffic){
     trafficObj.attackType(attackName);
     trafficObj.lastOccurrence(newTraffic.last_attack);
-    trafficObj.averageScore(newTraffic.average_score);
+    trafficObj.averageScore(roundToNearestHundreth(newTraffic.average_score));
     trafficObj.highScore(newTraffic.high_score);
-    trafficObj.perAttack(newTraffic.percent_attacks);
-    trafficObj.perTraffic(newTraffic.percent_traffic);
-    trafficObj.perFalsePositives(newTraffic.percent_false_positives);
+    trafficObj.perAttack(convertToPercent(newTraffic.percent_attacks));
+    trafficObj.perTraffic(convertToPercent(newTraffic.percent_traffic));
+    trafficObj.perFalsePositives(convertToPercent(newTraffic.percent_false_positives));
 }
 
 function convertToPercent(string){
