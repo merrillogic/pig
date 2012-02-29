@@ -17,7 +17,7 @@ function plotChart() {
     var lowPackets = [];
     var times = [];
     var time = null;
-    
+
     for(var i = jsonTrafficPoints.objects.length - 1; i >= 0; i--){
         time = Date.parse(jsonTrafficPoints.objects[i].time);
         //alert(Date.parse(time));
@@ -27,7 +27,7 @@ function plotChart() {
         mediumPackets.push([time, jsonTrafficPoints.objects[i].num_medium_packets]);
         lowPackets.push([time, jsonTrafficPoints.objects[i].num_low_packets]);
     }
-    
+
     var all_packets = {
         color: '#000000',
         data: allPackets,
@@ -56,7 +56,7 @@ function plotChart() {
         lines: { show: true },
         points: { show: true }
     };
-    
+
     var options = {
         xaxis: {
             mode: "time",
@@ -88,7 +88,7 @@ function getTrafficPoints(){
 /*
  *Knockout driven dynamic table entries
  */
- 
+
 /*Attack Table Objects*/
 function attack(attackEntry){
     //attack object, stored in array as a row for the attack table
@@ -102,7 +102,7 @@ function attack(attackEntry){
     self.score = ko.observable(attackEntry.score);
 
     self.link = ko.observable('/attack/' + self.aid());
-    
+
     //level determined to color code table
     self.level = ko.observable(attackEntry.threat_level);
 };
@@ -123,7 +123,7 @@ function updateAttackEntry(attackObj, newAttack){
 /*Traffic Analysis Objects*/
 function traffic(attackName, trafficEntry){
     var self = this;
-    
+
     self.attackType = ko.observable(attackName);
     self.lastOccurrence = ko.observable(trafficEntry.last_attack);
     self.averageScore = ko.observable(roundToNearestHundreth(trafficEntry.average_score));
@@ -147,14 +147,14 @@ function convertToPercent(string){
     var original = parseFloat(string);
     var num = null;
     var result = '';
-    
+
     if(original == original){
         //string actually contains a numeric value
         num = Math.round(original * 10000) / 100;
-        
+
         if(num == 0 && original > 0)
             result = '~'
-        
+
         result += num + '%';
         return result;
     }else{
@@ -166,7 +166,7 @@ function convertToPercent(string){
 function roundToNearestHundreth(string){
     var original = parseFloat(string);
     var num = null;
-    
+
     if(original == original){
         //string contained a numeric value
         num = Math.round(original * 100) / 100;
@@ -184,15 +184,16 @@ function attacksViewModel(){
 
     self.attacks = ko.observableArray([]); //observable array, serves as attack table
     self.traffics = ko.observableArray([]); //observable array, serves as traffic table
-    
+
     self.nextPage = ko.observable(jsonAttackObj.meta.next);
     self.previousPage = ko.observable(jsonAttackObj.meta.previous);
+    self.offset = ko.observable(jsonAttackObj.meta.offset);
 
     //iterate through every attack in the json object, create attack object and store in array
     for(var i = 0; i < jsonAttackObj.objects.length; i++){
         self.attacks.push(new attack(jsonAttackObj.objects[i]));
     }
-    
+
     for(var entry in jsonTrafficObj){
         self.traffics.push(new traffic(entry, jsonTrafficObj[entry]));
     }
@@ -215,6 +216,7 @@ function attacksViewModel(){
         var jsonFilteredAttacks = getAttacksFromURL(url); //get filtered attacks
         self.nextPage(jsonFilteredAttacks.meta.next);
         self.previousPage(jsonFilteredAttacks.meta.previous);
+        self.offset(jsonFilteredAttacks.meta.offset);
 
         if(jsonFilteredAttacks.objects.length <= self.attacks().length){
             //there are more attacks currently in the table than needed
@@ -260,7 +262,7 @@ function attacksViewModel(){
         var jsonAttackObj = getAttacks();
         var jsonTrafficObj = getTrafficAnalysis()
         var i = 0;
-        
+
         //put into array and thus in table
         for(i = 0; i < jsonAttackObj.objects.length; i++){
             if(i < self.attacks().length){
@@ -271,9 +273,9 @@ function attacksViewModel(){
                 self.attacks.push(new attack(jsonAttackObj.objects[i]));
             }
         }
-        
+
         i = 0;
-        
+
         //update traffic entries
         for(entry in jsonTrafficObj){
             updateTrafficEntry(self.traffics()[i], entry, jsonTrafficObj[entry]);
@@ -324,7 +326,7 @@ function getTrafficAnalysis(){
     xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", '/api/v1/traffic_analysis/?format=json', false);
     xmlHttp.send(null);
-    
+
     return JSON.parse(xmlHttp.responseText);
 }
 
@@ -349,10 +351,10 @@ plotChart();
 //function that updates the table every so often
 window.setInterval(function(){
     //only does it if you are not filtering attacks
-    if($('#form_entry').val() == ""){
+    if($('#form_entry').val() == "" && attacksViewTable.offset() === 0){
         attacksViewTable.getUpdate();
         //alert("updated");
     }
-    
+
     plotChart();
 }, 60000);//1 minute
