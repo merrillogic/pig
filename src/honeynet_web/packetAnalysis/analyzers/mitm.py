@@ -49,7 +49,7 @@ class MitMAnalyzer(AttackAnalyzer):
             source = packet.source_ip.split('.')
             dest = packet.source_ip.split('.')
 
-            return (not source[:-1] == record[:-1]) and (not dest[:-1] == record[:-1])
+            return (not source[:-1] == record[:-1]) or (not dest[:-1] == record[:-1])
 
         def _wrong_ip_mac(packet):
             if packet.source_ip in self.arp_tables['IP']:
