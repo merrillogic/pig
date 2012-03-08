@@ -1,0 +1,234 @@
+/*------------------------------------*\
+	VARIABLES
+\*------------------------------------*/
+@nice-font: 'Arvo', serif;
+@nav-font: 'Oswald', sans-serif;
+@base-font-size: 1.10em;
+@text-color: #333;
+@link-color: #227CE8;
+@nav-color: #666;
+@header-color: @text-color;
+
+/*------------------------------------*\
+	MAIN
+\*------------------------------------*/
+html{
+	background:white;
+}
+body{
+	background:white;
+	padding-top:50px;
+    font-size: @base-font-size;
+    line-height: 1.7em;
+    color: @text-color;
+}
+#page{
+	margin:0 auto;
+    margin-bottom: 1em;
+	float:none;
+	text-align:center;
+}
+
+ol.archive{
+    margin:0;
+    padding:0;
+    list-style-type:none;
+    margin-bottom: 1.5em;
+}
+
+.signoff{
+    text-align:right;
+    margin-bottom: 1em;
+}
+
+
+
+/*------------------------------------*\
+	TYPE
+\*------------------------------------*/
+.title{
+	font-size:3 / @base-font-size;
+	line-height:1;
+    font-family: @nav-font;
+
+    a{
+        color: @header-color;
+        border-bottom: 0;
+    }
+}
+a{
+    color: inherit;
+    border-bottom: 1px dotted #bbb;
+}
+a:hover{
+    color: #b83000;
+    text-decoration: none;
+}
+
+#header{
+   font-family: @nice-font;
+   text-transform: uppercase;
+   font-size: 6 / @base-font-size;
+   line-height: 1;
+   text-align: center;
+
+   a{
+       color:@header-color;
+       border-bottom: 0;
+    }
+    a:hover{
+        text-decoration: none;
+    }
+}
+
+nav > ul{
+    list-style: none;
+    text-transform: uppercase;
+    font-size: 2 / @base-font-size;
+    font-family: @nav-font;
+    margin: 0;
+    text-align: center;
+
+    a{
+        color: @text-color*2;
+        border-bottom: 0;
+    }
+}
+
+nav li{
+    display: inline;
+    margin-left: 0.6em;
+}
+
+nav li:first-child{
+    margin-left: 0;
+}
+
+nav{
+    margin-bottom: 2em;
+}
+
+
+/*------------------------------------*\
+	IMAGES
+\*------------------------------------*/
+#logo{
+	margin-bottom:1.5em;
+}
+
+img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rounded-corners (@radius: 10px) {
+    border-radius: @radius;
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+}
+
+img[src*="/photo/"]{
+    .rounded-corners;
+}
+
+
+/*------------------------------------*\
+	PAGINATION
+\*------------------------------------*/
+body > footer{
+    position: relative;
+    margin-top: 1em;
+}
+
+body > footer a{
+    position: absolute;
+    color: @header-color;
+    top: 0;
+}
+
+body > footer a:first-child{
+    left: 0;
+}
+
+body > footer a:last-child{
+    right: 0;
+}
+
+body > footer fieldset{
+    display: inline;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    text-align: center;
+}
+
+
+
+/*------------------------------------*\
+	NARROW
+\*------------------------------------*/
+/*
+CSS for tablets and narrower devices
+*/
+
+
+
+
+
+@media (min-width: 721px) and (max-width: 960px){
+}
+/*--- END NARROW ---*/
+
+
+
+
+
+/*------------------------------------*\
+	MOBILE
+\*------------------------------------*/
+/*
+CSS for mobile devices.
+Linearise it!
+*/
+
+@media (max-width: 720px){
+    body{
+        font-size:0.75em;
+    }
+
+    #header{
+        font-size:4em;
+    }
+    .title{
+        font-size:2em;
+    }
+    nav>ul{
+        font-size:1.5em;
+    }
+}
+
+@media (max-width: 320px){
+    #header{
+        font-size:3.75em;
+    }
+    nav li{
+        display: inline;
+        margin: 0;
+    }
+    nav>ul{
+        font-size:1.25em;
+    }
+}
+
+@media (max-width: 240px){
+    nav li{
+        display: block;
+        margin-left: 0;
+    }
+
+    nav li:first-child{
+        margin-left: 0;
+    }
+}
+/*--- END MOBILE ---*/
