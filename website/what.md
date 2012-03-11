@@ -29,4 +29,8 @@ A DoS attack is meant to overload a website or server, causing it to be unreacha
 
 ### Man in the Middle Attack
 
-Who knows.
+The idea behind a Man in the Middle Attack is pretty much what it sounds like. You have two computers attempting to communicate and a third computer gets in between them and attacks.
+
+This works by exploiting weaknesses in the ARP protocol. The attacking computer sends ARP replies with incorrect an IP address/MAC address to both computers, who then communicate through the attacker. Once the attacker has done this, he or she can log, modify, or stop any traffic between the two computers.
+
+This can be prevented or detected by storing all of the good ARP records and checking all packets for correct ARP records.
