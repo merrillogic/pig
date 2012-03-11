@@ -15,7 +15,7 @@ You don't even need a network. All you need is some `pcap` files to parse on the
 
 2. Install the requirements in `requirements.txt`. Perhaps `pip install -r requirements.txt` will work.
 
-3. Once this is done, go to the `honeynet_web` directory. `manage.py` contains all of the usual Django commands (e.g. `syncdb`, `runserver`, etc.) as well as a few of our own.
+3. Once this is done, go to the `pig_web` directory. `manage.py` contains all of the usual Django commands (e.g. `syncdb`, `runserver`, etc.) as well as a few of our own.
 
       - `start_analyzer` will start all of our attack analyzers on the database specified in the settings file.
       - `parse_pcap` will parse a `pcap`-file into the database.
@@ -26,4 +26,4 @@ You don't even need a network. All you need is some `pcap` files to parse on the
 
 ## Building your own analyzers
 
-<a href="https://bitbucket.org/rouge8/honeynet/wiki/AttackAnalyzer">Check out the wiki.</a>
+<a href="https://bitbucket.org/rouge8/pig/wiki/AttackAnalyzer">Check out the wiki.</a>
