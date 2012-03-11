@@ -1,0 +1,10 @@
+---
+title: Who?
+layout: page
+---
+
+{% for post in site.categories.bio %}
+    <h2>{{ post.title }}</h2>
+    <img src="{{ post.photo }}" title="{{ post.title }}" />
+    {{ post.content }}
+{% endfor %}

@@ -15,6 +15,11 @@ task :deploy => :build do
   sh "cd _site; zip -r ../honeynet_comps_site.zip .; cd -"
 end
 
+desc 'Build and upload'
+task :upload => :build do
+  sh "rsync -rtzh --progress --delete _site/ --exclude '/photo' rouge8_andyfreeland@ssh.phx.nearlyfreespeech.net:/home/public/pig/"
+end
+
 def jekyll(opts = '')
   sh 'rm -rf _site'
   sh 'jekyll ' + opts

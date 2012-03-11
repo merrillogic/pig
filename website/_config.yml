@@ -1,4 +1,3 @@
-permalink: pretty
 markdown: kramdown
 
 exclude: ['Rakefile', 'README.markdown']
