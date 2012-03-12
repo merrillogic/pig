@@ -4,6 +4,13 @@ img#logo{
     padding: 0;
 }
 
+a:active,
+a:focus{
+	/* Give clicked links a depressed effect. */
+	position:relative;
+	top:1px;
+}
+
 pre#clone:before{
     content:"$ " ;
 }
