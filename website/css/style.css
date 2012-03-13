@@ -70,6 +70,8 @@ nav a {
     color: #000000;
     font-size: 30px;
     font-family: "Essay1743";
+
+    position:absolute;
 }
 
 nav a:hover {
@@ -79,6 +81,7 @@ nav a:hover {
 nav li {
     position:absolute;
 }
+
 
 nav #who {
     background-image:url("../img/rump.png");
@@ -118,6 +121,27 @@ nav #code {
     height:105px;
     top:79px;
     left:96px;
+}
+
+nav #who a {
+    top:41px;
+    left:37px;
+}
+nav #what a {
+    top:21px;
+    left:25px;
+}
+nav #why a {
+    top:21px;
+    left:21px;
+}
+nav #use a {
+    top:8px;
+    left:17px;
+}
+nav #code a {
+    top:21px;
+    left:51px;
 }
 
 strong {
