@@ -84,40 +84,40 @@ nav #who {
     background-image:url("../img/rump.png");
     width:135px;
     height:253px;
-top:10px;
-left:10px;
+    top:-4px;
+    left:25px;
 }
 
 nav #what {
     background-image:url("../img/back.png");
     width:112px;
     height:99px;
-top:10px;
-left:10px;
+    top:-4px;
+    left:130px;
 }
 
 nav #why {
     background-image:url("../img/shoulder.png");
     width:115px;
     height:101px;
-top:10px;
-left:10px;
+    top:-5px;
+    left:219px;
 }
 
 nav #use {
     background-image:url("../img/hoof.png");
     width:110px;
     height:169px;
-top:10px;
-left:10px;
+    top:83px;
+    left:222px;
 }
 
 nav #code {
     background-image:url("../img/gut.png");
     width:155px;
     height:105px;
-top:10px;
-left:10px;
+    top:79px;
+    left:96px;
 }
 
 strong {
