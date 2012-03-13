@@ -58,6 +58,68 @@ a:active {
     color: #569107;
 }
 
+@font-face{
+    font-family: "Essay1743";
+    src: url("fonts/essays1743/Essays1743.woff");
+}
+
+nav ul {
+    position:relative;
+}
+nav a {
+    color: #000000;
+    font-size: 30px;
+    font-family: "Essay1743";
+}
+
+nav a:hover {
+    text-decoration:none;
+}
+
+nav li {
+    position:absolute;
+}
+
+nav #who {
+    background-image:url("../img/rump.png");
+    width:135px;
+    height:253px;
+top:10px;
+left:10px;
+}
+
+nav #what {
+    background-image:url("../img/back.png");
+    width:112px;
+    height:99px;
+top:10px;
+left:10px;
+}
+
+nav #why {
+    background-image:url("../img/shoulder.png");
+    width:115px;
+    height:101px;
+top:10px;
+left:10px;
+}
+
+nav #use {
+    background-image:url("../img/hoof.png");
+    width:110px;
+    height:169px;
+top:10px;
+left:10px;
+}
+
+nav #code {
+    background-image:url("../img/gut.png");
+    width:155px;
+    height:105px;
+top:10px;
+left:10px;
+}
+
 strong {
     font-weight: bold;
 }
