@@ -65,7 +65,15 @@ a:active {
 
 nav ul {
     position:relative;
+    background-image:url("../img/pig-nav.png");
+    width:480px;
+    height:257px;
 }
+
+nav ul:hover {
+    background-image:url("../img/pig-nav-color.png");
+}
+
 nav a {
     color: #000000;
     font-size: 30px;
