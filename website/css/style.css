@@ -1,4 +1,3 @@
-/* BY ANDY */
 img#logo{
     margin: 0;
     padding: 0;
@@ -14,8 +13,6 @@ a:focus{
 pre#clone:before{
     content:"$ " ;
 }
-
-/* FROM http://necolas.github.com/normalize.css/ */
 html {
     font-size: 100%;
     -webkit-text-size-adjust: 100%;
@@ -56,6 +53,104 @@ a:focus,
 a:active {
     text-decoration: underline;
     color: #569107;
+}
+
+@font-face{
+    font-family: "Essay1743";
+    src: url("fonts/essays1743/Essays1743.woff");
+}
+
+nav ul {
+    position:relative;
+    background-image:url("../img/pig-nav.png");
+    width:480px;
+    height:257px;
+}
+
+nav ul:hover {
+    background-image:url("../img/pig-nav-color.png");
+}
+
+nav a {
+    color: #000000;
+    font-size: 29px;
+    font-family: "Essay1743";
+
+    position:absolute;
+}
+
+nav a:hover {
+    text-decoration:none;
+}
+
+nav li {
+    position:absolute;
+}
+
+nav li a {
+    font-weight: normal;
+}
+
+
+nav #who {
+    background-image:url("../img/rump.png");
+    width:135px;
+    height:253px;
+    top:-4px;
+    left:25px;
+}
+
+nav #what {
+    background-image:url("../img/back.png");
+    width:112px;
+    height:99px;
+    top:-4px;
+    left:130px;
+}
+
+nav #why {
+    background-image:url("../img/shoulder.png");
+    width:115px;
+    height:101px;
+    top:-5px;
+    left:219px;
+}
+
+nav #use {
+    background-image:url("../img/hoof.png");
+    width:110px;
+    height:169px;
+    top:83px;
+    left:222px;
+}
+
+nav #code {
+    background-image:url("../img/gut.png");
+    width:155px;
+    height:105px;
+    top:79px;
+    left:96px;
+}
+
+nav #who a {
+    top:41px;
+    left:37px;
+}
+nav #what a {
+    top:21px;
+    left:25px;
+}
+nav #why a {
+    top:21px;
+    left:21px;
+}
+nav #use a {
+    top:8px;
+    left:17px;
+}
+nav #code a {
+    top:21px;
+    left:51px;
 }
 
 strong {
