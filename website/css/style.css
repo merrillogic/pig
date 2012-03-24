@@ -91,40 +91,50 @@ nav li {
 }
 
 
-nav #who {
+nav #who:hover {
     background-image:url("../img/rump.png");
+}
+nav #who {
     width:135px;
     height:253px;
     top:-4px;
     left:25px;
 }
 
-nav #what {
+nav #what:hover {
     background-image:url("../img/back.png");
+}
+nav #what {
     width:112px;
     height:99px;
     top:-4px;
     left:130px;
 }
 
-nav #why {
+nav #why:hover {
     background-image:url("../img/shoulder.png");
+}
+nav #why {
     width:115px;
     height:101px;
     top:-5px;
     left:219px;
 }
 
-nav #use {
+nav #use:hover {
     background-image:url("../img/hoof.png");
+}
+nav #use {
     width:110px;
     height:169px;
     top:83px;
     left:222px;
 }
 
-nav #code {
+nav #code:hover {
     background-image:url("../img/gut.png");
+}
+nav #code {
     width:155px;
     height:105px;
     top:79px;
