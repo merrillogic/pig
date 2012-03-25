@@ -17,7 +17,7 @@ end
 
 desc 'Build and upload'
 task :upload => :build do
-  sh "rsync -rtzh --progress --delete _site/ --exclude '/photo' rouge8_andyfreeland@ssh.phx.nearlyfreespeech.net:/home/public/pig/"
+  sh "rsync -rtzh --progress --delete _site/ --exclude '_img' rouge8_andyfreeland@ssh.phx.nearlyfreespeech.net:/home/public/pig/"
 end
 
 def jekyll(opts = '')
