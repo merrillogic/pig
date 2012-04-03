@@ -10,8 +10,8 @@ task :server do
   jekyll('--server --auto')
 end
 
-desc 'Build and deploy'
-task :deploy => :build do
+desc 'Build and zip'
+task :zip => :build do
   sh "cd _site; zip -r ../honeynet_comps_site.zip .; cd -"
 end
 
